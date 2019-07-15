@@ -1,0 +1,9 @@
+OK, so, welcome to the Dev Blog for the new OurDailies app. Ideally this will live at OurDailies.org/Dev someday, but right now I don't have any hosting so I'm just throwing it in this folder and putting that in git. 
+
+The idea is basically that I hate cluttering up code with long comments, but I do want a place to record my thinking as I'm writing and figuring things out. I am FAR from an expert, or even experienced, coder, so most of the things I'm doing I'll be figuring out as I go. This means I might do some silly things that don't make sense once I understand things better, or that I might only be able to figure something out based on some obscure forum answer I find somewhere that I won't be able to track down again easily later, and I want to put all the necessary explanations (and then some) somewhere so I can find them again easily later.
+
+On top of that, my ideal of clean code has been to not leave comments that would be unnecessary to someone who speaks the language fluently. But "fluently" is a pretty high bar. So I'd like to use these documents to leave little notes to my future self that a more experienced coder might not need. Little quirks of syntax, or notes on how a specific function works, or anything like that.
+
+Basically I'm trying to balance the virtues of clean code with the value of having really excessive notes about how the app works and what I was thinking when I wrote it, and this seems like a good way to broker that compromise. Maybe it isn't, I don't know. But for now it seems like it will be, so here we are.
+
+Anyway, enjoy.
