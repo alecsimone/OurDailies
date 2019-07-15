@@ -4,3 +4,8 @@ My plan is just to steal Wes Bos's package.json files from https://github.com/we
 
 Looks like everything went smoothly. Now it's time to get Next up and running to see if I can actually have some dev pages hosted locally.
 
+First step is running "npm run dev" in the front end directory, which runs the script "next -p 7777". It failed the first time because I didn't have a pages directory, but after creating an empty pages directory we're all good.
+
+I should point out, I'm following Wes Bos's Full Stack React course here. For now I'm not really concerned with building any of the actual OurDailies components, just with getting everything set up and gettin comfortable playing with the very basics of next and routing and all that. Actual building will come later.
+
+Anyway, next Wes has me creating an index.js file within the pages directory. My understanding is that because I specified index.js as the main entrypoint to the app in my package.json file, this will now be the homepage of my app, and after putting a super basic react component in index.js, it looks like that's exactly what happened. And the hot reloading works too, nice! God that makes me so happy.
