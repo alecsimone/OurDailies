@@ -9,3 +9,8 @@ First step is running "npm run dev" in the front end directory, which runs the s
 I should point out, I'm following Wes Bos's Full Stack React course here. For now I'm not really concerned with building any of the actual OurDailies components, just with getting everything set up and gettin comfortable playing with the very basics of next and routing and all that. Actual building will come later.
 
 Anyway, next Wes has me creating an index.js file within the pages directory. My understanding is that because I specified index.js as the main entrypoint to the app in my package.json file, this will now be the homepage of my app, and after putting a super basic react component in index.js, it looks like that's exactly what happened. And the hot reloading works too, nice! God that makes me so happy.
+
+Now he's got me creating a second page so that we can see how to set up different pages and to link between them. It is ridiculously simple, I just created a new file called second.js in my pages directory, and bada bing bada boom it's up and running at http://localhost:7777/second. 
+
+Linking is fairly straightforward, but has a couple wrinkles. You can, of course, just use regular anchor tags, but that doesn't give you all the advantages of Next. So instead what we do is import a Link component from Next, give it an href prop that points to the destination, and a child that is the anchor element with no href. Opening dev tools, I can see what this does is create a regular old anchor element on the page, but it's got a listener that prevents its default and instead uses all the cool Next functionality. Cool.
+

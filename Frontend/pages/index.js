@@ -1,11 +1,12 @@
-import React from 'react';
+import Link from 'next/link';
 
-class Home extends React.Component {
-
-    render() {
-        return <p>Hey hey you you I don't like your girlfriend!</p>
-    }
-}
-
+const Home = props => (
+    <div>
+        <p>Hey hey you you I don't like your girlfriend!</p>
+        <Link href="/second">
+            <a>Next Line</a>
+        </Link>
+    </div>
+);
 
 export default Home;
