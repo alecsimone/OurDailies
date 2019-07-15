@@ -1,0 +1,6 @@
+First up we've got the big scary thing that probably isn't that hard but is working with the part of the stack I understand least: setting up Next.js.
+
+My plan is just to steal Wes Bos's package.json files from https://github.com/wesbos/Advanced-React/tree/master/sick-fits and then to run npm install on them and hope everything goes smoothly. There are probably a bunch of dependencies in there that I don't need, but I'm going to just use them as is for now and then try to remove any unneeded dependencies once I have a clearer view of the shape of the whole application.
+
+Looks like everything went smoothly. Now it's time to get Next up and running to see if I can actually have some dev pages hosted locally.
+
