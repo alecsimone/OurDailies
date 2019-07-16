@@ -31,18 +31,27 @@ injectGlobal`
     }
     a {
         text-decoration: none;
+        :hover {
+            text-decoration: underline;
+        }
     }
+`;
+
+const StyledPage = styled.div`
+    width: 94%;
+    max-width: 1920px;
+    margin: 2rem auto;
 `;
 
 class Page extends Component {
     render() {
         return (
             <ThemeProvider theme={theme}>
-                <div>
+                <StyledPage>
                     <Meta />
                     <Header />
                     {this.props.children}
-                </div>
+                </StyledPage>
             </ThemeProvider>
         );
     }

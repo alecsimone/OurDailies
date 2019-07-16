@@ -6,14 +6,17 @@ const StyledLogoBox = styled.div`
     display: inline-flex;
     align-items: center;
     img {
-        width: 6rem;
+        width: 7rem;
+        margin-top: -4px;
     }
     a, a:visited {
         font-size: 4rem;
         opacity: .9;
-        margin-left: 1.5rem;
-        margin-top: 4px;
+        margin-left: 2rem;
         color: ${props => props.theme.gold};
+        :hover {
+            text-decoration: none;
+        }
     }
 `;
 
