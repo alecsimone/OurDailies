@@ -1,9 +1,0 @@
-Mostly this is just me learning to work with Styled Components, which is simple enough I'm assuming it will become second nature and there's not much I need to document.
-
-The handling of global styles requires some explanation, though. Wes has set up his app using Styled Components v3.4.9, and apparently in v4 they changed how you're supposed to handle global styles. See here: https://stackoverflow.com/questions/46760861/styled-components-how-to-set-styles-on-html-or-body-tag
-
-It seems to be a very mild change that will be easy to adapt should I ever update. Styled Components isn't one of the dependencies throwing a security error on GitHub, so I'm going to leave it at the version Wes used for now, and if I ever come up with a reason to upgrade I can fix it pretty easily.
-
-Anyway, there are two ways I'm doing global styles right now. First is with injectGlobalStyle, which is explained in that link above. It's basically just a random tagged string dropped in Page.js that can add style to the html and body elements.
-
-The second way is a theme, which also lives in Page.js. Styled Components uses a Theme Provider to make an object of styles available through the React context api. The return of the Page component is wrapped in a new component, ThemeProvider, which takes the object of styles as a prop called "theme". This can then be referenced anywhere in the app (descended from the Page component), using a interpolated string with an arrow function that takes props as a parameter, ${props => props.theme.themeObjectPropertyName}, eg: ${props => props.theme.white}.

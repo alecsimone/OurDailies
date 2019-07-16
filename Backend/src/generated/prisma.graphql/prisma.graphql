@@ -1,0 +1,174 @@
+type AggregateThing {
+  count: Int!
+}
+
+type BatchPayload {
+  count: Long!
+}
+
+scalar Long
+
+type Mutation {
+  createThing(data: ThingCreateInput!): Thing!
+  updateManyThings(data: ThingUpdateInput!, where: ThingWhereInput): BatchPayload!
+  deleteManyThings(where: ThingWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+interface Node {
+  id: ID!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Query {
+  things(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Thing]!
+  thingsConnection(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ThingConnection!
+  node(id: ID!): Node
+}
+
+type Subscription {
+  thing(where: ThingSubscriptionWhereInput): ThingSubscriptionPayload
+}
+
+type Thing {
+  id: ID!
+  submitter: String!
+  title: String!
+  link: String
+}
+
+type ThingConnection {
+  pageInfo: PageInfo!
+  edges: [ThingEdge]!
+  aggregate: AggregateThing!
+}
+
+input ThingCreateInput {
+  submitter: String!
+  title: String!
+  link: String
+}
+
+type ThingEdge {
+  node: Thing!
+  cursor: String!
+}
+
+enum ThingOrderByInput {
+  id_ASC
+  id_DESC
+  submitter_ASC
+  submitter_DESC
+  title_ASC
+  title_DESC
+  link_ASC
+  link_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ThingPreviousValues {
+  id: ID!
+  submitter: String!
+  title: String!
+  link: String
+}
+
+type ThingSubscriptionPayload {
+  mutation: MutationType!
+  node: Thing
+  updatedFields: [String!]
+  previousValues: ThingPreviousValues
+}
+
+input ThingSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ThingWhereInput
+  AND: [ThingSubscriptionWhereInput!]
+  OR: [ThingSubscriptionWhereInput!]
+  NOT: [ThingSubscriptionWhereInput!]
+}
+
+input ThingUpdateInput {
+  submitter: String
+  title: String
+  link: String
+}
+
+input ThingWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  submitter: String
+  submitter_not: String
+  submitter_in: [String!]
+  submitter_not_in: [String!]
+  submitter_lt: String
+  submitter_lte: String
+  submitter_gt: String
+  submitter_gte: String
+  submitter_contains: String
+  submitter_not_contains: String
+  submitter_starts_with: String
+  submitter_not_starts_with: String
+  submitter_ends_with: String
+  submitter_not_ends_with: String
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  link: String
+  link_not: String
+  link_in: [String!]
+  link_not_in: [String!]
+  link_lt: String
+  link_lte: String
+  link_gt: String
+  link_gte: String
+  link_contains: String
+  link_not_contains: String
+  link_starts_with: String
+  link_not_starts_with: String
+  link_ends_with: String
+  link_not_ends_with: String
+  AND: [ThingWhereInput!]
+  OR: [ThingWhereInput!]
+  NOT: [ThingWhereInput!]
+}
