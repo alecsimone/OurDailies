@@ -1,6 +1,6 @@
 import Router from 'next/router';
 import NProgress from 'nprogress';
-import Nav from './Nav';
+import LogoBox from './LogoBox';
 
 Router.onRouteChangeStart = () => {
     NProgress.start();
@@ -14,7 +14,7 @@ Router.onRouteChangeError = () => {
 
 const Header = () => (
     <div>
-        <Nav />
+        <LogoBox />
     </div>
 )
 

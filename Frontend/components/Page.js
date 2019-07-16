@@ -4,19 +4,19 @@ import Header from './Header';
 import Meta from './Meta';
 
 const theme = {
-    black: 'hsl(200, 17%, 7%)', 
-    white: 'hsl(30, 5%, 90%)',
-    blue: 'hsl(210, 100%, 67%)',
-    gold: 'hsl(42, 61%, 93%)',
-    darkBlue: 'hsl(210, 100%, 33%)',
+    black: 'hsl(216, 24%, 4%)', 
+    white: 'hsl(33, 17%, 88%)',
+    blue: 'hsl(210, 100%, 34%)',
+    gold: 'hsl(42, 79%, 64%)',
+    darkBlue: 'hsl(210, 100%, 16%)',
     darkGrey: 'hsl(30, 10%, 33%)',
-    lightGrey: 'hsl(30, 10%, 67%)',
+    lightGrey: 'hsl(28, 9%, 64%)',
 }
 
 injectGlobal`
     html {
         background: ${theme.black};
-        font-family: sans-serif;
+        font-family: "Proxima Nova", sans-serif;
         font-size: 12px;
         box-sizing: border-box;
     }

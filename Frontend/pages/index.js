@@ -1,8 +1,13 @@
 import Link from 'next/link';
+import styled from 'styled-components';
 
-const Home = props => (
+const HomeText = styled.p`
+    color: ${props => props.theme.white};
+`;
+
+const Home = () => (
     <div>
-        <p>Hey hey you you I don't like your girlfriend!</p>
+        <HomeText>This is the home page</HomeText>
     </div>
 );
 
