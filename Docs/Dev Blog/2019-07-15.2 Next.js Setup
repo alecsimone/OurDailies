@@ -14,3 +14,16 @@ Now he's got me creating a second page so that we can see how to set up differen
 
 Linking is fairly straightforward, but has a couple wrinkles. You can, of course, just use regular anchor tags, but that doesn't give you all the advantages of Next. So instead what we do is import a Link component from Next, give it an href prop that points to the destination, and a child that is the anchor element with no href. Opening dev tools, I can see what this does is create a regular old anchor element on the page, but it's got a listener that prevents its default and instead uses all the cool Next functionality. Cool.
 
+Finally, we built the container for the app itself. One thing I'm trying to adjust in my thinking is that this is not a collection of pages, it's an app. So where I would normally say, "the stuff that's on every page," instead I'm trying to think of it as the foundation of the app itself, which shows whatever thing is requested. 
+
+This is drawn out in the structure of what we created. in _app.js we define the highest level structure of the app. It wraps everything in a container, which I think does some Next.js magic, and then that container has a page component, which takes another component as a child. That grandchild component is passed to the app container as a prop, and it shows up in Page as a child. So what we have is not, "we're on the Finalists page, here's the code for that." It's, "the user requested Finalists, let's load in the Finalists components." And I guess that's the core of the distinction: pages vs components.
+
+We also created a Meta component, which contains all the basic HTML <Head> stuff. Next.js allows us to drop these anywhere down the line and edit it, but Page calls the basics, along with a header. Wes had me create a Nav element to put inside it, which I think will eventually become the round selector and be totally different, so I'm not going to go into any of that.
+
+So just to recap, for the sake of stating it concisely:
+-The app lives in _app.js
+-It is given a route from either a URL or a Link
+-That route corresponds to a component with the same name in the pages directory
+-This component is loaded, and wrapped by the Page component, which contains the <Head> (in the Meta component) and Header.
+
+Nice.
