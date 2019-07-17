@@ -1,0 +1,11 @@
+The most important thing I want to note here is that the shortcut for deploying prisma with the different environmental variable is "npm run deploy". That triggers a script in package.json that runs "prisma deploy --env-file variables.env"
+
+The basic idea of how this all fits together seems pretty simple. When we initiated prisma it created two files, prisma.yml and datamodel.prisma
+
+prisma.yml is the config for the prisma service. It contains all the info on where things are, and contains the command to generate the prisma.graphql file and where to store it. That file seems to be a list of all the graphql commands we'll be able to use with our other graphql engines (Yoga, and I believe Apollo too).
+
+datamodel.prisma contains what it says, the model of how our data is stored. What attributes each type of data has and what type of data that attribute will be. You change this and then redeploy, and prisma updates it's architecture accordingly.
+
+It's also worth noting that the method of generating the prisma.graphql file is different from when Wes made the tutorial. Now instead of a post-deploy hook we use a generator. Seems to give more flexibility, as we can now control where the file is saved. That went a little wrong though, as first I supplied a directory and got an error saying I needed to pass a .graphql file, but then it treated my new location (which ended in prisma.graphql) as a directory, and now prsima.graphql is located inside a directory called prisma.graphql. Oh well.
+
+Otherwise pretty smooth sailing.
