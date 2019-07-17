@@ -1,7 +1,12 @@
 type Thing {
   id: ID! @id
-  submitter: String!
   title: String!
   link: String!
   createdAt: DateTime! @createdAt
+}
+
+type User {
+  id: ID! @id
+  displayName: String!
+  avatar: String!
 }
