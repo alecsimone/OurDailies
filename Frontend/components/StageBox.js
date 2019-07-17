@@ -13,6 +13,9 @@ const StyledStageBox = styled.div`
 
 const StageBox = () => (
     <StyledStageBox>
+        <Link href="Submit">
+            <a>Submit</a>
+        </Link>
         <Link href="Scout">
             <a>Scout</a>
         </Link>

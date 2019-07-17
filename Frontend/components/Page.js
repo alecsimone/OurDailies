@@ -16,6 +16,7 @@ const theme = {
 injectGlobal`
     html {
         background: ${theme.black};
+        color: ${theme.white};
         font-family: "Proxima Nova", sans-serif;
         font-size: 12px;
         box-sizing: border-box;
@@ -27,10 +28,13 @@ injectGlobal`
         padding: 0;
         margin: 0;
         font-size: 1.5rem;
-        line-height: 2;
     }
     a {
         text-decoration: none;
+        color: ${theme.white};
+        :visited {
+            color: ${theme.white};
+        }
         :hover {
             text-decoration: underline;
         }
