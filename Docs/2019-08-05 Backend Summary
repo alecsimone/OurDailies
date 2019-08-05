@@ -1,0 +1,17 @@
+OK, so I've been away for a little while, and I want to get back into the swing of things by writing out a little explanation of how data gets from the database to the page.
+
+We're going to start on the front end, using the Things.js component as an example.
+
+First we have to import two libraries: Query from 'react-apollo' and gql from 'graphql-tag'
+
+Before we create the component, we define the query as a constant. This constant is a tagged template literal, so it passes what's between the backticks to the function named in front of them. In this case, we're passing our query to the gql function we imported.
+
+I'm going to skip over the graphql basics for the query, but the idea is that we run a query and specify what data we want to get back from it. The query has to be named in both the schema.graphql and /src/resolvers/Query.js files in our backend directory.
+
+I believe (not 100% sure of this), that schema.graphql is defining which queries (and mutations, but we're just talking about queries for now) Prisma will allow the server to run. So there may be some queries that can be run in the prisma playground but that the server doesn't have access to. Worth noting that any parameters you want on the query must be added here (i.e. orderby or where clauses).
+
+Resolvers I think are part of GraphQL Yoga, and they tell the server how to handle these queries. For all the queries I've written so far, I just send them straight to the database to spit out the info, but I think if you wanted to modify what data comes back or do any kind of validation, it would go here. I think we'll probably get into that once we get more into the user authentication in Wes Bos's tutorial. 
+
+For mutations it's a lot more complicated, and I'm not 100% sure what's going on in the code here. What seems to be happening is we're passed data through the args parameter and then we run a mutation function (ctx.db is the context of the component and it's what contains the queries and mutations, but I don't know where it comes from really. There is a db.js file that exports a db module which contains the prisma instance, but I can't figure out what happens to it or how it gets to the actual page. My best guess is that it has something to do with the getInitialProps function we run in _app.js, and that that is how Apollo provides it as context to components, since that is the great grandpappy component containing all the others. Only reason I'm confused is that file doesn't actually pull in db.js or anything that contains it as far as I can tell. So I think it's some under the hood apollo action that makes it work.)
+
+Anyway, the basic principle is that we define a query or mutation in the component file. That query is then passed to a Query component that wraps the component we intend to display so that it can provide the returned data to it. The query must also be found in schema.graphql and /resolvers/Query.js so that Prisma and GraphQL Yoga know what to do with it. It's pretty straightforward, except for the really confusing parts I can't figure out, I guess.
