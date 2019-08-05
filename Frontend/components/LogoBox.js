@@ -11,6 +11,7 @@ const StyledLogoBox = styled.div`
     }
     a, a:visited {
         font-size: 4rem;
+        font-weight: 300;
         opacity: .9;
         margin-left: 2rem;
         color: ${props => props.theme.gold};

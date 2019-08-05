@@ -1,12 +1,71 @@
-type Thing {
-  id: ID! @id
+type Submission {
+  id: ID! @id @unique
   title: String!
-  link: String!
+  url: String! @unique
+  author: Person!
+  description: String!
+  partOfNarratives: [Narrative]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
+}
+
+type Story {
+  id: ID! @id @unique
+  title: String!
+  featuredImage: String
+  summary: [String] @scalarList(strategy:RELATION)
+  partOfNarratives: [Narrative]
+  includedSubmissions: [Submission!]!
+  includedLinks: [Link]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
+}
+
+type Narrative {
+  id: ID! @id @unique
+  title: String! @unique
+}
+
+type Comment {
+  id: ID! @id @unique
+  author: Person!
+  comment: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
+  onSubmission: Submission
+  onStory: Story
+  onLink: Link
+  onComment: Comment
+}
+
+type Link {
+  id: ID! @id @unique
+  title: String!
+  url: String!
+}
+
+type Vote {
+  id: ID! @id @unique
+  voter: Person!
+  onSubmission: Submission
+  onStory: Story
+  onLink: Link
+  onComment: Comment
+  value: Int!
   createdAt: DateTime! @createdAt
 }
 
-type User {
-  id: ID! @id
+type Person {
+  id: ID! @id @unique
   displayName: String!
-  avatar: String!
+  name: String
+  avatar: String
+  rep: Int! @default(value: 1)
+  points: Int! @default(value: 1)
+  giveableRep: Int! @default(value: 1)
+  twitchName: String
+  email: String
+  password: String!
+  roles: [String!] @scalarList(strategy: RELATION)
+  createdAt: DateTime! @createdAt
 }

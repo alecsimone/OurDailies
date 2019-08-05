@@ -7,22 +7,26 @@ const StyledStageBox = styled.div`
     a, a:visited {
         color: ${props => props.theme.white};
         font-size: 3rem;
-        margin-right: 10rem;
+        margin-right: 8rem;
     }
 `;
 
+function openSubmitBox(e) {
+    
+}
+
 const StageBox = () => (
     <StyledStageBox>
-        <Link href="Submit">
+       <Link href="/submit">
             <a>Submit</a>
         </Link>
-        <Link href="Scout">
+        <Link href="/scout">
             <a>Scout</a>
         </Link>
-        <Link href="Prospects">
+        <Link href="/prospects">
             <a>Prospects</a>
         </Link>
-        <Link href="Finalists">
+        <Link href="/finalists">
             <a>Finalists</a>
         </Link>
     </StyledStageBox>

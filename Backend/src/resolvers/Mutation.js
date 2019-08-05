@@ -1,10 +1,25 @@
 const Mutations = {
-    async createThing(parent, args, ctx, info) {
-        const thing = await ctx.db.mutation.createThing({
+    async createSubmission(parent, args, ctx, info) {
+        const submission = await ctx.db.mutation.createSubmission({
             data: {...args}
         }, info);
 
-        return thing;
+        return submission;
+    },
+    updateSubmission(parent, args, ctx, info) {
+        const updates = { ...args };
+        delete updates.id;
+        return ctx.db.mutation.updateSubmission({
+            data: updates,
+            where: {
+                id: args.id,
+            },
+        }, info);
+    },
+    async deleteSubmission(parent, args, ctx, info) {
+        const where = { id: args.id };
+        const submission = await ctx.db.query.submission({ where }, `{ id title }`);
+        return ctx.db.mutation.deleteSubmission({ where }, info);
     }
 };
 

@@ -1,6 +1,8 @@
+import SubmitForm from '../components/SubmitForm';
+
 const Submit = props => (
     <div>
-        <p>Submit</p>
+        <SubmitForm />
     </div>
 );
 

@@ -1,9 +1,19 @@
-# import * from './generated/prisma.graphql/prisma.graphql'
+# import * from './generated/prisma.graphql'
 
 type Mutation {
-    createThing(title: String, link: String): Thing!
+    createSubmission(title: String!, url: String!, description: String!, author: PersonCreateOneInput!): Submission!
+    updateSubmission(id: ID!, title: String, url: String, description: String): Submission!
+    deleteSubmission(id: ID!): Submission
 }
 
 type Query {
-    things: [Thing]!
+    submissions: [Submission]!
+    submission(where: SubmissionWhereUniqueInput!): Submission
+    stories(orderBy: StoryOrderByInput): [Story]!
+    story(where: StoryWhereUniqueInput!): Story
+    narratives(last: Int): [Narrative]!
+    narrative(where: NarrativeWhereUniqueInput!): Narrative
+    commentsConnection(where: CommentWhereInput!): CommentConnection
+    storiesConnection(where: StoryWhereInput!): StoryConnection
+    submissionsConnection(where: SubmissionWhereInput!): SubmissionConnection
 }
