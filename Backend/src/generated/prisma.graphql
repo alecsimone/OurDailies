@@ -6,11 +6,11 @@ type AggregateLink {
   count: Int!
 }
 
-type AggregateNarrative {
+type AggregateMember {
   count: Int!
 }
 
-type AggregatePerson {
+type AggregateNarrative {
   count: Int!
 }
 
@@ -32,7 +32,7 @@ type BatchPayload {
 
 type Comment {
   id: ID!
-  author: Person!
+  author: Member!
   comment: String!
   createdAt: DateTime!
   updatedAt: DateTime
@@ -49,7 +49,7 @@ type CommentConnection {
 }
 
 input CommentCreateInput {
-  author: PersonCreateOneInput!
+  author: MemberCreateOneInput!
   comment: String!
   onSubmission: SubmissionCreateOneInput
   onStory: StoryCreateOneInput
@@ -104,7 +104,7 @@ input CommentSubscriptionWhereInput {
 }
 
 input CommentUpdateDataInput {
-  author: PersonUpdateOneRequiredInput
+  author: MemberUpdateOneRequiredInput
   comment: String
   onSubmission: SubmissionUpdateOneInput
   onStory: StoryUpdateOneInput
@@ -113,7 +113,7 @@ input CommentUpdateDataInput {
 }
 
 input CommentUpdateInput {
-  author: PersonUpdateOneRequiredInput
+  author: MemberUpdateOneRequiredInput
   comment: String
   onSubmission: SubmissionUpdateOneInput
   onStory: StoryUpdateOneInput
@@ -150,7 +150,7 @@ input CommentWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  author: PersonWhereInput
+  author: MemberWhereInput
   comment: String
   comment_not: String
   comment_in: [String!]
@@ -363,6 +363,296 @@ input LinkWhereUniqueInput {
 
 scalar Long
 
+type Member {
+  id: ID!
+  displayName: String!
+  name: String
+  avatar: String
+  rep: Int!
+  points: Int!
+  giveableRep: Int!
+  twitchName: String
+  email: String
+  password: String!
+  roles: [String!]!
+  createdAt: DateTime!
+}
+
+type MemberConnection {
+  pageInfo: PageInfo!
+  edges: [MemberEdge]!
+  aggregate: AggregateMember!
+}
+
+input MemberCreateInput {
+  displayName: String!
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String
+  password: String!
+  roles: MemberCreaterolesInput
+}
+
+input MemberCreateOneInput {
+  create: MemberCreateInput
+  connect: MemberWhereUniqueInput
+}
+
+input MemberCreaterolesInput {
+  set: [String!]
+}
+
+type MemberEdge {
+  node: Member!
+  cursor: String!
+}
+
+enum MemberOrderByInput {
+  id_ASC
+  id_DESC
+  displayName_ASC
+  displayName_DESC
+  name_ASC
+  name_DESC
+  avatar_ASC
+  avatar_DESC
+  rep_ASC
+  rep_DESC
+  points_ASC
+  points_DESC
+  giveableRep_ASC
+  giveableRep_DESC
+  twitchName_ASC
+  twitchName_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type MemberPreviousValues {
+  id: ID!
+  displayName: String!
+  name: String
+  avatar: String
+  rep: Int!
+  points: Int!
+  giveableRep: Int!
+  twitchName: String
+  email: String
+  password: String!
+  roles: [String!]!
+  createdAt: DateTime!
+}
+
+type MemberSubscriptionPayload {
+  mutation: MutationType!
+  node: Member
+  updatedFields: [String!]
+  previousValues: MemberPreviousValues
+}
+
+input MemberSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: MemberWhereInput
+  AND: [MemberSubscriptionWhereInput!]
+  OR: [MemberSubscriptionWhereInput!]
+  NOT: [MemberSubscriptionWhereInput!]
+}
+
+input MemberUpdateDataInput {
+  displayName: String
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String
+  password: String
+  roles: MemberUpdaterolesInput
+}
+
+input MemberUpdateInput {
+  displayName: String
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String
+  password: String
+  roles: MemberUpdaterolesInput
+}
+
+input MemberUpdateOneRequiredInput {
+  create: MemberCreateInput
+  update: MemberUpdateDataInput
+  upsert: MemberUpsertNestedInput
+  connect: MemberWhereUniqueInput
+}
+
+input MemberUpdaterolesInput {
+  set: [String!]
+}
+
+input MemberUpsertNestedInput {
+  update: MemberUpdateDataInput!
+  create: MemberCreateInput!
+}
+
+input MemberWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  displayName: String
+  displayName_not: String
+  displayName_in: [String!]
+  displayName_not_in: [String!]
+  displayName_lt: String
+  displayName_lte: String
+  displayName_gt: String
+  displayName_gte: String
+  displayName_contains: String
+  displayName_not_contains: String
+  displayName_starts_with: String
+  displayName_not_starts_with: String
+  displayName_ends_with: String
+  displayName_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  avatar: String
+  avatar_not: String
+  avatar_in: [String!]
+  avatar_not_in: [String!]
+  avatar_lt: String
+  avatar_lte: String
+  avatar_gt: String
+  avatar_gte: String
+  avatar_contains: String
+  avatar_not_contains: String
+  avatar_starts_with: String
+  avatar_not_starts_with: String
+  avatar_ends_with: String
+  avatar_not_ends_with: String
+  rep: Int
+  rep_not: Int
+  rep_in: [Int!]
+  rep_not_in: [Int!]
+  rep_lt: Int
+  rep_lte: Int
+  rep_gt: Int
+  rep_gte: Int
+  points: Int
+  points_not: Int
+  points_in: [Int!]
+  points_not_in: [Int!]
+  points_lt: Int
+  points_lte: Int
+  points_gt: Int
+  points_gte: Int
+  giveableRep: Int
+  giveableRep_not: Int
+  giveableRep_in: [Int!]
+  giveableRep_not_in: [Int!]
+  giveableRep_lt: Int
+  giveableRep_lte: Int
+  giveableRep_gt: Int
+  giveableRep_gte: Int
+  twitchName: String
+  twitchName_not: String
+  twitchName_in: [String!]
+  twitchName_not_in: [String!]
+  twitchName_lt: String
+  twitchName_lte: String
+  twitchName_gt: String
+  twitchName_gte: String
+  twitchName_contains: String
+  twitchName_not_contains: String
+  twitchName_starts_with: String
+  twitchName_not_starts_with: String
+  twitchName_ends_with: String
+  twitchName_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  AND: [MemberWhereInput!]
+  OR: [MemberWhereInput!]
+  NOT: [MemberWhereInput!]
+}
+
+input MemberWhereUniqueInput {
+  id: ID
+}
+
 type Mutation {
   createComment(data: CommentCreateInput!): Comment!
   updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
@@ -376,18 +666,18 @@ type Mutation {
   upsertLink(where: LinkWhereUniqueInput!, create: LinkCreateInput!, update: LinkUpdateInput!): Link!
   deleteLink(where: LinkWhereUniqueInput!): Link
   deleteManyLinks(where: LinkWhereInput): BatchPayload!
+  createMember(data: MemberCreateInput!): Member!
+  updateMember(data: MemberUpdateInput!, where: MemberWhereUniqueInput!): Member
+  updateManyMembers(data: MemberUpdateInput!, where: MemberWhereInput): BatchPayload!
+  upsertMember(where: MemberWhereUniqueInput!, create: MemberCreateInput!, update: MemberUpdateInput!): Member!
+  deleteMember(where: MemberWhereUniqueInput!): Member
+  deleteManyMembers(where: MemberWhereInput): BatchPayload!
   createNarrative(data: NarrativeCreateInput!): Narrative!
   updateNarrative(data: NarrativeUpdateInput!, where: NarrativeWhereUniqueInput!): Narrative
   updateManyNarratives(data: NarrativeUpdateInput!, where: NarrativeWhereInput): BatchPayload!
   upsertNarrative(where: NarrativeWhereUniqueInput!, create: NarrativeCreateInput!, update: NarrativeUpdateInput!): Narrative!
   deleteNarrative(where: NarrativeWhereUniqueInput!): Narrative
   deleteManyNarratives(where: NarrativeWhereInput): BatchPayload!
-  createPerson(data: PersonCreateInput!): Person!
-  updatePerson(data: PersonUpdateInput!, where: PersonWhereUniqueInput!): Person
-  updateManyPersons(data: PersonUpdateInput!, where: PersonWhereInput): BatchPayload!
-  upsertPerson(where: PersonWhereUniqueInput!, create: PersonCreateInput!, update: PersonUpdateInput!): Person!
-  deletePerson(where: PersonWhereUniqueInput!): Person
-  deleteManyPersons(where: PersonWhereInput): BatchPayload!
   createStory(data: StoryCreateInput!): Story!
   updateStory(data: StoryUpdateInput!, where: StoryWhereUniqueInput!): Story
   updateManyStories(data: StoryUpdateInput!, where: StoryWhereInput): BatchPayload!
@@ -551,296 +841,6 @@ type PageInfo {
   endCursor: String
 }
 
-type Person {
-  id: ID!
-  displayName: String!
-  name: String
-  avatar: String
-  rep: Int!
-  points: Int!
-  giveableRep: Int!
-  twitchName: String
-  email: String
-  password: String!
-  roles: [String!]!
-  createdAt: DateTime!
-}
-
-type PersonConnection {
-  pageInfo: PageInfo!
-  edges: [PersonEdge]!
-  aggregate: AggregatePerson!
-}
-
-input PersonCreateInput {
-  displayName: String!
-  name: String
-  avatar: String
-  rep: Int
-  points: Int
-  giveableRep: Int
-  twitchName: String
-  email: String
-  password: String!
-  roles: PersonCreaterolesInput
-}
-
-input PersonCreateOneInput {
-  create: PersonCreateInput
-  connect: PersonWhereUniqueInput
-}
-
-input PersonCreaterolesInput {
-  set: [String!]
-}
-
-type PersonEdge {
-  node: Person!
-  cursor: String!
-}
-
-enum PersonOrderByInput {
-  id_ASC
-  id_DESC
-  displayName_ASC
-  displayName_DESC
-  name_ASC
-  name_DESC
-  avatar_ASC
-  avatar_DESC
-  rep_ASC
-  rep_DESC
-  points_ASC
-  points_DESC
-  giveableRep_ASC
-  giveableRep_DESC
-  twitchName_ASC
-  twitchName_DESC
-  email_ASC
-  email_DESC
-  password_ASC
-  password_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type PersonPreviousValues {
-  id: ID!
-  displayName: String!
-  name: String
-  avatar: String
-  rep: Int!
-  points: Int!
-  giveableRep: Int!
-  twitchName: String
-  email: String
-  password: String!
-  roles: [String!]!
-  createdAt: DateTime!
-}
-
-type PersonSubscriptionPayload {
-  mutation: MutationType!
-  node: Person
-  updatedFields: [String!]
-  previousValues: PersonPreviousValues
-}
-
-input PersonSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: PersonWhereInput
-  AND: [PersonSubscriptionWhereInput!]
-  OR: [PersonSubscriptionWhereInput!]
-  NOT: [PersonSubscriptionWhereInput!]
-}
-
-input PersonUpdateDataInput {
-  displayName: String
-  name: String
-  avatar: String
-  rep: Int
-  points: Int
-  giveableRep: Int
-  twitchName: String
-  email: String
-  password: String
-  roles: PersonUpdaterolesInput
-}
-
-input PersonUpdateInput {
-  displayName: String
-  name: String
-  avatar: String
-  rep: Int
-  points: Int
-  giveableRep: Int
-  twitchName: String
-  email: String
-  password: String
-  roles: PersonUpdaterolesInput
-}
-
-input PersonUpdateOneRequiredInput {
-  create: PersonCreateInput
-  update: PersonUpdateDataInput
-  upsert: PersonUpsertNestedInput
-  connect: PersonWhereUniqueInput
-}
-
-input PersonUpdaterolesInput {
-  set: [String!]
-}
-
-input PersonUpsertNestedInput {
-  update: PersonUpdateDataInput!
-  create: PersonCreateInput!
-}
-
-input PersonWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  displayName: String
-  displayName_not: String
-  displayName_in: [String!]
-  displayName_not_in: [String!]
-  displayName_lt: String
-  displayName_lte: String
-  displayName_gt: String
-  displayName_gte: String
-  displayName_contains: String
-  displayName_not_contains: String
-  displayName_starts_with: String
-  displayName_not_starts_with: String
-  displayName_ends_with: String
-  displayName_not_ends_with: String
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  avatar: String
-  avatar_not: String
-  avatar_in: [String!]
-  avatar_not_in: [String!]
-  avatar_lt: String
-  avatar_lte: String
-  avatar_gt: String
-  avatar_gte: String
-  avatar_contains: String
-  avatar_not_contains: String
-  avatar_starts_with: String
-  avatar_not_starts_with: String
-  avatar_ends_with: String
-  avatar_not_ends_with: String
-  rep: Int
-  rep_not: Int
-  rep_in: [Int!]
-  rep_not_in: [Int!]
-  rep_lt: Int
-  rep_lte: Int
-  rep_gt: Int
-  rep_gte: Int
-  points: Int
-  points_not: Int
-  points_in: [Int!]
-  points_not_in: [Int!]
-  points_lt: Int
-  points_lte: Int
-  points_gt: Int
-  points_gte: Int
-  giveableRep: Int
-  giveableRep_not: Int
-  giveableRep_in: [Int!]
-  giveableRep_not_in: [Int!]
-  giveableRep_lt: Int
-  giveableRep_lte: Int
-  giveableRep_gt: Int
-  giveableRep_gte: Int
-  twitchName: String
-  twitchName_not: String
-  twitchName_in: [String!]
-  twitchName_not_in: [String!]
-  twitchName_lt: String
-  twitchName_lte: String
-  twitchName_gt: String
-  twitchName_gte: String
-  twitchName_contains: String
-  twitchName_not_contains: String
-  twitchName_starts_with: String
-  twitchName_not_starts_with: String
-  twitchName_ends_with: String
-  twitchName_not_ends_with: String
-  email: String
-  email_not: String
-  email_in: [String!]
-  email_not_in: [String!]
-  email_lt: String
-  email_lte: String
-  email_gt: String
-  email_gte: String
-  email_contains: String
-  email_not_contains: String
-  email_starts_with: String
-  email_not_starts_with: String
-  email_ends_with: String
-  email_not_ends_with: String
-  password: String
-  password_not: String
-  password_in: [String!]
-  password_not_in: [String!]
-  password_lt: String
-  password_lte: String
-  password_gt: String
-  password_gte: String
-  password_contains: String
-  password_not_contains: String
-  password_starts_with: String
-  password_not_starts_with: String
-  password_ends_with: String
-  password_not_ends_with: String
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  AND: [PersonWhereInput!]
-  OR: [PersonWhereInput!]
-  NOT: [PersonWhereInput!]
-}
-
-input PersonWhereUniqueInput {
-  id: ID
-}
-
 type Query {
   comment(where: CommentWhereUniqueInput!): Comment
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
@@ -848,12 +848,12 @@ type Query {
   link(where: LinkWhereUniqueInput!): Link
   links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link]!
   linksConnection(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LinkConnection!
+  member(where: MemberWhereUniqueInput!): Member
+  members(where: MemberWhereInput, orderBy: MemberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Member]!
+  membersConnection(where: MemberWhereInput, orderBy: MemberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MemberConnection!
   narrative(where: NarrativeWhereUniqueInput!): Narrative
   narratives(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Narrative]!
   narrativesConnection(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): NarrativeConnection!
-  person(where: PersonWhereUniqueInput!): Person
-  persons(where: PersonWhereInput, orderBy: PersonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Person]!
-  personsConnection(where: PersonWhereInput, orderBy: PersonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PersonConnection!
   story(where: StoryWhereUniqueInput!): Story
   stories(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Story]!
   storiesConnection(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StoryConnection!
@@ -1064,7 +1064,7 @@ type Submission {
   id: ID!
   title: String!
   url: String!
-  author: Person!
+  author: Member!
   description: String!
   partOfNarratives(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Narrative!]
   createdAt: DateTime!
@@ -1080,7 +1080,7 @@ type SubmissionConnection {
 input SubmissionCreateInput {
   title: String!
   url: String!
-  author: PersonCreateOneInput!
+  author: MemberCreateOneInput!
   description: String!
   partOfNarratives: NarrativeCreateManyInput
 }
@@ -1145,7 +1145,7 @@ input SubmissionSubscriptionWhereInput {
 input SubmissionUpdateDataInput {
   title: String
   url: String
-  author: PersonUpdateOneRequiredInput
+  author: MemberUpdateOneRequiredInput
   description: String
   partOfNarratives: NarrativeUpdateManyInput
 }
@@ -1153,7 +1153,7 @@ input SubmissionUpdateDataInput {
 input SubmissionUpdateInput {
   title: String
   url: String
-  author: PersonUpdateOneRequiredInput
+  author: MemberUpdateOneRequiredInput
   description: String
   partOfNarratives: NarrativeUpdateManyInput
 }
@@ -1235,7 +1235,7 @@ input SubmissionWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
-  author: PersonWhereInput
+  author: MemberWhereInput
   description: String
   description_not: String
   description_in: [String!]
@@ -1282,8 +1282,8 @@ input SubmissionWhereUniqueInput {
 type Subscription {
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
   link(where: LinkSubscriptionWhereInput): LinkSubscriptionPayload
+  member(where: MemberSubscriptionWhereInput): MemberSubscriptionPayload
   narrative(where: NarrativeSubscriptionWhereInput): NarrativeSubscriptionPayload
-  person(where: PersonSubscriptionWhereInput): PersonSubscriptionPayload
   story(where: StorySubscriptionWhereInput): StorySubscriptionPayload
   submission(where: SubmissionSubscriptionWhereInput): SubmissionSubscriptionPayload
   vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
@@ -1291,7 +1291,7 @@ type Subscription {
 
 type Vote {
   id: ID!
-  voter: Person!
+  voter: Member!
   onSubmission: Submission
   onStory: Story
   onLink: Link
@@ -1307,7 +1307,7 @@ type VoteConnection {
 }
 
 input VoteCreateInput {
-  voter: PersonCreateOneInput!
+  voter: MemberCreateOneInput!
   onSubmission: SubmissionCreateOneInput
   onStory: StoryCreateOneInput
   onLink: LinkCreateOneInput
@@ -1356,7 +1356,7 @@ input VoteSubscriptionWhereInput {
 }
 
 input VoteUpdateInput {
-  voter: PersonUpdateOneRequiredInput
+  voter: MemberUpdateOneRequiredInput
   onSubmission: SubmissionUpdateOneInput
   onStory: StoryUpdateOneInput
   onLink: LinkUpdateOneInput
@@ -1379,7 +1379,7 @@ input VoteWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  voter: PersonWhereInput
+  voter: MemberWhereInput
   onSubmission: SubmissionWhereInput
   onStory: StoryWhereInput
   onLink: LinkWhereInput

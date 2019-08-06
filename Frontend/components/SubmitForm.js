@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Error from './ErrorMessage.js';
 
 const CREATE_SUBMISSION_MUTATION = gql`
-    mutation CREATE_SUBMISSION_MUTATION($title: String!, $url: String!, $description: String!, $author: PersonCreateOneInput!) {
+    mutation CREATE_SUBMISSION_MUTATION($title: String!, $url: String!, $description: String!, $author: MemberCreateOneInput!) {
         createSubmission(
             title: $title
             url: $url
@@ -62,7 +62,7 @@ class SubmitForm extends Component {
         description: '',
         author: {
             connect: {
-                id: "cjybuxavf662a0b193a4chbq1"
+                id: "cjyyzqs1zvnjo0b55cvpycxqs"
             }
         }
     }

@@ -49,7 +49,7 @@ const Home = props => {
     return (
         <div>
             <NarrativesBar />
-                <DateBar><h2>{monthString} {dayString}, {year}</h2></DateBar>
+            <DateBar><h2>{monthString} {dayString}, {year}</h2></DateBar>
             <Things />
         </div>
     )

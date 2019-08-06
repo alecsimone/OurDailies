@@ -2,7 +2,7 @@ type Submission {
   id: ID! @id @unique
   title: String!
   url: String! @unique
-  author: Person!
+  author: Member!
   description: String!
   partOfNarratives: [Narrative]
   createdAt: DateTime! @createdAt
@@ -28,7 +28,7 @@ type Narrative {
 
 type Comment {
   id: ID! @id @unique
-  author: Person!
+  author: Member!
   comment: String!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
@@ -46,7 +46,7 @@ type Link {
 
 type Vote {
   id: ID! @id @unique
-  voter: Person!
+  voter: Member!
   onSubmission: Submission
   onStory: Story
   onLink: Link
@@ -55,7 +55,7 @@ type Vote {
   createdAt: DateTime! @createdAt
 }
 
-type Person {
+type Member {
   id: ID! @id @unique
   displayName: String!
   name: String

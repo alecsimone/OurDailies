@@ -1,7 +1,7 @@
 # import * from './generated/prisma.graphql'
 
 type Mutation {
-    createSubmission(title: String!, url: String!, description: String!, author: PersonCreateOneInput!): Submission!
+    createSubmission(title: String!, url: String!, description: String!, author: MemberCreateOneInput!): Submission!
     updateSubmission(id: ID!, title: String, url: String, description: String): Submission!
     deleteSubmission(id: ID!): Submission
 }
