@@ -23,8 +23,8 @@ const StageBox = () => (
         <Link href="/scout">
             <a>Scout</a>
         </Link>
-        <Link href="/prospects">
-            <a>Prospects</a>
+        <Link href="/curation">
+            <a>Curation</a>
         </Link>
         <Link href="/finalists">
             <a>Finalists</a>
