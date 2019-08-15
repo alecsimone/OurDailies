@@ -60,12 +60,22 @@ type Member {
   displayName: String!
   name: String
   avatar: String
-  rep: Int! @default(value: 1)
+  rep: Int! @default(value: 0)
   points: Int! @default(value: 1)
-  giveableRep: Int! @default(value: 1)
+  giveableRep: Int! @default(value: 0)
   twitchName: String
-  email: String
+  email: String!
   password: String!
-  roles: [String!] @scalarList(strategy: RELATION)
+  roles: [Role!] @scalarList(strategy: RELATION)
+  resetToken: String
+  resetTokenExpiry: Float
   createdAt: DateTime! @createdAt
+}
+
+enum Role {
+  Admin
+  Editor
+  Moderator
+  Member
+  LiteMember
 }

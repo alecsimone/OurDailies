@@ -10,7 +10,7 @@ const StyledVoteBar = styled.div`
     text-align: center;
     font-size: 2rem;
     line-height: 5rem;
-    color: ${props => props.theme.white};
+    color: ${props => props.theme.mainText};
 `;
 
 class VoteBar extends Component {

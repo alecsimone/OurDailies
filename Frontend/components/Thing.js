@@ -12,7 +12,7 @@ const StyledThing = styled.article`
         height: calc(720px + 2rem);
         :before {
             content: '';
-            background: ${props => props.theme.blue};
+            background: ${props => props.theme.majorColor};
             z-index: -1;
             width: 5rem;
             height: 100%;
@@ -55,14 +55,14 @@ const StyledThing = styled.article`
             z-index: 1;
             h3 {
                 font-size: 6rem;
-                text-shadow: 0px 3px 6px black;
+                text-shadow: ${props => props.theme.background};
                 margin: 0;
-                background: hsla(0, 0%, 0%, .75);
+                background: ${props => props.theme.lowContrastGrey};
                 border-radius: 4px;
                 padding: 0 1rem;
             }
             p {
-                color: ${props => props.theme.darkGrey};
+                color: ${props => props.theme.lowContrastGrey};
                 font-style: italic;
             }
         }
@@ -72,7 +72,7 @@ const StyledThing = styled.article`
             left: 3rem;
             bottom: 6rem;
             h5 {
-                color: ${props => props.theme.green};
+                color: ${props => props.theme.primaryAccent};
                 font-size: 2.75rem;
                 font-weight: 400;
                 margin: 0 0 1rem;
@@ -81,7 +81,7 @@ const StyledThing = styled.article`
                 margin-right: .5rem;
             }
             a {
-                color: ${props => props.theme.lightGrey};
+                color: ${props => props.theme.highContrastGrey};
                 font-size: 2rem;
                 font-weight: 300;
             }
@@ -101,7 +101,7 @@ const HalfSizedThing = styled.article`
         position: relative;
         :before {
             content: '';
-            background: ${props => props.theme.blue};
+            background: ${props => props.theme.majorColor};
             z-index: -1;
             width: 100%;
             height: 2.75rem;

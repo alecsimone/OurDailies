@@ -4,6 +4,7 @@ type Mutation {
     createSubmission(title: String!, url: String!, description: String!, author: MemberCreateOneInput!): Submission!
     updateSubmission(id: ID!, title: String, url: String, description: String): Submission!
     deleteSubmission(id: ID!): Submission
+    signup(email: String!, password: String!, displayName: String!, name: String, twitchName: String): Member!
 }
 
 type Query {
@@ -16,4 +17,5 @@ type Query {
     commentsConnection(where: CommentWhereInput!): CommentConnection
     storiesConnection(where: StoryWhereInput!): StoryConnection
     submissionsConnection(where: SubmissionWhereInput!): SubmissionConnection
+    me: Member
 }

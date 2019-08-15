@@ -8,14 +8,14 @@ const DateBar = styled.div`
     width: 96%;
     margin: auto;
     h2{
-        color: ${props => props.theme.blue};
+        color: ${props => props.theme.majorColor};
         font-size: 4rem;
         font-weight: 300;
         text-align: center;
         margin: 4rem 0;
         padding: 0 3rem;
         display: inline-block;
-        background: ${props => props.theme.black};
+        background: ${props => props.theme.background};
     }
     :before {
         content: ' ';

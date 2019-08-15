@@ -5,7 +5,7 @@ import Link from 'next/link';
 const StyledStageBox = styled.div`
     display: inline-block;
     a, a:visited {
-        color: ${props => props.theme.white};
+        color: ${props => props.theme.mainText};
         font-size: 3rem;
         margin-right: 8rem;
     }

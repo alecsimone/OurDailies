@@ -13,7 +13,7 @@ const StyledLittleThing = styled.article`
     background: hsla(210, 40%, 40%, .07);
     :before {
         content: '';
-        background: ${props => props.theme.blue};
+        background: ${props => props.theme.majorColor};
         z-index: -1;
         width: 100%;
         height: 2.75rem;
@@ -57,7 +57,7 @@ const StyledLittleThing = styled.article`
     div.narratives {
         margin: 6rem 1.5rem 3rem;
         h5 {
-            color: ${props => props.theme.green};
+            color: ${props => props.theme.primaryAccent};
             font-size: 2.75rem;
             font-weight: 400;
             margin: 0 0 1rem;

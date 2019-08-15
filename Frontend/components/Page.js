@@ -10,14 +10,78 @@ const theme = {
     gold: 'hsl(42, 79%, 64%)',
     green: 'hsl(120, 100%, 25%)',
     darkBlue: 'hsl(210, 100%, 16%)',
-    darkGrey: 'hsl(30, 10%, 33%)',
-    lightGrey: 'hsl(28, 9%, 64%)',
+    // darkGrey: 'hsl(30, 10%, 33%)',
+    // lightGrey: 'hsl(28, 9%, 64%)',
+    
+    // Collective
+    background: 'hsl(216, 24%, 4%)', 
+    mainText: 'hsla(33, 17%, 88%, .9)',
+    majorColor: 'hsl(210, 100%, 34%)',
+    primaryAccent: 'hsl(120, 100%, 25%)',
+    secondaryAccent: 'hsl(42, 79%, 64%)',
+    lowContrastGrey: 'hsl(30, 10%, 33%)',
+    highContrastGrey: 'hsl(28, 9%, 64%)',
+
+    // Elite
+    // background: 'hsl(216, 24%, 4%)', 
+    // mainText: 'hsla(33, 17%, 88%, .9)',
+    // majorColor: '#e6b545',
+    // primaryAccent: '#0043bf',
+    // secondaryAccent: '#99007d',
+    // lowContrastGrey: '#4c5054',
+    // highContrastGrey: '#9aa2ab',
+
+    // Irreverent
+    // background: '#e5e0da', 
+    // mainText: '#080A0D',
+    // majorColor: '#991d99',
+    // primaryAccent: '#0043bf',
+    // secondaryAccent: '#99520f',
+    // highContrastGrey: '#4c5054',
+    // lowContrastGrey: '#9aa2ab',
+
+    // Celebration
+    // background: '#e5e0da', 
+    // mainText: '#080A0D',
+    // majorColor: '#991d99',
+    // primaryAccent: '#0043bf',
+    // secondaryAccent: '#3d993d',
+    // highContrastGrey: '#4c5054',
+    // lowContrastGrey: '#9aa2ab',
+
+    // Growth
+    // background: '#080A0D', 
+    // mainText: '#e5e0da',
+    // majorColor: '#004000',
+    // primaryAccent: '#0043bf',
+    // secondaryAccent: '#994c00',
+    // highContrastGrey: '#9aa2ab',
+    // lowContrastGrey: '#4c5054',
+
+    // Saviors
+    // background: '#e5e0da', 
+    // mainText: '#080A0D',
+    // majorColor: '#991d99',
+    // primaryAccent: '#0043bf',
+    // secondaryAccent: '#d95757',
+    // highContrastGrey: '#4c5054',
+    // lowContrastGrey: '#9aa2ab',
+
+    // Underground
+    // background: '#080A0D', 
+    // mainText: '#e5e0da',
+    // majorColor: '#992626',
+    // primaryAccent: '#0043bf',
+    // secondaryAccent: '#994c00',
+    // highContrastGrey: '#9aa2ab',
+    // lowContrastGrey: '#4c5054',
 }
+
 
 injectGlobal`
     html {
-        background: ${theme.black};
-        color: ${theme.white};
+        background: ${theme.background};
+        color: ${theme.mainText};
         font-family: "Proxima Nova", sans-serif;
         box-sizing: border-box;
         font-size: 8px;
@@ -39,9 +103,9 @@ injectGlobal`
     }
     a {
         text-decoration: none;
-        color: ${theme.white};
+        color: ${theme.mainText};
         :visited {
-            color: ${theme.white};
+            color: ${theme.mainText};
         }
         :hover {
             text-decoration: underline;
@@ -58,7 +122,7 @@ const StyledPage = styled.div`
 class Page extends Component {
     render() {
         return (
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} >
                 <StyledPage>
                     <Meta />
                     <Header />

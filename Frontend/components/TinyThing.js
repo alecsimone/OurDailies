@@ -19,10 +19,10 @@ const StyledTinyThing = styled.article`
     word-wrap: break-word;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: ${props => props.theme.darkGrey};
+    color: ${props => props.theme.lowContrastGrey};
     :before {
         content: '';
-        background: ${props => props.theme.blue};
+        background: ${props => props.theme.majorColor};
         width: .5rem;
         height: 100%;
         position: absolute;
@@ -40,7 +40,7 @@ const StyledTinyThing = styled.article`
     div.meta {
     }
     p.meta, a.SubTitleLink {
-        color: ${props => props.theme.lightGrey};
+        color: ${props => props.theme.highContrastGrey};
         font-size: 1.25rem;
         line-height: 1;
         opacity: .6;
@@ -59,7 +59,7 @@ const StyledTinyThing = styled.article`
         line-height: 1;
         background: hsla(210, 50%, 40%, .1);
         border: none;
-        /* border-bottom: 1px solid ${props => props.theme.lightGrey}; */
+        /* border-bottom: 1px solid ${props => props.theme.highContrastGrey}; */
     }
     input {
         &[name="title"] {
@@ -67,10 +67,10 @@ const StyledTinyThing = styled.article`
             font-weight: bold;
             padding: 0;
             margin: 0;
-            color: ${props => props.theme.white};
+            color: ${props => props.theme.mainText};
         }
         &[name="url"] {
-            color: ${props => props.theme.lightGrey};
+            color: ${props => props.theme.highContrastGrey};
             font-size: 1.25rem;
         }
     }

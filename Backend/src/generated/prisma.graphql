@@ -372,9 +372,11 @@ type Member {
   points: Int!
   giveableRep: Int!
   twitchName: String
-  email: String
+  email: String!
   password: String!
-  roles: [String!]!
+  roles: [Role!]!
+  resetToken: String
+  resetTokenExpiry: Float
   createdAt: DateTime!
 }
 
@@ -392,9 +394,11 @@ input MemberCreateInput {
   points: Int
   giveableRep: Int
   twitchName: String
-  email: String
+  email: String!
   password: String!
   roles: MemberCreaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
 }
 
 input MemberCreateOneInput {
@@ -403,7 +407,7 @@ input MemberCreateOneInput {
 }
 
 input MemberCreaterolesInput {
-  set: [String!]
+  set: [Role!]
 }
 
 type MemberEdge {
@@ -432,6 +436,10 @@ enum MemberOrderByInput {
   email_DESC
   password_ASC
   password_DESC
+  resetToken_ASC
+  resetToken_DESC
+  resetTokenExpiry_ASC
+  resetTokenExpiry_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -447,9 +455,11 @@ type MemberPreviousValues {
   points: Int!
   giveableRep: Int!
   twitchName: String
-  email: String
+  email: String!
   password: String!
-  roles: [String!]!
+  roles: [Role!]!
+  resetToken: String
+  resetTokenExpiry: Float
   createdAt: DateTime!
 }
 
@@ -482,6 +492,8 @@ input MemberUpdateDataInput {
   email: String
   password: String
   roles: MemberUpdaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
 }
 
 input MemberUpdateInput {
@@ -495,6 +507,8 @@ input MemberUpdateInput {
   email: String
   password: String
   roles: MemberUpdaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
 }
 
 input MemberUpdateOneRequiredInput {
@@ -505,7 +519,7 @@ input MemberUpdateOneRequiredInput {
 }
 
 input MemberUpdaterolesInput {
-  set: [String!]
+  set: [Role!]
 }
 
 input MemberUpsertNestedInput {
@@ -636,6 +650,28 @@ input MemberWhereInput {
   password_not_starts_with: String
   password_ends_with: String
   password_not_ends_with: String
+  resetToken: String
+  resetToken_not: String
+  resetToken_in: [String!]
+  resetToken_not_in: [String!]
+  resetToken_lt: String
+  resetToken_lte: String
+  resetToken_gt: String
+  resetToken_gte: String
+  resetToken_contains: String
+  resetToken_not_contains: String
+  resetToken_starts_with: String
+  resetToken_not_starts_with: String
+  resetToken_ends_with: String
+  resetToken_not_ends_with: String
+  resetTokenExpiry: Float
+  resetTokenExpiry_not: Float
+  resetTokenExpiry_in: [Float!]
+  resetTokenExpiry_not_in: [Float!]
+  resetTokenExpiry_lt: Float
+  resetTokenExpiry_lte: Float
+  resetTokenExpiry_gt: Float
+  resetTokenExpiry_gte: Float
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -864,6 +900,14 @@ type Query {
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote]!
   votesConnection(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection!
   node(id: ID!): Node
+}
+
+enum Role {
+  Admin
+  Editor
+  Moderator
+  Member
+  LiteMember
 }
 
 type Story {

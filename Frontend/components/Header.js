@@ -2,7 +2,7 @@ import Router from 'next/router';
 import NProgress from 'nprogress';
 import styled from 'styled-components';
 import LogoBox from './LogoBox';
-import UserBox from './UserBox';
+import MemberBox from './MemberBox';
 import StageBox from './StageBox';
 
 Router.onRouteChangeStart = () => {
@@ -27,7 +27,7 @@ const Header = () => (
         <LogoBox />
         <div>
             <StageBox />
-            <UserBox />
+            <MemberBox />
         </div>
     </StyledHeader>
 )

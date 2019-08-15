@@ -22,7 +22,7 @@ const StyledNarrativesBar = styled.div`
     flex-wrap: wrap;
     line-height: 1.4;
     h5 {
-        color: ${props => props.theme.green};
+        color: ${props => props.theme.primaryAccent};
         display: inline;
         font-size: 2.5rem;
         margin: 0 .5rem 0 0;
@@ -33,12 +33,12 @@ const StyledNarrativesBar = styled.div`
     }
     a {
         font-size: 2.25rem;
-        color: ${props => props.theme.lightGrey};
+        color: ${props => props.theme.highContrastGrey};
         &:hover {
-            color: ${props => props.theme.white};
+            color: ${props => props.theme.mainText};
         }
         &:visited {
-            color: ${props => props.theme.lightGrey};
+            color: ${props => props.theme.highContrastGrey};
         }
     }
 `;

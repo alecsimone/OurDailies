@@ -35,11 +35,11 @@ const ThingContainer = styled.div`
     width: 96%;
     margin: auto;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
     grid-auto-rows: auto;
-    @media screen and (min-width: 1400px) {
+    /* @media screen and (min-width: 1400px) {
         grid-template-columns: 1fr 1fr 1fr;
-    }
+    } */
     grid-gap: 6rem;
     justify-content: space-around;
     align-items: stretch;

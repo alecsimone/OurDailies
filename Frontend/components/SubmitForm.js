@@ -34,19 +34,19 @@ const StyledSubmitForm = styled.form`
         margin: 1rem 0;
         padding: .75rem;
         border-radius: 3px;
-        border: 1px solid ${props => props.theme.darkGrey};
+        border: 1px solid ${props => props.theme.lowContrastGrey};
     }
     textarea {
         font-family: "Proxima Nova", sans-serif; 
     }
     button {
-        background: ${props => props.theme.blue};
+        background: ${props => props.theme.majorColor};
         border: none;
         border-radius: 2px;
         font-size: 1.5rem;
         margin-top: 1rem;
         padding: .75rem 2.25rem;
-        color: ${props => props.theme.white};
+        color: ${props => props.theme.mainText};
         cursor: pointer;
         -webkit-appearance: none;
         -moz-appearance: none;
