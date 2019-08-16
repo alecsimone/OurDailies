@@ -20,6 +20,7 @@ const theme = {
     primaryAccent: 'hsl(120, 100%, 25%)',
     secondaryAccent: 'hsl(42, 79%, 64%)',
     lowContrastGrey: 'hsl(30, 10%, 33%)',
+    lowContrastCoolGrey: 'hsl(210, 15%, 48%, .6)',
     highContrastGrey: 'hsl(28, 9%, 64%)',
 
     // Elite

@@ -57,7 +57,7 @@ const StyledThing = styled.article`
                 font-size: 6rem;
                 text-shadow: ${props => props.theme.background};
                 margin: 0;
-                background: ${props => props.theme.lowContrastGrey};
+                background: ${props => props.theme.lowContrastCoolGrey};
                 border-radius: 4px;
                 padding: 0 1rem;
             }
