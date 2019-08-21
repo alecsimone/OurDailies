@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import Things from '../components/Things';
 import NarrativesBar from '../components/NarrativesBar'
+import Logout from '../components/Logout';
+import Member from '../components/Member';
 
 const DateBar = styled.div`
     position: relative;
@@ -51,6 +53,11 @@ const Home = props => {
             <NarrativesBar />
             <DateBar><h2>{monthString} {dayString}, {year}</h2></DateBar>
             <Things />
+            <Member>
+                {({data: {me}}) => {
+                    return me && <Logout />
+                }}
+            </Member>
         </div>
     )
 };

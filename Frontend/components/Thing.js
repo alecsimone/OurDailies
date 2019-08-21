@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import VoteBar from './VoteBar';
+import VoteBar from './ThingParts/VoteBar';
 
 const StyledThing = styled.article`
     position: relative;
@@ -149,7 +149,7 @@ class Thing extends Component {
         const narrativeLinks = data.partOfNarratives.map((narrative, index) => {
             if(index < data.partOfNarratives.length - 1) {
                 return (
-                    <span>
+                    <span key={narrative.title}>
                         <Link href={{
                             pathname: '/narrative',
                             query: {
@@ -162,7 +162,7 @@ class Thing extends Component {
                 )
             } else {
                 return (
-                    <span>
+                    <span key={narrative.title}>
                         <Link href={{
                             pathname: '/narrative',
                             query: {

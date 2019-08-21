@@ -8,25 +8,20 @@ import TinyThing from './TinyThing';
 
 const ALL_THINGS_QUERY = gql`
     query ALL_THINGS_QUERY {
-        submissions {
+        things(orderBy:updatedAt_DESC) {
             id
             title
-            url
             author {
                 displayName
             }
-            description
-            createdAt
-        }
-        stories(orderBy:updatedAt_DESC) {
-            id
-            title
             featuredImage
-            createdAt
+            originalSource
+            summary
             partOfNarratives {
                 id
                 title
             }
+            createdAt
         }
     }
 `;
@@ -54,7 +49,7 @@ class Things extends Component {
                         if (loading) return <p>Loading...</p>
                         if (error) return <p>Error: {error.message}</p>
                         return <ThingContainer>
-                            {data.stories.map((story, index) => index === 0 ? <Thing thing={story} key={story.id} /> : <LittleThing thing={story} key={story.id} />)}
+                            {data.things.map((thing, index) => index === 0 ? <Thing thing={thing} key={thing.id} /> : <LittleThing thing={thing} key={thing.id} />)}
                         </ThingContainer>
                     }
                 }

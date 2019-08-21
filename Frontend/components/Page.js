@@ -1,83 +1,84 @@
-import React, { Component } from 'react';
-import styled, { ThemeProvider, injectGlobal } from 'styled-components';
-import Header from './Header';
-import Meta from './Meta';
+import React, { Component } from "react";
+import styled, { ThemeProvider, injectGlobal } from "styled-components";
+import Header from "./Header";
+import Meta from "./Meta";
 
 const theme = {
-    black: 'hsl(216, 24%, 4%)', 
-    white: 'hsla(33, 17%, 88%, .9)',
-    blue: 'hsl(210, 100%, 34%)',
-    gold: 'hsl(42, 79%, 64%)',
-    green: 'hsl(120, 100%, 25%)',
-    darkBlue: 'hsl(210, 100%, 16%)',
-    // darkGrey: 'hsl(30, 10%, 33%)',
-    // lightGrey: 'hsl(28, 9%, 64%)',
-    
-    // Collective
-    background: 'hsl(216, 24%, 4%)', 
-    mainText: 'hsla(33, 17%, 88%, .9)',
-    majorColor: 'hsl(210, 100%, 34%)',
-    primaryAccent: 'hsl(120, 100%, 25%)',
-    secondaryAccent: 'hsl(42, 79%, 64%)',
-    lowContrastGrey: 'hsl(30, 10%, 33%)',
-    lowContrastCoolGrey: 'hsl(210, 15%, 48%, .6)',
-    highContrastGrey: 'hsl(28, 9%, 64%)',
+   black: "hsl(216, 24%, 4%)",
+   white: "hsla(33, 17%, 88%, .9)",
+   blue: "hsl(210, 100%, 34%)",
+   gold: "hsl(42, 79%, 64%)",
+   green: "hsl(120, 100%, 25%)",
+   darkBlue: "hsl(210, 100%, 16%)",
+   // darkGrey: 'hsl(30, 10%, 33%)',
+   // lightGrey: 'hsl(28, 9%, 64%)',
 
-    // Elite
-    // background: 'hsl(216, 24%, 4%)', 
-    // mainText: 'hsla(33, 17%, 88%, .9)',
-    // majorColor: '#e6b545',
-    // primaryAccent: '#0043bf',
-    // secondaryAccent: '#99007d',
-    // lowContrastGrey: '#4c5054',
-    // highContrastGrey: '#9aa2ab',
+   // Collective
+   background: "hsl(216, 24%, 4%)",
+   mainText: "hsla(33, 17%, 88%, .9)",
+   majorColor: "hsl(210, 100%, 40%)",
+   primaryAccent: "hsl(120, 100%, 25%)",
+   secondaryAccent: "hsl(42, 79%, 64%)",
+   lowContrastGrey: "hsl(30, 10%, 33%)",
+   veryLowContrastGrey: "hsla(30, 10%, 33%, .5)",
+   lowContrastCoolGrey: "hsl(210, 15%, 48%, .6)",
+   veryLowContrastCoolGrey: "hsl(210, 15%, 48%, .25)",
+   highContrastGrey: "hsl(28, 9%, 64%)"
 
-    // Irreverent
-    // background: '#e5e0da', 
-    // mainText: '#080A0D',
-    // majorColor: '#991d99',
-    // primaryAccent: '#0043bf',
-    // secondaryAccent: '#99520f',
-    // highContrastGrey: '#4c5054',
-    // lowContrastGrey: '#9aa2ab',
+   // Elite
+   // background: 'hsl(216, 24%, 4%)',
+   // mainText: 'hsla(33, 17%, 88%, .9)',
+   // majorColor: '#e6b545',
+   // primaryAccent: '#0043bf',
+   // secondaryAccent: '#99007d',
+   // lowContrastGrey: '#4c5054',
+   // highContrastGrey: '#9aa2ab',
 
-    // Celebration
-    // background: '#e5e0da', 
-    // mainText: '#080A0D',
-    // majorColor: '#991d99',
-    // primaryAccent: '#0043bf',
-    // secondaryAccent: '#3d993d',
-    // highContrastGrey: '#4c5054',
-    // lowContrastGrey: '#9aa2ab',
+   // Irreverent
+   // background: '#e5e0da',
+   // mainText: '#080A0D',
+   // majorColor: '#991d99',
+   // primaryAccent: '#0043bf',
+   // secondaryAccent: '#99520f',
+   // highContrastGrey: '#4c5054',
+   // lowContrastGrey: '#9aa2ab',
 
-    // Growth
-    // background: '#080A0D', 
-    // mainText: '#e5e0da',
-    // majorColor: '#004000',
-    // primaryAccent: '#0043bf',
-    // secondaryAccent: '#994c00',
-    // highContrastGrey: '#9aa2ab',
-    // lowContrastGrey: '#4c5054',
+   // Celebration
+   // background: '#e5e0da',
+   // mainText: '#080A0D',
+   // majorColor: '#991d99',
+   // primaryAccent: '#0043bf',
+   // secondaryAccent: '#3d993d',
+   // highContrastGrey: '#4c5054',
+   // lowContrastGrey: '#9aa2ab',
 
-    // Saviors
-    // background: '#e5e0da', 
-    // mainText: '#080A0D',
-    // majorColor: '#991d99',
-    // primaryAccent: '#0043bf',
-    // secondaryAccent: '#d95757',
-    // highContrastGrey: '#4c5054',
-    // lowContrastGrey: '#9aa2ab',
+   // Growth
+   // background: '#080A0D',
+   // mainText: '#e5e0da',
+   // majorColor: '#004000',
+   // primaryAccent: '#0043bf',
+   // secondaryAccent: '#994c00',
+   // highContrastGrey: '#9aa2ab',
+   // lowContrastGrey: '#4c5054',
 
-    // Underground
-    // background: '#080A0D', 
-    // mainText: '#e5e0da',
-    // majorColor: '#992626',
-    // primaryAccent: '#0043bf',
-    // secondaryAccent: '#994c00',
-    // highContrastGrey: '#9aa2ab',
-    // lowContrastGrey: '#4c5054',
-}
+   // Saviors
+   // background: '#e5e0da',
+   // mainText: '#080A0D',
+   // majorColor: '#991d99',
+   // primaryAccent: '#0043bf',
+   // secondaryAccent: '#d95757',
+   // highContrastGrey: '#4c5054',
+   // lowContrastGrey: '#9aa2ab',
 
+   // Underground
+   // background: '#080A0D',
+   // mainText: '#e5e0da',
+   // majorColor: '#992626',
+   // primaryAccent: '#0043bf',
+   // secondaryAccent: '#994c00',
+   // highContrastGrey: '#9aa2ab',
+   // lowContrastGrey: '#4c5054',
+};
 
 injectGlobal`
     html {
@@ -115,23 +116,23 @@ injectGlobal`
 `;
 
 const StyledPage = styled.div`
-    width: 94%;
-    max-width: 1920px;
-    margin: 4rem auto;
+   width: 94%;
+   max-width: 1920px;
+   margin: 4rem auto;
 `;
 
 class Page extends Component {
-    render() {
-        return (
-            <ThemeProvider theme={theme} >
-                <StyledPage>
-                    <Meta />
-                    <Header />
-                    {this.props.children}
-                </StyledPage>
-            </ThemeProvider>
-        );
-    }
+   render() {
+      return (
+         <ThemeProvider theme={theme}>
+            <StyledPage>
+               <Meta />
+               <Header />
+               {this.props.children}
+            </StyledPage>
+         </ThemeProvider>
+      );
+   }
 }
 
 export default Page;

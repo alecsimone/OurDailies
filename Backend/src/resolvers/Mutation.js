@@ -1,50 +1,183 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const { randomBytes } = require("crypto");
+const { promisify } = require("util");
+const jwt = require("jsonwebtoken");
+const { transport, basicEmailTemplate } = require("../mail");
 
 const Mutations = {
-    async createSubmission(parent, args, ctx, info) {
-        const submission = await ctx.db.mutation.createSubmission({
-            data: {...args}
-        }, info);
+   async createThing(parent, args, ctx, info) {
+      if (!ctx.request.memberId) {
+         throw new Error("You must be logged in to do that");
+      }
 
-        return submission;
-    },
-    updateSubmission(parent, args, ctx, info) {
-        const updates = { ...args };
-        delete updates.id;
-        return ctx.db.mutation.updateSubmission({
+      const thing = await ctx.db.mutation.createThing(
+         {
+            data: {
+               ...args,
+               author: {
+                  connect: {
+                     id: ctx.request.memberId
+                  }
+               }
+            }
+         },
+         info
+      );
+
+      return thing;
+   },
+   updateSubmission(parent, args, ctx, info) {
+      const updates = { ...args };
+      delete updates.id;
+      return ctx.db.mutation.updateSubmission(
+         {
             data: updates,
             where: {
-                id: args.id,
-            },
-        }, info);
-    },
-    async deleteSubmission(parent, args, ctx, info) {
-        const where = { id: args.id };
-        const submission = await ctx.db.query.submission({ where }, `{ id title }`);
-        return ctx.db.mutation.deleteSubmission({ where }, info);
-    },
-    async signup(parent, args, ctx, info) {
-        args.email = args.email.toLowerCase();
-        console.log(info);
-        const password = await bcrypt.hash(args.password, 10);
-        const member = await ctx.db.mutation.createMember(
-            {
-                data: {
-                    ...args,
-                    password,
-                    roles: { set: ['LiteMember'] }
-                },
-            },
-            info
-        );
-        const token = jwt.sign({ memberId: member.id }, process.env.APP_SECRET);
-        ctx.response.cookie('token', token, {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 24 * 365 * 4,
-        });
-        return member;
-    }
+               id: args.id
+            }
+         },
+         info
+      );
+   },
+   async deleteSubmission(parent, args, ctx, info) {
+      const where = { id: args.id };
+      const submission = await ctx.db.query.submission(
+         { where },
+         `{ id title }`
+      );
+      return ctx.db.mutation.deleteSubmission({ where }, info);
+   },
+   async signup(parent, args, ctx, info) {
+      args.email = args.email.toLowerCase();
+      console.log(info);
+      const password = await bcrypt.hash(args.password, 10);
+      const member = await ctx.db.mutation.createMember(
+         {
+            data: {
+               ...args,
+               password,
+               roles: { set: ["LiteMember"] }
+            }
+         },
+         info
+      );
+      const token = jwt.sign({ memberId: member.id }, process.env.APP_SECRET);
+      ctx.response.cookie("token", token, {
+         httpOnly: true,
+         maxAge: 1000 * 60 * 60 * 24 * 365 * 4
+      });
+      return member;
+   },
+   async login(parent, { email, password }, ctx, info) {
+      const member = await ctx.db.query.member({ where: { email } });
+      if (!member) {
+         throw new Error("We don't know anyone with that email address");
+      }
+
+      const valid = await bcrypt.compare(password, member.password);
+      if (!valid) {
+         throw new Error("Wrong Password");
+      }
+
+      const token = jwt.sign({ memberId: member.id }, process.env.APP_SECRET);
+      ctx.response.cookie("token", token, {
+         httpOnly: true,
+         maxAge: 1000 * 60 * 60 * 24 * 365 * 4
+      });
+
+      return member;
+   },
+   logout(parent, args, ctx, info) {
+      ctx.response.clearCookie("token");
+      return { message: "Successfully logged out" };
+   },
+   async requestReset(parent, args, ctx, info) {
+      const member = await ctx.db.query.member({
+         where: { email: args.email }
+      });
+      if (!member) {
+         throw new Error("We don't know anyone with that email address");
+      }
+
+      const resetToken = (await promisify(randomBytes)(20)).toString("hex");
+      const resetTokenExpiry = Date.now() + 1000 * 60 * 60;
+      const res = await ctx.db.mutation.updateMember({
+         where: { email: args.email },
+         data: { resetToken, resetTokenExpiry }
+      });
+
+      const mailRes = await transport.sendMail({
+         from: "alec@dailies.gg",
+         to: member.email,
+         subject: "Reset your password",
+         html: basicEmailTemplate(`Someone requested a password reset for the account associated with this email.
+            \n\n
+            If it was you, choose a new password <a href="${
+               process.env.FRONTEND_URL
+            }/passwordreset?resetToken=${resetToken}">here</a>`)
+      });
+
+      return { message: "Password reset initiated" };
+   },
+   async resetPassword(parent, args, ctx, info) {
+      if (args.password !== args.confirmPassword) {
+         throw new Error("Passwords do not match");
+      }
+
+      const [member] = await ctx.db.query.members({
+         where: {
+            resetToken: args.resetToken,
+            resetTokenExpiry_gte: Date.now() - 1000 * 60 * 60
+         }
+      });
+      if (!member) {
+         throw new Error("Token either invalid or expired");
+      }
+
+      const password = await bcrypt.hash(args.password, 10);
+
+      const updatedMember = await ctx.db.mutation.updateMember({
+         where: { email: member.email },
+         data: {
+            password,
+            resetToken: null,
+            resetTokenExpiry: null
+         }
+      });
+
+      const token = jwt.sign(
+         { memberId: updatedMember.id },
+         process.env.APP_SECRET
+      );
+      ctx.response.cookie("token", token, {
+         httpOnly: true,
+         maxAge: 1000 * 60 * 60 * 24 * 365 * 4
+      });
+
+      return updatedMember;
+   },
+   async addNarrativeToThing(parent, { title, thingID }, ctx, info) {
+      const narrative = await ctx.db.query.narrative({
+         where: { title }
+      });
+      let narrativeConnectionMethod;
+      if (!narrative) {
+         narrativeConnectionMethod = 'create';
+      } else {
+         narrativeConnectionMethod = 'connect';
+      }
+      const updatedThing = await ctx.db.mutation.updateThing({
+         where: { id: thingID },
+         data: {
+            partOfNarratives: {
+               [narrativeConnectionMethod]: {
+                  title
+               }
+            }
+         }
+      });
+      return updatedThing;
+   }
 };
 
 module.exports = Mutations;

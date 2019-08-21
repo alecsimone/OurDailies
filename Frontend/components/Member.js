@@ -22,7 +22,7 @@ const Member = props => (
     </Query>
 )
 
-Member.PropTypes = {
+Member.propTypes = {
     children: propTypes.func.isRequired,
 }
 

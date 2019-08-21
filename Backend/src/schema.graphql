@@ -1,21 +1,67 @@
 # import * from './generated/prisma.graphql'
 
+type SuccessMessage {
+  message: String
+}
+
 type Mutation {
-    createSubmission(title: String!, url: String!, description: String!, author: MemberCreateOneInput!): Submission!
-    updateSubmission(id: ID!, title: String, url: String, description: String): Submission!
-    deleteSubmission(id: ID!): Submission
-    signup(email: String!, password: String!, displayName: String!, name: String, twitchName: String): Member!
+  createThing(
+    title: String!
+    originalSource: String!
+    summary: ThingCreatesummaryInput!
+  ): Thing!
+  updateSubmission(
+    id: ID!
+    title: String
+    url: String
+    description: String
+  ): Submission!
+  deleteSubmission(id: ID!): Submission
+  signup(
+    email: String!
+    password: String!
+    displayName: String!
+    name: String
+    twitchName: String
+  ): Member!
+  login(email: String!, password: String!): Member!
+  logout: SuccessMessage
+  requestReset(email: String!): SuccessMessage
+  resetPassword(
+    resetToken: String!
+    password: String!
+    confirmPassword: String!
+  ): Member!
+  addNarrativeToThing(title: String!, thingID: ID!): Thing!
 }
 
 type Query {
-    submissions: [Submission]!
-    submission(where: SubmissionWhereUniqueInput!): Submission
-    stories(orderBy: StoryOrderByInput): [Story]!
-    story(where: StoryWhereUniqueInput!): Story
-    narratives(last: Int): [Narrative]!
-    narrative(where: NarrativeWhereUniqueInput!): Narrative
-    commentsConnection(where: CommentWhereInput!): CommentConnection
-    storiesConnection(where: StoryWhereInput!): StoryConnection
-    submissionsConnection(where: SubmissionWhereInput!): SubmissionConnection
-    me: Member
+  submissions: [Submission]!
+  submission(where: SubmissionWhereUniqueInput!): Submission
+  stories(orderBy: StoryOrderByInput): [Story]!
+  story(where: StoryWhereUniqueInput!): Story
+  thing(where: ThingWhereUniqueInput!): Thing
+  things(orderBy: ThingOrderByInput): [Thing]!
+  narratives(last: Int): [Narrative]!
+  narrative(where: NarrativeWhereUniqueInput!): Narrative
+  members(where: MemberWhereInput): [Member]!
+  member(where: MemberWhereUniqueInput!): Member!
+  commentsConnection(where: CommentWhereInput!): CommentConnection
+  storiesConnection(where: StoryWhereInput!): StoryConnection
+  submissionsConnection(where: SubmissionWhereInput!): SubmissionConnection
+  me: Member
+}
+
+type Member {
+  id: ID!
+  displayName: String!
+  name: String
+  avatar: String
+  rep: Int!
+  points: Int!
+  giveableRep: Int!
+  twitchName: String
+  email: String!
+  roles: [Role!]
+  createdAt: DateTime!
 }

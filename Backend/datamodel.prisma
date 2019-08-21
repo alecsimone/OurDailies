@@ -21,6 +21,20 @@ type Story {
   updatedAt: DateTime @updatedAt
 }
 
+type Thing {
+  id: ID! @id @unique
+  title: String!
+  author: Member!
+  featuredImage: String
+  originalSource: String! @unique
+  summary: [String!]! @scalarList(strategy:RELATION)
+  includedLinks: [Link]
+  includedThings: [Thing]
+  partOfNarratives: [Narrative]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
+}
+
 type Narrative {
   id: ID! @id @unique
   title: String! @unique
@@ -34,6 +48,7 @@ type Comment {
   updatedAt: DateTime @updatedAt
   onSubmission: Submission
   onStory: Story
+  onThing: Thing
   onLink: Link
   onComment: Comment
 }
@@ -47,9 +62,7 @@ type Link {
 type Vote {
   id: ID! @id @unique
   voter: Member!
-  onSubmission: Submission
-  onStory: Story
-  onLink: Link
+  onThing: Thing
   onComment: Comment
   value: Int!
   createdAt: DateTime! @createdAt
@@ -64,7 +77,7 @@ type Member {
   points: Int! @default(value: 1)
   giveableRep: Int! @default(value: 0)
   twitchName: String
-  email: String!
+  email: String! @unique
   password: String!
   roles: [Role!] @scalarList(strategy: RELATION)
   resetToken: String

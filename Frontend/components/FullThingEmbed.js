@@ -9,7 +9,7 @@ import VoteBar from './ThingParts/VoteBar';
 import TinyThing from './TinyThing'
 import Comment from './Comment';
 
-const StyledFullStory = styled.article`
+const StyledFullThing = styled.article`
     position: relative;
     margin: .5rem;
     padding: .5rem 2rem;
@@ -152,38 +152,7 @@ const StyledFullStory = styled.article`
 `;
 
 
-class FullStory extends Component {
-    // state = {
-    //     editable: false,
-    //     // title: this.props.thing.title,
-    //     // link: this.props.thing.link,
-    // }
-
-    // handleChange = (e) => {
-    //     const { name, type, value } = e.target;
-    //     const val = type === 'number' ? parseFloat(value) : value;
-    //     this.setState({
-    //         [name]: val
-    //     });
-    // }
-
-    // detectSubmit = async (e, updateSubmissionMutation) => {
-    //     if (e.keyCode === 13) {
-    //         e.preventDefault();
-    //         const res = await updateSubmissionMutation({
-    //             variables: {
-    //                 id: this.props.thing.id,
-    //                 ...this.state.edits,
-    //             }
-    //         });
-    //         this.toggleEditing();
-    //     }
-    // }
-
-    // toggleEditing = () => {
-    //     this.setState({editable: !this.state.editable});
-    // }
-
+class FullThingEmbed extends Component {
     render() {
         const { thing } = this.props;
 
@@ -252,12 +221,12 @@ class FullStory extends Component {
         }
 
         return (
-            <StyledFullStory>
+            <StyledFullThing>
                 <div className="lede">
                     {featuredImage}
                     {headline}
                 </div>
-                <p className="meta">Created at {thing.createdAt} {thing.author ? "by " + thing.author.displayName : ""}</p>
+                <p className="meta">Embed Created at {thing.createdAt} {thing.author ? "by " + thing.author.displayName : ""}</p>
                 {summary}
                 {narratives}
                 <VoteBar />
@@ -266,7 +235,7 @@ class FullStory extends Component {
                     {links}
                 </div>
                 {comments}
-            </StyledFullStory>
+            </StyledFullThing>
         );
     }
 }
@@ -275,4 +244,4 @@ class FullStory extends Component {
 //     thing: PropTypes.object.isRequired,
 // };
 
-export default FullStory;
+export default FullThingEmbed;

@@ -57,26 +57,33 @@ class NarrativesBar extends Component {
                                 data.narratives.map((narrative, index) => {
                                     if(index < data.narratives.length - 1) {
                                         return (
-                                            <span>
-                                                <Link href={{
-                                                    pathname: '/narrative',
-                                                    query: {
-                                                        id: narrative.id
-                                                    }
-                                                }}>
+                                            <span key={narrative.title}>
+                                                <Link 
+                                                    href={{
+                                                        pathname: '/narrative',
+                                                        query: {
+                                                            id: narrative.id
+                                                        }
+                                                        
+                                                    }}
+                                                    
+                                                >
                                                     <a>{narrative.title}</a>
                                                 </Link>, 
                                             </span>
                                         )
                                     } else {
                                         return (
-                                            <span>
-                                                <Link href={{
-                                                    pathname: '/narrative',
-                                                    query: {
-                                                        id: narrative.id
-                                                    }
-                                                }}>
+                                            <span key={narrative.title}>
+                                                <Link 
+                                                    href={{
+                                                        pathname: '/narrative',
+                                                        query: {
+                                                            id: narrative.id
+                                                        }
+                                                    }}
+                                                    
+                                                >
                                                     <a>{narrative.title}</a>
                                                 </Link>
                                             </span>

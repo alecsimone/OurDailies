@@ -3,12 +3,12 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 import Router from 'next/router';
-import Error from './ErrorMessage.js';
+import Error from './ErrorMessage';
 import {CURRENT_MEMBER_QUERY} from './Member';
 
-const SIGNUP_MUTATION = gql`
-    mutation SIGNUP_MUTATION($email: String!, $displayName: String!, $password: String!) {
-        signup(email: $email, displayName: $displayName, password: $password) {
+const LOGIN_MUTATION = gql`
+    mutation LOGIN_MUTATION($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
             id
             email
             displayName
@@ -16,11 +16,10 @@ const SIGNUP_MUTATION = gql`
     }
 `;
 
-class Signup extends Component {
+class Login extends Component {
     state = {
-        displayName: "",
-        password: "",
         email: "",
+        password: "",
     }
 
     saveToState = (e) => {
@@ -29,34 +28,24 @@ class Signup extends Component {
     render() {
         return (
             <Mutation 
-                mutation={SIGNUP_MUTATION} 
+                mutation={LOGIN_MUTATION} 
                 variables={this.state}
                 refetchQueries={[{query: CURRENT_MEMBER_QUERY}]}
             >
-                {(signup, {error, loading}) => {
+                {(login, {error, loading}) => {
                     return(<form 
                         method="post" 
                         onSubmit={async e => {
                             e.preventDefault();
-                            await signup();
+                            await login();
                             Router.push({
                                 pathname: '/',
                             });
                         }
                     }>
                         <fieldset disabled={loading} aria-busy={loading}>
-                            <h2>Sign Up</h2>
+                            <h2>Log In</h2>
                             <Error error={error} />
-                            <label htmlFor="displayName">
-                                Display Name
-                                <input 
-                                    type="text" 
-                                    name="displayName" 
-                                    placeholder="display name" 
-                                    value={this.state.displayName} 
-                                    onChange={this.saveToState} 
-                                    />
-                            </label>
                             <label htmlFor="email">
                                 Email
                                 <input 
@@ -78,7 +67,7 @@ class Signup extends Component {
                                 />
                             </label>
 
-                            <button type="submit">Sign Up</button>
+                            <button type="submit">Log In</button>
                         </fieldset> 
                     </form>)
                 }}
@@ -87,4 +76,4 @@ class Signup extends Component {
     }
 }
 
-export default Signup;
+export default Login;

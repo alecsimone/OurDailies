@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import VoteBar from './VoteBar';
+import VoteBar from './ThingParts/VoteBar';
 
 const StyledLittleThing = styled.article`
     max-width: 600px;
@@ -84,7 +84,7 @@ class LittleThing extends Component {
         const narrativeLinks = data.partOfNarratives.map((narrative, index) => {
             if(index < data.partOfNarratives.length - 1) {
                 return (
-                    <span>
+                    <span key={narrative.title}>
                         <Link href={{
                             pathname: '/narrative',
                             query: {
@@ -97,7 +97,7 @@ class LittleThing extends Component {
                 )
             } else {
                 return (
-                    <span>
+                    <span key={narrative.title}>
                         <Link href={{
                             pathname: '/narrative',
                             query: {
