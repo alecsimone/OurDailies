@@ -1,29 +1,29 @@
-import React, { Component } from "react";
-import styled, { ThemeProvider, injectGlobal } from "styled-components";
-import Header from "./Header";
-import Meta from "./Meta";
+import React, { Component } from 'react';
+import styled, { ThemeProvider, injectGlobal } from 'styled-components';
+import Header from './Header';
+import Meta from './Meta';
 
 const theme = {
-   black: "hsl(216, 24%, 4%)",
-   white: "hsla(33, 17%, 88%, .9)",
-   blue: "hsl(210, 100%, 34%)",
-   gold: "hsl(42, 79%, 64%)",
-   green: "hsl(120, 100%, 25%)",
-   darkBlue: "hsl(210, 100%, 16%)",
+   black: 'hsl(216, 24%, 4%)',
+   white: 'hsla(33, 17%, 88%, .9)',
+   blue: 'hsl(210, 100%, 34%)',
+   gold: 'hsl(42, 79%, 64%)',
+   green: 'hsl(120, 100%, 25%)',
+   darkBlue: 'hsl(210, 100%, 16%)',
    // darkGrey: 'hsl(30, 10%, 33%)',
    // lightGrey: 'hsl(28, 9%, 64%)',
 
    // Collective
-   background: "hsl(216, 24%, 4%)",
-   mainText: "hsla(33, 17%, 88%, .9)",
-   majorColor: "hsl(210, 100%, 40%)",
-   primaryAccent: "hsl(120, 100%, 25%)",
-   secondaryAccent: "hsl(42, 79%, 64%)",
-   lowContrastGrey: "hsl(30, 10%, 33%)",
-   veryLowContrastGrey: "hsla(30, 10%, 33%, .5)",
-   lowContrastCoolGrey: "hsl(210, 15%, 48%, .6)",
-   veryLowContrastCoolGrey: "hsl(210, 15%, 48%, .25)",
-   highContrastGrey: "hsl(28, 9%, 64%)"
+   background: 'hsl(216, 24%, 4%)',
+   mainText: 'hsla(33, 17%, 88%, .9)',
+   majorColor: 'hsl(210, 100%, 40%)',
+   primaryAccent: 'hsl(120, 100%, 25%)',
+   secondaryAccent: 'hsl(42, 79%, 64%)',
+   lowContrastGrey: 'hsl(30, 10%, 33%)',
+   veryLowContrastGrey: 'hsla(30, 10%, 33%, .5)',
+   lowContrastCoolGrey: 'hsl(210, 15%, 48%, .6)',
+   veryLowContrastCoolGrey: 'hsl(210, 15%, 48%, .1)',
+   highContrastGrey: 'hsl(28, 9%, 64%)'
 
    // Elite
    // background: 'hsl(216, 24%, 4%)',

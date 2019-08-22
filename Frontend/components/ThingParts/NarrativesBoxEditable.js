@@ -1,14 +1,24 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { Mutation } from 'react-apollo';
+import { Mutation, ApolloConsumer } from 'react-apollo';
 import gql from "graphql-tag";
+import Downshift from 'downshift';
+import debounce from 'lodash.debounce';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
 
 const ADD_NARRATIVE_TO_THING_MUTATION = gql`
    mutation ADD_NARRATIVE_TO_THING_MUTATION($title: String!, $thingID: ID!) {
       addNarrativeToThing(title: $title, thingID: $thingID) {
          id
+         title
+      }
+   }
+`;
+
+const NARRATIVES_SEARCH_QUERY = gql`
+   query NARRATIVES_SEARCH_QUERY($searchTerm: String!) {
+      narratives(where: { title_contains: $searchTerm }) {
          title
       }
    }
@@ -30,16 +40,20 @@ const StyledNarratives = styled.div`
       font-size: 2.25rem;
       font-weight: 500;
       display: inline;
-      line-height: 2;
       margin: 0 0.5rem 0 0;
    }
    span {
       margin-right: 0.5rem;
+      line-height: 1.4;
       a {
          color: ${props => props.theme.highContrastGrey};
       }
    }
+   form {
+      position: relative;
+   }
    input {
+      position: relative;
       background: ${props => props.theme.veryLowContrastCoolGrey};
       color: ${props => props.theme.mainText};
       border-radius: 3px;
@@ -48,20 +62,59 @@ const StyledNarratives = styled.div`
       font-size: 2rem;
       font-weight: 500;
       margin: 0 0.5rem 0 0;
+      width: 350px;
       &:disabled {
          background: ${props => props.theme.veryLowContrastGrey};
+      }
+   }
+   .autocompleteSuggestions {
+      position: absolute;
+      box-sizing: border-box;
+      top: 2.5rem;
+      left: 0;
+      width: calc(100% - 0.5rem);
+      padding: 0.25rem;
+      text-align: left;
+      background: ${props => props.theme.background};
+      border: 1px solid ${props => props.theme.lowContrastGrey};
+      border-top: none;
+      border-radius: 0 0 3px 3px;
+   }
+   .autocompleteSuggestionItem {
+      background: ${props => props.theme.background};
+      &.highlighted {
+         background: ${props => props.theme.lowContrastCoolGrey};
       }
    }
 `;
 
 class NarrativesBox extends Component {
    state = {
-      addNarrative: ""
+      addNarrative: "",
+      narratives: [],
+      loading: false
    };
 
-   handleChange = e => {
+   handleChange = (e, client) => {
       this.setState({ addNarrative: e.target.value });
+      this.generateAutocomplete(e, client);
    };
+
+   submitNarrative = async addNarrativeToThing => {
+      console.log(addNarrativeToThing);
+      const res = await addNarrativeToThing();
+      this.setState({ addNarrative: "" });
+   };
+
+   generateAutocomplete = debounce(async (e, client) => {
+      const res = await client.query({
+         query: NARRATIVES_SEARCH_QUERY,
+         variables: { searchTerm: e.target.value }
+      });
+      this.setState({
+         narratives: e.target.value === '' ? [] : res.data.narratives
+      });
+   }, 350);
 
    render() {
       let narrativeLinks;
@@ -119,25 +172,87 @@ class NarrativesBox extends Component {
             {(addNarrativeToThing, { loading, error, called, data }) => (
                <StyledNarratives>
                   <h5 className="narratives">PART OF:</h5> {narrativeLinks}{" "}
-                  <form
-                     onSubmit={async e => {
-                        e.preventDefault();
-                        const res = await addNarrativeToThing();
-                        this.setState({ addNarrative: "" });
-                     }}
-                  >
-                     <input
-                        type="text"
-                        id="addNarrative"
-                        name="addNarrative"
-                        placeholder={
-                           loading ? 'Adding...' : '+ Add a Narrative'
-                        }
-                        value={this.state.addNarrative}
-                        onChange={this.handleChange}
-                        disabled={loading}
-                     />
-                  </form>
+                  <ApolloConsumer>
+                     {client => (
+                        <Downshift
+                           onChange={async item => {
+                              this.setState({
+                                 addNarrative: '',
+                                 loading: true
+                              });
+                              const res = await client.mutate({
+                                 mutation: ADD_NARRATIVE_TO_THING_MUTATION,
+                                 variables: {
+                                    title: item.title,
+                                    thingID: this.props.thingID
+                                 },
+                                 refetchQueries: [
+                                    {
+                                       query: SINGLE_THING_QUERY,
+                                       variables: { id: this.props.thingID }
+                                    }
+                                 ]
+                              });
+                              this.setState({ loading: false });
+                           }}
+                           itemToString={item =>
+                              item === null ? "" : item.title
+                           }
+                        >
+                           {({
+                              getInputProps,
+                              getItemProps,
+                              isOpen,
+                              inputValue,
+                              highlightedIndex
+                           }) => (
+                              <form
+                                 onSubmit={async e => {
+                                    e.preventDefault();
+                                    const res = await addNarrativeToThing();
+                                    this.setState({ addNarrative: "" });
+                                 }}
+                              >
+                                 <input
+                                    {...getInputProps({
+                                       type: "text",
+                                       id: 'addNarrative',
+                                       name: 'addNarrative',
+                                       placeholder: this.state.loading
+                                          ? "Adding..."
+                                          : '+ Add a Narrative',
+                                       value: this.state.addNarrative,
+                                       disabled: this.state.loading,
+                                       onChange: e => {
+                                          e.persist();
+                                          this.handleChange(e, client);
+                                       }
+                                    })}
+                                 />
+                                 {this.state.narratives.length > 0 && isOpen && (
+                                    <div className="autocompleteSuggestions">
+                                       {this.state.narratives.map(
+                                          (item, index) => (
+                                             <div
+                                                className={
+                                                   index === highlightedIndex
+                                                      ? "autocompleteSuggestionItem highlighted"
+                                                      : "autoCompleteSuggestionItem"
+                                                }
+                                                {...getItemProps({ item })}
+                                                key={item.title}
+                                             >
+                                                {item.title}
+                                             </div>
+                                          )
+                                       )}
+                                    </div>
+                                 )}
+                              </form>
+                           )}
+                        </Downshift>
+                     )}
+                  </ApolloConsumer>
                </StyledNarratives>
             )}
          </Mutation>

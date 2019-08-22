@@ -42,7 +42,7 @@ type Query {
   story(where: StoryWhereUniqueInput!): Story
   thing(where: ThingWhereUniqueInput!): Thing
   things(orderBy: ThingOrderByInput): [Thing]!
-  narratives(last: Int): [Narrative]!
+  narratives(where: NarrativeWhereInput, last: Int): [Narrative]!
   narrative(where: NarrativeWhereUniqueInput!): Narrative
   members(where: MemberWhereInput): [Member]!
   member(where: MemberWhereUniqueInput!): Member!
