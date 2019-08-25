@@ -4,13 +4,15 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import psl from 'psl';
 import AdminBar from './AdminBar';
 import Error from './ErrorMessage.js';
+import { convertISOtoAgo, extractHostname } from '../lib/utils';
 
 const StyledTinyThing = styled.article`
     position: relative;
     margin: .5rem;
-    background: hsla(0, 0%, 50%, .1);
+    background: ${props => props.theme.veryLowContrastCoolGrey};
     padding: .75rem 1.25rem;
     border-radius: 0 2px 2px 0;
     max-width: 1000px;
@@ -31,7 +33,7 @@ const StyledTinyThing = styled.article`
         opacity: .8
     }
     h3 {
-        font-size: 2.25rem;
+        font-size: 2.5rem;
         cursor: pointer;
         margin: 0rem;
         line-height: 1.25;
@@ -39,19 +41,30 @@ const StyledTinyThing = styled.article`
     }
     div.meta {
     }
-    p.meta, a.SubTitleLink {
-        color: ${props => props.theme.highContrastGrey};
-        font-size: 1.25rem;
-        line-height: 1;
-        opacity: .6;
-    }
-    a.SubTitleLink {
-        font-style: italic;
-        text-decoration: underline;
-        margin-right: .5rem;
-    }
-    p {
-        margin: .25rem 0 0 0;
+    .metaContainer {
+      display: flex;
+      align-items: center;
+      margin-top: .4rem;
+      p.meta, a.SubTitleLink {
+         color: ${props => props.theme.highContrastGrey};
+         font-size: 1.25rem;
+         line-height: 1;
+         opacity: .4;
+         display: inline-block;
+      }
+      a.SubTitleLink {
+         text-decoration: underline;
+         max-width: 50%;
+         margin-left: .25rem;
+         &:hover {
+            color: ${props => props.theme.mainText};
+         }
+      }
+      p {
+         margin: 0;
+         span {
+         }
+      }
     }
     input, textarea {
         font-family: "Proxima Nova", sans-serif;
@@ -77,42 +90,70 @@ const StyledTinyThing = styled.article`
 `;
 
 const UPDATE_SUBMISSION_MUTATION = gql`
-    mutation UPDATE_SUBMISSION_MUTATION($id: ID!, $title: String, $url: String, $description: String) {
-        updateSubmission(id: $id, title: $title, url: $url, description: $description) {
-            id
-            title
-            url
-            description
-        }
-    }
+   mutation UPDATE_SUBMISSION_MUTATION(
+      $id: ID!
+      $title: String
+      $url: String
+      $description: String
+   ) {
+      updateSubmission(
+         id: $id
+         title: $title
+         url: $url
+         description: $description
+      ) {
+         id
+         title
+         url
+         description
+      }
+   }
 `;
 
-
 class TinyThing extends Component {
-    render() {
-        const { thing } = this.props;
-        const type = thing.__typename.toLowerCase();
+   render() {
+      const { thing } = this.props;
+      const type = thing.__typename.toLowerCase();
 
-        return (
-            <StyledTinyThing>
-                <Link href={{
-                    pathname: '/thing',
-                    query: { 
-                        id: thing.id,
-                        type,
-                    },
-                }}>
-                    <h3><a>{thing.title}</a></h3>
-                </Link>
-                <a className="SubTitleLink" href={thing.url ? thing.url : ""} target="_blank">{thing.url ? thing.url : ""}</a>
-                <p className="meta">Created at {thing.createdAt} {thing.author ? ` by ${thing.author.displayName}` : ''}</p>
-            </StyledTinyThing>
-        );
-    }
+      return (
+         <StyledTinyThing>
+            <Link
+               href={{
+                  pathname: '/thing',
+                  query: {
+                     id: thing.id
+                  }
+               }}
+            >
+               <h3>
+                  <a>{thing.title}</a>
+               </h3>
+            </Link>
+            <div className="metaContainer">
+               <p className="meta">
+                  {convertISOtoAgo(thing.createdAt)}
+                  {' AGO '}
+                  <span>via</span>
+               </p>
+               <a
+                  className="SubTitleLink"
+                  href={thing.originalSource ? thing.originalSource : ''}
+                  target="_blank"
+               >
+                  {thing.originalSource
+                     ? psl
+                          .parse(extractHostname(thing.originalSource))
+                          .sld.toUpperCase()
+                     : ''}
+               </a>
+            </div>
+         </StyledTinyThing>
+      );
+   }
 }
 
 TinyThing.propTypes = {
-    thing: PropTypes.object.isRequired,
+   thing: PropTypes.object.isRequired
 };
 
 export default TinyThing;

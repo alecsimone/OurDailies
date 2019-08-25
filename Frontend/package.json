@@ -29,6 +29,7 @@
     "next-with-apollo": "^3.1.3",
     "nprogress": "^0.2.0",
     "prop-types": "^15.6.2",
+    "psl": "^1.3.0",
     "react": "^16.5.2",
     "react-adopt": "^0.6.0",
     "react-apollo": "^2.2.1",

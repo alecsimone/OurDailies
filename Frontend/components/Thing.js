@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import VoteBar from './ThingParts/VoteBar';
+import { convertISOtoAgo } from '../lib/utils';
 
 const StyledThing = styled.article`
     position: relative;
     padding: 0 1rem;
     grid-column: 1 / -1;
+    background: ${props => props.theme.veryLowContrastCoolGrey};
+    padding: 2rem;
+    box-shadow: 0 0 .4rem ${props => props.theme.highContrastSecondaryAccent};
     div.body {
         position: relative;
         height: calc(720px + 2rem);
@@ -17,7 +21,7 @@ const StyledThing = styled.article`
             width: 5rem;
             height: 100%;
             position: absolute;
-            right: -1.5rem;
+            right: 0;
             top: 0;
             opacity: .8;
             border-radius; 2px;
@@ -27,7 +31,7 @@ const StyledThing = styled.article`
             max-width: 77%;
             height: 720px;
             position: absolute;
-            right: 0;
+            right: 2rem;
             top: 1rem;
             z-index: -1;
             img.featuredImage {
@@ -51,15 +55,16 @@ const StyledThing = styled.article`
         }
         .TopInfo {
             padding: 6rem 3rem;
-            width: 60%;
+            max-width: 60%;
             z-index: 1;
             h3 {
-                font-size: 6rem;
+                font-size: 5rem;
                 text-shadow: ${props => props.theme.background};
                 margin: 0;
                 background: ${props => props.theme.lowContrastCoolGrey};
                 border-radius: 4px;
                 padding: 0 1rem;
+                display: inline;
             }
             p {
                 color: ${props => props.theme.lowContrastGrey};
@@ -88,7 +93,7 @@ const StyledThing = styled.article`
         }
     }
     .VoteBarWrapper {
-        width: calc(100% + 2rem);
+        width: 100%;
     }
 `;
 
@@ -143,68 +148,88 @@ const HalfSizedThing = styled.article`
 `;
 
 class Thing extends Component {
-    render() {
-        const data = this.props.thing;
+   render() {
+      const data = this.props.thing;
 
-        const narrativeLinks = data.partOfNarratives.map((narrative, index) => {
-            if(index < data.partOfNarratives.length - 1) {
-                return (
-                    <span key={narrative.title}>
-                        <Link href={{
-                            pathname: '/narrative',
-                            query: {
-                                id: narrative.id
-                            }
-                        }}>
-                            <a>{narrative.title}</a>
-                        </Link>, 
-                    </span>
-                )
-            } else {
-                return (
-                    <span key={narrative.title}>
-                        <Link href={{
-                            pathname: '/narrative',
-                            query: {
-                                id: narrative.id
-                            }
-                        }}>
-                            <a>{narrative.title}</a>
-                        </Link>
-                    </span>
-                )
-            }
-        });
-        const narratives = <div><h5>PART OF</h5>{narrativeLinks}</div>
+      const narrativeLinks = data.partOfNarratives.map((narrative, index) => {
+         if (index < data.partOfNarratives.length - 1) {
+            return (
+               <span key={narrative.title}>
+                  <Link
+                     href={{
+                        pathname: "/narrative",
+                        query: {
+                           id: narrative.id
+                        }
+                     }}
+                  >
+                     <a>{narrative.title}</a>
+                  </Link>
+                  ,
+               </span>
+            );
+         }
+         return (
+            <span key={narrative.title}>
+               <Link
+                  href={{
+                     pathname: "/narrative",
+                     query: {
+                        id: narrative.id
+                     }
+                  }}
+               >
+                  <a>{narrative.title}</a>
+               </Link>
+            </span>
+         );
+      });
+      const narratives = (
+         <div>
+            <h5>PART OF</h5>
+            {narrativeLinks}
+         </div>
+      );
 
-        return (
-            <StyledThing>
-                <div className="body">
-                    <div className="TopInfo">
-                        <h3>
-                            <Link href={{
-                                pathname: '/thing',
-                                query: {
-                                    id: data.id,
-                                    type: "story",
-                                }
-                            }}>
-                                <a>{data.title}</a>
-                            </Link>
-                        </h3>
-                        <p>{data.createdAt}</p>
-                    </div>
-                    <div className="BottomInfo">
-                        {narratives}
-                    </div>
-                    <div className="imageWrapper">
-                        <img className="featuredImage" src={data.featuredImage} />
-                    </div>
-                </div>
-                <div className="VoteBarWrapper"><VoteBar /></div>
-            </StyledThing>
-        );
-    }
+      return (
+         <StyledThing>
+            <div className="body">
+               <div className="TopInfo">
+                  <h3>
+                     <Link
+                        href={{
+                           pathname: '/thing',
+                           query: {
+                              id: data.id
+                           }
+                        }}
+                     >
+                        <a>{data.title}</a>
+                     </Link>
+                  </h3>
+                  <p>
+                     {convertISOtoAgo(data.createdAt)}
+                     {" AGO"}
+                  </p>
+               </div>
+               <div className="BottomInfo">{narratives}</div>
+               <div className="imageWrapper">
+                  <img
+                     className="featuredImage"
+                     src={
+                        data.featuredImage
+                           ? data.featuredImage
+                           : "/static/defaultPic.jpg"
+                     }
+                  />
+               </div>
+            </div>
+            <div className="VoteBarWrapper">
+               <VoteBar />
+            </div>
+         </StyledThing>
+      );
+   }
 }
 
 export default Thing;

@@ -49,7 +49,6 @@ const Mutations = {
    },
    async signup(parent, args, ctx, info) {
       args.email = args.email.toLowerCase();
-      console.log(info);
       const password = await bcrypt.hash(args.password, 10);
       const member = await ctx.db.mutation.createMember(
          {
@@ -177,6 +176,154 @@ const Mutations = {
          }
       });
       return updatedThing;
+   },
+   async addLinkToThing(parent, { title, url, thingID }, ctx, info) {
+      const thingUrlStructure = `${process.env.FRONTEND_URL}/thing?id=`;
+      const thingUrlStructureNoHTTP = thingUrlStructure.substring(
+         thingUrlStructure.indexOf("://") + 3
+      );
+
+      if (
+         url.includes(thingUrlStructure) ||
+         url.includes(thingUrlStructureNoHTTP)
+      ) {
+         let thingToLinkID;
+         if (url.includes("&")) {
+            thingToLinkID = url.substring(
+               thingUrlStructure.length,
+               url.indexOf('&')
+            );
+         } else {
+            thingToLinkID = url.substring(thingUrlStructure.length);
+         }
+
+         const updatedThing = await ctx.db.mutation.updateThing({
+            where: { id: thingID },
+            data: {
+               includedThings: {
+                  connect: {
+                     id: thingToLinkID
+                  }
+               }
+            }
+         });
+         return updatedThing;
+      }
+      const updatedThing = await ctx.db.mutation.updateThing({
+         where: { id: thingID },
+         data: {
+            includedLinks: {
+               create: {
+                  title,
+                  url
+               }
+            }
+         }
+      });
+      return updatedThing;
+   },
+   async addSummaryLineToThing(parent, { summaryLine, thingID }, ctx, info) {
+      const currentSummary = await ctx.db.query.thing(
+         {
+            where: {
+               id: thingID
+            }
+         },
+         `{summary}`
+      );
+      currentSummary.summary.push(summaryLine);
+
+      const newThing = await ctx.db.mutation.updateThing(
+         {
+            where: { id: thingID },
+            data: {
+               summary: {
+                  set: currentSummary.summary
+               }
+            }
+         },
+         info
+      );
+
+      return newThing;
+   },
+   async removeSummaryLineFromThing(
+      parent,
+      { summaryLine, thingID },
+      ctx,
+      info
+   ) {
+      const currentSummary = await ctx.db.query.thing(
+         {
+            where: {
+               id: thingID
+            }
+         },
+         `{summary}`
+      );
+
+      const newSummary = currentSummary.summary.filter(
+         line => line !== summaryLine
+      );
+
+      const newThing = await ctx.db.mutation.updateThing(
+         {
+            where: { id: thingID },
+            data: {
+               summary: {
+                  set: newSummary
+               }
+            }
+         },
+         info
+      );
+
+      return newThing;
+   },
+   async setFeaturedImage(parent, { imageUrl, thingID }, ctx, info) {
+      const newThing = await ctx.db.mutation.updateThing(
+         {
+            where: {
+               id: thingID
+            },
+            data: {
+               featuredImage: imageUrl
+            }
+         },
+         info
+      );
+      return newThing;
+   },
+   async addCommentToThing(parent, { comment, thingID }, ctx, info) {
+      if (!ctx.request.memberId) {
+         throw new Error("You must be logged in to do that");
+      }
+
+      const addedComment = await ctx.db.mutation.createComment({
+         data: {
+            comment,
+            onThing: {
+               connect: {
+                  id: thingID
+               }
+            },
+            author: {
+               connect: {
+                  id: ctx.request.memberId
+               }
+            }
+         }
+      });
+
+      return addedComment;
+   },
+   async deleteComment(parent, { id }, ctx, info) {
+      const deletedComment = await ctx.db.mutation.deleteComment({
+         where: {
+            id
+         }
+      });
+      return deletedComment;
    }
 };
 

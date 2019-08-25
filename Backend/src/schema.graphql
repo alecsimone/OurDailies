@@ -32,7 +32,13 @@ type Mutation {
     password: String!
     confirmPassword: String!
   ): Member!
+  setFeaturedImage(imageUrl: String!, thingID: ID!): Thing!
   addNarrativeToThing(title: String!, thingID: ID!): Thing!
+  addLinkToThing(title: String!, url: String!, thingID: ID!): Thing!
+  addSummaryLineToThing(summaryLine: String!, thingID: ID!): Thing!
+  removeSummaryLineFromThing(summaryLine: String!, thingID: ID!): Thing!
+  addCommentToThing(comment: String!, thingID: ID!): Comment!
+  deleteComment(id: ID!): Comment!
 }
 
 type Query {
@@ -41,7 +47,7 @@ type Query {
   stories(orderBy: StoryOrderByInput): [Story]!
   story(where: StoryWhereUniqueInput!): Story
   thing(where: ThingWhereUniqueInput!): Thing
-  things(orderBy: ThingOrderByInput): [Thing]!
+  things(orderBy: ThingOrderByInput, first: Int, last: Int): [Thing]!
   narratives(where: NarrativeWhereInput, last: Int): [Narrative]!
   narrative(where: NarrativeWhereUniqueInput!): Narrative
   members(where: MemberWhereInput): [Member]!

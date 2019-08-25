@@ -4,57 +4,41 @@ import styled from "styled-components";
 import Link from "next/link";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import { convertISOtoAgo } from '../lib/utils';
 import Error from "./ErrorMessage";
 import VoteBar from "./ThingParts/VoteBar";
 import NarrativesBoxEditable from "./ThingParts/NarrativesBoxEditable";
-import TinyThing from "./TinyThing";
-import Comment from "./Comment";
+import LinksBox from "./ThingParts/LinksBox";
+import Summary from "./ThingParts/Summary";
+import Comments from "./ThingParts/Comments";
+import FeaturedImageCarousel from "./ThingParts/FeaturedImageCarousel";
 
 const StyledFullThing = styled.article`
    position: relative;
    margin: 0.5rem;
-   padding: 0.5rem 2rem;
-   border-radius: 0 2px 2px 0;
+   margin-bottom: 60vh;
+   padding: 2rem;
+   border-radius: 2px 2px;
    width: 100%;
    max-width: 1280px;
+   background: ${props => props.theme.veryLowContrastCoolGrey};
+   box-shadow: 0 0.1rem 0.4rem
+      ${props => props.theme.highContrastSecondaryAccent};
    :before {
       content: "";
-      background: ${props => props.theme.blue};
+      background: ${props => props.theme.majorColor};
       z-index: -1;
       height: 5rem;
       width: 100%;
       position: absolute;
       left: 0;
-      top: -1.5rem;
+      top: 0;
       opacity: 0.8;
-      border-radius: 2px;
+      border-radius: 2px 2px 0 0;
+      box-shadow: 0 -0.2rem 0.4rem ${props => props.theme.majorColor};
    }
    .lede {
       position: relative;
-      .featuredImageContainer {
-         max-width: calc(1440px - 4rem);
-         padding-bottom: 56.25%;
-         height: 0;
-         overflow: hidden;
-         background: ${props => props.theme.darkGrey};
-         :after {
-            content: " ";
-            z-index: 0;
-            display: block;
-            position: absolute;
-            top: -20;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: hsla(0, 0%, 0%, 0.4);
-         }
-      }
-      img.featured {
-         width: 100%;
-         z-index: -1;
-      }
       h3.headline {
          font-size: 5rem;
          margin: 0rem;
@@ -63,7 +47,7 @@ const StyledFullThing = styled.article`
          bottom: 0;
          left: 0;
          width: 100%;
-         padding: 12rem 2rem 2rem;
+         padding: 12rem 2rem 1.25rem;
          text-shadow: 0px 0px 2px black;
          background: black;
          background: -moz-linear-gradient(
@@ -84,148 +68,68 @@ const StyledFullThing = styled.article`
          filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
       }
    }
-   p.meta {
+   .meta {
       color: ${props => props.theme.lightGrey};
       font-size: 1.25rem;
       line-height: 1;
       opacity: 0.6;
-   }
-   ul.summary {
-      margin: 3rem 0;
-      padding: 0 0 0 1rem;
-      li {
-         font-size: 1.75rem;
-         line-height: 2;
-         list-style-type: " - ";
-      }
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.4rem;
    }
    h5 {
       font-size: 2rem;
       margin: 0 0 1.5rem;
       text-align: center;
    }
-   .submissionsAndLinks {
-      display: flex;
-      margin: 3rem 0;
-      @media screen and (max-width: 1200px) {
-         flex-wrap: wrap;
-      }
-      .submissions {
-         flex-grow: 2;
-         max-width: 1000px;
-         article {
-            margin-bottom: 1rem;
-         }
-      }
-      .links {
-         flex-grow: 1;
-         ul {
-            margin: 0;
-            list-style-type: none;
-            li {
-               margin-bottom: 0.5rem;
-            }
-         }
-      }
-      a.includedLink {
-         text-decoration: underline;
-         color: ${props => props.theme.blue};
-         font-size: 1.75rem;
-      }
-   }
-   .commentsContainer {
-      border-top: 1px solid hsla(0, 0%, 80%, 0.1);
-      margin: auto;
-      padding: 2rem;
-   }
 `;
 
 class FullThing extends Component {
    render() {
       const { thing } = this.props;
-      const featuredImage = thing.featuredImage ? (
-         <div className="featuredImageContainer">
-            <img src={thing.featuredImage} className="featured" />
-         </div>
-      ) : (
-         ""
-      );
-
-      let headline;
-      headline = <h3 className="headline">{thing.title}</h3>;
-
-      let summary;
-      if (thing.summary) {
-         const summaryItems = thing.summary.map((bullet, index) => (
-            <li key={index}>{bullet}</li>
-         ));
-         summary = <ul className="summary">{summaryItems}</ul>;
-      }
-
-      let submissions;
-      if (thing.includedSubmissions) {
-         const submissionThings = thing.includedSubmissions.map(submission => (
-            <TinyThing thing={submission} key={submission.id} />
-         ));
-         submissions = (
-            <div className="submissions">
-               <h5>RELEVANT THINGS</h5>
-               {submissionThings}
-            </div>
-         );
-      }
-
-      let links;
-      if (thing.includedLinks) {
-         const linkItems = thing.includedLinks.map(link => (
-            <li key={link.url}>
-               <a className="includedLink" href={link.url} key={link.url}>
-                  {link.title}
-               </a>
-            </li>
-         ));
-         links = (
-            <div className="links">
-               <h5>LINKS</h5>
-               <ul>{linkItems}</ul>
-            </div>
-         );
-      }
-
-      let comments;
-      if (thing.comments.length > 0) {
-         const commentItems = thing.comments.map(comment => (
-            <Comment data={comment} />
-         ));
-         comments = (
-            <div className="commentsContainer">
-               <h5 className="comments">COMMENTS</h5>
-               {commentItems}
-            </div>
-         );
-      }
 
       return (
          <StyledFullThing>
             <div className="lede">
-               {featuredImage}
-               {headline}
+               <FeaturedImageCarousel
+                  featuredImage={thing.featuredImage}
+                  includedLinks={thing.includedLinks}
+                  headline={thing.title}
+                  thingID={thing.id}
+                  key={"FeaturedImageCarousel-" + thing.id}
+               />
             </div>
-            <p className="meta">
-               Created at {thing.createdAt}{" "}
-               {thing.author ? `by ${thing.author.displayName}` : ''}
-            </p>
-            {summary}
+            <div className="meta">
+               {convertISOtoAgo(thing.createdAt)}
+               {" AGO "}
+               {thing.author ? (
+                  <div>Submitted by {thing.author.displayName}</div>
+               ) : (
+                  ""
+               )}
+            </div>
+            <Summary
+               summary={thing.summary}
+               thingID={thing.id}
+               key={"Summary-" + thing.id}
+            />
             <NarrativesBoxEditable
                partOfNarratives={thing.partOfNarratives}
                thingID={thing.id}
+               key={"NarrativesBoxEditable-" + thing.id}
             />
-            <VoteBar />
-            <div className="submissionsAndLinks">
-               {submissions}
-               {links}
-            </div>
-            {comments}
+            <VoteBar key={thing.id} />
+            <LinksBox
+               things={thing.includedThings}
+               links={thing.includedLinks}
+               thingID={thing.id}
+               key={"LinksBox-" + thing.id}
+            />
+            <Comments
+               comments={thing.comments}
+               thingID={thing.id}
+               key={"Comments-" + thing.id}
+            />
          </StyledFullThing>
       );
    }
