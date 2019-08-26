@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Link from 'next/link';
-import VoteBar from './ThingParts/VoteBar';
-import { convertISOtoAgo } from '../lib/utils';
+import React, { Component } from "react";
+import styled from "styled-components";
+import Link from "next/link";
+import VoteBar from "./ThingParts/VoteBar";
+import { convertISOtoAgo } from "../lib/utils";
 
 const StyledThing = styled.article`
     position: relative;
@@ -58,7 +58,7 @@ const StyledThing = styled.article`
             max-width: 60%;
             z-index: 1;
             h3 {
-                font-size: 5rem;
+                font-size: ${props => props.theme.bigHead};
                 text-shadow: ${props => props.theme.background};
                 margin: 0;
                 background: ${props => props.theme.lowContrastCoolGrey};
@@ -66,7 +66,8 @@ const StyledThing = styled.article`
                 padding: 0 1rem;
                 display: inline;
             }
-            p {
+            p.meta {
+               font-size: ${props => props.theme.smallText};
                 color: ${props => props.theme.lowContrastGrey};
                 font-style: italic;
             }
@@ -78,7 +79,7 @@ const StyledThing = styled.article`
             bottom: 6rem;
             h5 {
                 color: ${props => props.theme.primaryAccent};
-                font-size: 2.75rem;
+                font-size: ${props => props.theme.bigText};
                 font-weight: 400;
                 margin: 0 0 1rem;
             }
@@ -87,63 +88,13 @@ const StyledThing = styled.article`
             }
             a {
                 color: ${props => props.theme.highContrastGrey};
-                font-size: 2rem;
+                font-size: ${props => props.theme.smallText};
                 font-weight: 300;
             }
         }
     }
     .VoteBarWrapper {
         width: 100%;
-    }
-`;
-
-const HalfSizedThing = styled.article`
-    width: 600px;
-    position: relative;
-    padding: 0 1rem;
-    margin-bottom: 4rem;
-    div.body {
-        position: relative;
-        :before {
-            content: '';
-            background: ${props => props.theme.majorColor};
-            z-index: -1;
-            width: 100%;
-            height: 2.75rem;
-            position: absolute;
-            top: -1.25rem;
-            left: 0;
-            opacity: .8;
-            border-radius; 2px;
-        }
-        .TopInfo {
-            padding-top: 56.25%;
-        }
-        .imageWrapper {
-            width: calc(100% - 1.5rem);
-            height: 300px;
-            padding-bottom: 56.25%;
-            position: absolute;
-            top: 0;
-            left: .75rem;
-            z-index: -1;
-            overflow: hidden;
-            img.featuredImage{
-                width: 100%;
-                object-fit: cover;
-            }
-            :after {
-                content: ' ';
-                background: hsla(0, 0%, 0%, .4);
-                z-index: 2;
-                position: absolute;
-                display: block;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-            }
-        }
     }
 `;
 
@@ -157,7 +108,7 @@ class Thing extends Component {
                <span key={narrative.title}>
                   <Link
                      href={{
-                        pathname: "/narrative",
+                        pathname: '/narrative',
                         query: {
                            id: narrative.id
                         }
@@ -173,7 +124,7 @@ class Thing extends Component {
             <span key={narrative.title}>
                <Link
                   href={{
-                     pathname: "/narrative",
+                     pathname: '/narrative',
                      query: {
                         id: narrative.id
                      }
@@ -198,7 +149,7 @@ class Thing extends Component {
                   <h3>
                      <Link
                         href={{
-                           pathname: '/thing',
+                           pathname: "/thing",
                            query: {
                               id: data.id
                            }
@@ -207,9 +158,9 @@ class Thing extends Component {
                         <a>{data.title}</a>
                      </Link>
                   </h3>
-                  <p>
+                  <p className="meta">
                      {convertISOtoAgo(data.createdAt)}
-                     {" AGO"}
+                     {' AGO'}
                   </p>
                </div>
                <div className="BottomInfo">{narratives}</div>
@@ -219,7 +170,7 @@ class Thing extends Component {
                      src={
                         data.featuredImage
                            ? data.featuredImage
-                           : "/static/defaultPic.jpg"
+                           : '/static/defaultPic.jpg'
                      }
                   />
                </div>

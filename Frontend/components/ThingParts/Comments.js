@@ -29,9 +29,9 @@ const StyledComments = styled.section`
       width: 100%;
       max-width: 800px;
       margin-top: 2rem;
-      font-size: 1.6rem;
+      font-size: ${props => props.theme.smallText};
       line-height: 1.6;
-      height: calc(1.6rem * 1.6 + 2rem);
+      height: calc(${props => props.theme.smallText} * 1.6 + 2rem);
       transition: height 0.25s;
       &[aria-disabled="true"] {
          background: ${props => props.theme.lowContrastCoolGrey};

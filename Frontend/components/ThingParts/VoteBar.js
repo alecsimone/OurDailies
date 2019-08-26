@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import styled from "styled-components";
+import React, { Component } from 'react';
+import styled from 'styled-components';
 
 const StyledVoteBar = styled.div`
    background: ${props => props.theme.veryLowContrastGrey};
@@ -8,7 +8,7 @@ const StyledVoteBar = styled.div`
    border-radius: 5px;
    margin: 3rem 0 0;
    text-align: center;
-   font-size: 2rem;
+   font-size: ${props => props.theme.smallText};
    line-height: 5rem;
    color: ${props => props.theme.mainText};
 `;

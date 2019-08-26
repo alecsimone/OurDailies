@@ -33,7 +33,7 @@ const StyledSubmitForm = styled.form`
    }
    input,
    textarea {
-      font-size: 1.5rem;
+      font-size: ${props => props.theme.smallText};
       width: 100%;
       margin: 1rem 0;
       padding: 0.75rem;
@@ -47,7 +47,7 @@ const StyledSubmitForm = styled.form`
       background: ${props => props.theme.majorColor};
       border: none;
       border-radius: 2px;
-      font-size: 1.5rem;
+      font-size: ${props => props.theme.smallText};
       margin-top: 1rem;
       padding: 0.75rem 2.25rem;
       color: ${props => props.theme.mainText};

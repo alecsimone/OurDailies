@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import { getYoutubeVideoIdFromLink } from "../../lib/utils";
-import { SINGLE_THING_QUERY } from '../../pages/thing';
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import { getYoutubeVideoIdFromLink } from '../../lib/utils';
+import { SINGLE_THING_QUERY } from "../../pages/thing";
 
 const SET_FEATURED_IMAGE_MUTATION = gql`
    mutation SET_FEATURED_IMAGE_MUTATION($imageUrl: String!, $thingID: ID!) {
@@ -49,9 +49,6 @@ const FeaturedImageContainer = styled.div`
    button {
       position: absolute;
       z-index: 2;
-      font-size: 2rem;
-      line-height: 2rem;
-      padding: 0 0.6rem;
       top: calc(50% - 1rem);
       border: none;
       color: transparent;
@@ -140,11 +137,11 @@ class FeaturedImageCarousel extends Component {
 
       const mediaLinksArray = justTheLinks.filter(
          link =>
-            (link !== this.props.featuredImage && link.includes('jpg')) ||
-            link.includes("png") ||
-            link.includes("gif") ||
-            link.includes("youtube.com/watch?v=") ||
-            link.includes("youtu.be/")
+            (link !== this.props.featuredImage && link.includes("jpg")) ||
+            link.includes('png') ||
+            link.includes('gif') ||
+            link.includes('youtube.com/watch?v=') ||
+            link.includes('youtu.be/')
       );
       const allMedia = featuredImageButItsAnArrayNow.concat(mediaLinksArray);
 
@@ -190,16 +187,16 @@ class FeaturedImageCarousel extends Component {
             </>
          );
       } else if (
-         currentLink.includes('jpg') ||
-         currentLink.includes('png') ||
-         currentLink.includes('gif')
+         currentLink.includes("jpg") ||
+         currentLink.includes("png") ||
+         currentLink.includes("gif")
       ) {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
                   {this.props.member != null &&
                      this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator'].includes(role)
+                        ["Admin", "Editor", "Moderator"].includes(role)
                      ) && (
                         <Mutation
                            mutation={SET_FEATURED_IMAGE_MUTATION}
@@ -242,8 +239,8 @@ class FeaturedImageCarousel extends Component {
             </>
          );
       } else if (
-         currentLink.includes("youtube.com/watch?v=") ||
-         currentLink.includes("youtu.be/")
+         currentLink.includes('youtube.com/watch?v=') ||
+         currentLink.includes('youtu.be/')
       ) {
          const videoID = getYoutubeVideoIdFromLink(currentLink);
          featuredImage = (

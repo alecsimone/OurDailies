@@ -33,7 +33,7 @@ const DateBar = styled.div`
    margin: auto;
    h2 {
       color: ${props => props.theme.majorColor};
-      font-size: 3rem;
+      font-size: ${props => props.theme.smallHead};
       font-weight: 300;
       text-align: center;
       margin: 4rem 0;

@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import Link from "next/link";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
 
 const StyledStageBox = styled.div`
    display: inline-block;
    a,
    a:visited {
       color: ${props => props.theme.mainText};
-      font-size: 3rem;
+      font-size: ${props => props.theme.bigText};
       margin-right: 8rem;
       position: relative;
    }

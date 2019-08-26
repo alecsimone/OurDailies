@@ -42,7 +42,7 @@ const StyledLittleThing = styled.article`
          left: 0;
          margin: 0;
          width: 100%;
-         font-size: 3rem;
+         font-size: ${props => props.theme.smallHead};
          text-shadow: 0 3px 6px black;
          z-index: 2;
          padding: 6rem 1.5rem 0.75rem;
@@ -83,7 +83,7 @@ const StyledLittleThing = styled.article`
       flex-grow: 1;
       h5 {
          color: ${props => props.theme.primaryAccent};
-         font-size: 2.75rem;
+         font-size: ${props => props.theme.bigText};
          font-weight: 400;
          margin: 0 0 1rem;
       }
@@ -92,7 +92,7 @@ const StyledLittleThing = styled.article`
       }
       a {
          color: ${props => props.theme.lightGrey};
-         font-size: 2rem;
+         font-size: ${props => props.theme.smallText};
          font-weight: 300;
       }
    }

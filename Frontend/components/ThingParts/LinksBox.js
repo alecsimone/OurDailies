@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { Mutation } from "react-apollo";
-import gql from 'graphql-tag';
-import ErrorMessage from "../ErrorMessage";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
-import TinyThing from '../TinyThing';
+import React, { Component } from "react";
+import styled from "styled-components";
+import { Mutation } from 'react-apollo';
+import gql from "graphql-tag";
+import ErrorMessage from '../ErrorMessage';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
+import TinyThing from "../TinyThing";
 
 const ADD_LINK_TO_THING_MUTATION = gql`
    mutation ADD_LINK_TO_THING_MUTATION(
@@ -43,7 +43,7 @@ const StyledLinksBox = styled.div`
       }
    }
    .empty {
-      font-size: 2rem;
+      font-size: ${props => props.theme.smallText};
       text-align: center;
       p {
          color: ${props => props.theme.lowContrastGrey};
@@ -52,7 +52,7 @@ const StyledLinksBox = styled.div`
    a.includedLink {
       text-decoration: underline;
       color: ${props => props.theme.majorColor};
-      font-size: 1.75rem;
+      font-size: ${props => props.theme.smallText};
    }
    form {
       flex-grow: 1;
@@ -72,7 +72,7 @@ const StyledLinksBox = styled.div`
          }
       }
       input {
-         font-size: 2rem;
+         font-size: ${props => props.theme.smallText};
          margin: 0 1rem 0 0;
          flex-grow: 1;
          max-width: 400px;
@@ -84,7 +84,7 @@ const StyledLinksBox = styled.div`
          line-height: 2.5rem;
          border: none;
          font-weight: 700;
-         font-size: 2.5rem;
+         font-size: ${props => props.theme.bigText};
          opacity: 0.4;
          &:hover {
             background: none;
@@ -111,8 +111,8 @@ const StyledLinksBox = styled.div`
 class LinksBox extends Component {
    state = {
       showForm: false,
-      linkTitle: '',
-      linkURL: '',
+      linkTitle: "",
+      linkURL: "",
       loading: false
    };
 
@@ -201,23 +201,23 @@ class LinksBox extends Component {
                            onSubmit={async e => {
                               e.preventDefault();
                               if (
-                                 this.state.linkTitle == "" &&
+                                 this.state.linkTitle == '' &&
                                  !this.state.linkURL.includes(
-                                    "localhost:7777/thing?id="
+                                    'localhost:7777/thing?id='
                                  )
                               ) {
-                                 alert("You need to give that link a  title");
+                                 alert('You need to give that link a  title');
                                  return;
                               }
-                              if (this.state.linkURL == "") {
+                              if (this.state.linkURL == '') {
                                  alert("You didn't give a URL, dummy");
                                  return;
                               }
                               this.setState({ loading: true });
                               const res = await addLinkToThing();
                               this.setState({
-                                 linkTitle: '',
-                                 linkURL: '',
+                                 linkTitle: "",
+                                 linkURL: "",
                                  loading: false
                               });
                            }}

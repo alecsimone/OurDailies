@@ -35,11 +35,11 @@ const StyledFullThing = styled.article`
       overflow: auto;
       h3 {
          margin: 0;
-         font-size: 2.5rem;
+         font-size: ${props => props.theme.smallHead};
       }
       .meta {
          color: ${props => props.theme.lightGrey};
-         font-size: 1.25rem;
+         font-size: ${props => props.theme.tinyText};
          line-height: 1;
          opacity: 0.6;
          display: flex;

@@ -1,18 +1,18 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import Link from "next/link";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import { convertISOtoAgo } from '../lib/utils';
-import Error from "./ErrorMessage";
-import Member from "./Member";
-import VoteBar from "./ThingParts/VoteBar";
-import NarrativesBoxEditable from "./ThingParts/NarrativesBoxEditable";
-import LinksBox from "./ThingParts/LinksBox";
-import Summary from "./ThingParts/Summary";
-import Comments from "./ThingParts/Comments";
-import FeaturedImageCarousel from "./ThingParts/FeaturedImageCarousel";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import { convertISOtoAgo } from "../lib/utils";
+import Error from './ErrorMessage';
+import Member from './Member';
+import VoteBar from './ThingParts/VoteBar';
+import NarrativesBoxEditable from './ThingParts/NarrativesBoxEditable';
+import LinksBox from './ThingParts/LinksBox';
+import Summary from './ThingParts/Summary';
+import Comments from './ThingParts/Comments';
+import FeaturedImageCarousel from './ThingParts/FeaturedImageCarousel';
 
 const StyledFullThing = styled.article`
    position: relative;
@@ -41,7 +41,7 @@ const StyledFullThing = styled.article`
    .lede {
       position: relative;
       h3.headline {
-         font-size: 5rem;
+         font-size: ${props => props.theme.bigHead};
          margin: 0rem;
          line-height: 1;
          position: absolute;
@@ -71,7 +71,7 @@ const StyledFullThing = styled.article`
    }
    .meta {
       color: ${props => props.theme.lightGrey};
-      font-size: 1.25rem;
+      font-size: ${props => props.theme.tinyText};
       line-height: 1;
       opacity: 0.6;
       display: flex;
@@ -79,7 +79,7 @@ const StyledFullThing = styled.article`
       margin-top: 0.4rem;
    }
    h5 {
-      font-size: 2rem;
+      font-size: ${props => props.theme.smallText};
       margin: 0 0 1.5rem;
       text-align: center;
    }
@@ -100,29 +100,29 @@ class FullThing extends Component {
                         headline={thing.title}
                         thingID={thing.id}
                         member={memberData.me}
-                        key={"FeaturedImageCarousel-" + thing.id}
+                        key={'FeaturedImageCarousel-' + thing.id}
                      />
                   </div>
                   <div className="meta">
                      {convertISOtoAgo(thing.createdAt)}
-                     {" AGO "}
+                     {' AGO '}
                      {thing.author ? (
                         <div>Submitted by {thing.author.displayName}</div>
                      ) : (
-                        ""
+                        ''
                      )}
                   </div>
                   <Summary
                      summary={thing.summary}
                      thingID={thing.id}
                      member={memberData.me}
-                     key={"Summary-" + thing.id}
+                     key={'Summary-' + thing.id}
                   />
                   <NarrativesBoxEditable
                      partOfNarratives={thing.partOfNarratives}
                      thingID={thing.id}
                      member={memberData.me}
-                     key={"NarrativesBoxEditable-" + thing.id}
+                     key={'NarrativesBoxEditable-' + thing.id}
                   />
                   <VoteBar key={thing.id} />
                   <LinksBox
@@ -130,13 +130,13 @@ class FullThing extends Component {
                      links={thing.includedLinks}
                      thingID={thing.id}
                      member={memberData.me}
-                     key={"LinksBox-" + thing.id}
+                     key={'LinksBox-' + thing.id}
                   />
                   <Comments
                      comments={thing.comments}
                      thingID={thing.id}
                      member={memberData.me}
-                     key={"Comments-" + thing.id}
+                     key={'Comments-' + thing.id}
                   />
                </StyledFullThing>
             )}

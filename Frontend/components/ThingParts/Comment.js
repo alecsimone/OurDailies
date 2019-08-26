@@ -17,8 +17,8 @@ const DELETE_COMMENT_MUTATION = gql`
 const StyledComment = styled.div`
    /* max-width: 800px; */
    margin: 0.75rem 0;
-   font-size: 1.6rem;
-   line-height: 1.5;
+   font-size: ${props => props.theme.smallText};
+   line-height: 1.4;
    background: ${props => props.theme.veryLowContrastCoolGrey};
    padding: 0.75em;
    border-radius: 3px;
@@ -82,7 +82,7 @@ const StyledComment = styled.div`
       }
    }
    .commentMeta {
-      font-size: 0.6em;
+      font-size: ${props => props.theme.tinyText};
       margin-top: 0.6em;
       color: ${props => props.theme.highContrastGrey};
       opacity: 0.6;

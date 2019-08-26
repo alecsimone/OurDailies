@@ -29,7 +29,7 @@ const StyledNarratives = styled.div`
    align-items: center;
    justify-content: center;
    flex-wrap: wrap;
-   font-size: 2rem;
+   font-size: ${props => props.theme.smallText};
    margin-bottom: 3rem;
    text-align: center;
    /* border-top: 1px solid hsla(0, 0%, 80%, .1); */
@@ -37,7 +37,7 @@ const StyledNarratives = styled.div`
    padding: 1rem 0;
    h5.narratives {
       color: ${props => props.theme.primaryAccent};
-      font-size: 2.25rem;
+      font-size: ${props => props.theme.smallText};
       font-weight: 500;
       display: inline;
       margin: 0 0.5rem 0 0;
@@ -60,7 +60,7 @@ const StyledNarratives = styled.div`
       border: none;
       border-bottom: 1px solid ${props => props.theme.highContrastGrey};
       box-sizing: border-box;
-      font-size: 2rem;
+      font-size: ${props => props.theme.smallText};
       line-height: 1.2;
       font-weight: 500;
       margin: 0 0.6rem 0 0;
