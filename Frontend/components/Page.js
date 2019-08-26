@@ -4,6 +4,12 @@ import Header from "./Header";
 import Meta from "./Meta";
 
 const theme = {
+   tinyText: "1rem",
+   smallText: "2rem",
+   bigText: "2.5rem",
+   smallHead: "4rem",
+   bigHead: "6rem",
+
    // Collective
    background: "hsl(216, 24%, 5%)",
    mainText: "hsla(33, 17%, 88%, .9)",
@@ -148,7 +154,6 @@ injectGlobal`
 
 const StyledPage = styled.div`
    width: 94%;
-   max-width: 1920px;
    margin: 4rem auto;
 `;
 

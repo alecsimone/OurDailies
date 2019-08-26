@@ -1,10 +1,10 @@
-import styled from 'styled-components';
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
-import Head from 'next/head';
-import FullThing from '../components/FullThing';
-import FullThingEmbed from '../components/FullThingEmbed';
-import Error from '../components/ErrorMessage';
+import styled from "styled-components";
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
+import Head from "next/head";
+import FullThing from "../components/FullThing";
+import FullThingEmbed from "../components/FullThingEmbed";
+import Error from "../components/ErrorMessage";
 
 const SINGLE_THING_QUERY = gql`
    query SINGLE_THING_QUERY($id: ID!) {
@@ -43,6 +43,7 @@ const SINGLE_THING_QUERY = gql`
             node {
                id
                author {
+                  id
                   displayName
                   avatar
                }
@@ -82,9 +83,9 @@ const SingleThing = props => (
          let thingComponent = <FullThingEmbed thing={data.thing} />;
          data.thing.includedLinks.forEach(link => {
             if (
-               link.url.includes("jpg") ||
-               link.url.includes("png") ||
-               link.url.includes("gif")
+               link.url.includes('jpg') ||
+               link.url.includes('png') ||
+               link.url.includes('gif')
             ) {
                thingComponent = <FullThing thing={data.thing} />;
             }

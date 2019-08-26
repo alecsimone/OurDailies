@@ -1,18 +1,20 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Link from 'next/link';
-import VoteBar from './ThingParts/VoteBar';
-import { convertISOtoAgo } from '../lib/utils';
+import React, { Component } from "react";
+import styled from "styled-components";
+import Link from "next/link";
+import VoteBar from "./ThingParts/VoteBar";
+import { convertISOtoAgo } from "../lib/utils";
 
 const StyledLittleThing = styled.article`
    display: flex;
    flex-direction: column;
    justify-content: space-between;
-   max-width: 600px;
-   width: 100%;
+   width: 35rem;
+   min-width: 35rem;
+   flex-grow: 1;
+   /* max-width: 50rem; */
    position: relative;
    padding: 0 1rem;
-   margin-bottom: 4rem;
+   margin: 0 1.5rem 4rem;
    justify-self: center;
    background: hsla(210, 40%, 40%, 0.07);
    border-radius: 2px;
@@ -110,7 +112,7 @@ class LittleThing extends Component {
                <span key={narrative.title}>
                   <Link
                      href={{
-                        pathname: "/narrative",
+                        pathname: '/narrative',
                         query: {
                            id: narrative.id
                         }
@@ -126,7 +128,7 @@ class LittleThing extends Component {
             <span key={narrative.title}>
                <Link
                   href={{
-                     pathname: "/narrative",
+                     pathname: '/narrative',
                      query: {
                         id: narrative.id
                      }
@@ -150,7 +152,7 @@ class LittleThing extends Component {
                <h3>
                   <Link
                      href={{
-                        pathname: '/thing',
+                        pathname: "/thing",
                         query: {
                            id: data.id
                         }
@@ -163,12 +165,12 @@ class LittleThing extends Component {
                   src={
                      data.featuredImage
                         ? data.featuredImage
-                        : '/static/defaultPic.jpg'
+                        : "/static/defaultPic.jpg"
                   }
                />
                <p className="meta">
                   {convertISOtoAgo(data.createdAt)}
-                  {' AGO'}
+                  {" AGO"}
                </p>
             </div>
             {narratives}

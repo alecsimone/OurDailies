@@ -42,7 +42,7 @@ const StyledSummary = styled.div`
          justify-content: space-between;
          margin: 2rem 0;
          span {
-            max-width: calc(100% - 2rem);
+            max-width: calc(100% - 3rem);
          }
          img {
             width: 2rem;
@@ -108,32 +108,39 @@ class Summary extends Component {
       const summaryItems = this.props.summary.map((bullet, index) => (
          <li key={index}>
             <span>- {bullet}</span>
-            <Mutation
-               mutation={REMOVE_SUMMARY_LINE_FROM_THING_MUTATION}
-               variables={{
-                  summaryLine: bullet,
-                  thingID: this.props.thingID
-               }}
-               refetchQueries={[
-                  {
-                     query: SINGLE_THING_QUERY,
-                     variables: { id: this.props.thingID }
-                  }
-               ]}
-            >
-               {(
-                  removeSummaryLineFromThing,
-                  { loading, error, called, data }
-               ) => (
-                  <img
-                     src="/static/red-x.png"
-                     className={loading ? "loading" : ""}
-                     onClick={() => {
-                        removeSummaryLineFromThing();
+            {this.props.member != null &&
+               this.props.member.roles.some(role =>
+                  ["Admin", "Editor", "Moderator"].includes(role)
+               ) && (
+                  <Mutation
+                     mutation={REMOVE_SUMMARY_LINE_FROM_THING_MUTATION}
+                     variables={{
+                        summaryLine: bullet,
+                        thingID: this.props.thingID
                      }}
-                  />
+                     refetchQueries={[
+                        {
+                           query: SINGLE_THING_QUERY,
+                           variables: { id: this.props.thingID }
+                        }
+                     ]}
+                  >
+                     {(
+                        removeSummaryLineFromThing,
+                        { loading, error, called, data }
+                     ) => (
+                        <img
+                           src="/static/red-x.png"
+                           className={loading ? "loading" : ""}
+                           onClick={() => {
+                              removeSummaryLineFromThing().catch(err => {
+                                 alert(err.message);
+                              });
+                           }}
+                        />
+                     )}
+                  </Mutation>
                )}
-            </Mutation>
          </li>
       ));
 
@@ -155,15 +162,22 @@ class Summary extends Component {
                <StyledSummary>
                   <ul>{summaryItems}</ul>
                   <ErrorMessage error={error} />
-                  <textarea
-                     placeholder={loading ? 'Adding...' : '- Add summary line'}
-                     onKeyDown={e =>
-                        this.handleKeyDown(e, addSummaryLineToThing)
-                     }
-                     onChange={this.handleChange}
-                     value={this.state.lineToAdd}
-                     aria-disabled={loading}
-                  />
+                  {this.props.member != null &&
+                     this.props.member.roles.some(role =>
+                        ["Admin", "Editor", "Moderator"].includes(role)
+                     ) && (
+                        <textarea
+                           placeholder={
+                              loading ? "Adding..." : "- Add summary line"
+                           }
+                           onKeyDown={e =>
+                              this.handleKeyDown(e, addSummaryLineToThing)
+                           }
+                           onChange={this.handleChange}
+                           value={this.state.lineToAdd}
+                           aria-disabled={loading}
+                        />
+                     )}
                </StyledSummary>
             )}
          </Mutation>

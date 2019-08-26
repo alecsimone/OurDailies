@@ -1,8 +1,30 @@
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import styled from 'styled-components';
 import Things from '../components/Things';
 import NarrativesBar from '../components/NarrativesBar';
 import Logout from '../components/Logout';
 import Member from '../components/Member';
+
+const ALL_THINGS_QUERY = gql`
+   query ALL_THINGS_QUERY {
+      things(orderBy: createdAt_DESC, first: 5) {
+         id
+         title
+         author {
+            displayName
+         }
+         featuredImage
+         originalSource
+         summary
+         partOfNarratives {
+            id
+            title
+         }
+         createdAt
+      }
+   }
+`;
 
 const DateBar = styled.div`
    position: relative;
@@ -52,13 +74,13 @@ const Home = props => {
    const day = todaysDate.getDate();
    let dayString;
    if (day == '1' || day == '01' || day == '21' || day == '31') {
-      dayString = `${day  }ST`;
+      dayString = `${day}ST`;
    } else if (day == '2' || day == '02' || day == '22') {
-      dayString = `${day  }ND`;
+      dayString = `${day}ND`;
    } else if (day == '3' || day == '03' || day == '23') {
-      dayString = `${day  }RD`;
+      dayString = `${day}RD`;
    } else {
-      dayString = `${day  }TH`;
+      dayString = `${day}TH`;
    }
    const year = todaysDate.getFullYear();
    return (
@@ -69,10 +91,17 @@ const Home = props => {
                {monthString} {dayString}, {year}
             </h2>
          </DateBar>
-         <Things />
+         <Query query={ALL_THINGS_QUERY}>
+            {({ data, error, loading }) => {
+               if (loading) return <p>Loading...</p>;
+               if (error) return <p>Error: {error.message}</p>;
+               return <Things things={data.things} />;
+            }}
+         </Query>
          <Member>{({ data: { me } }) => me && <Logout />}</Member>
       </div>
    );
 };
 
+export { ALL_THINGS_QUERY };
 export default Home;

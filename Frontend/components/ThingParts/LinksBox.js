@@ -102,6 +102,9 @@ const StyledLinksBox = styled.div`
             display: none;
          }
       }
+      .errorMessage {
+         width: 100%;
+      }
    }
 `;
 
@@ -190,7 +193,9 @@ class LinksBox extends Component {
                      {links}
                   </div>
                   <div className="wholeAddLinkForm">
-                     <ErrorMessage error={error} />
+                     <div className="errorMessage">
+                        <ErrorMessage error={error} />
+                     </div>
                      {this.state.showForm && (
                         <form
                            onSubmit={async e => {
@@ -243,18 +248,23 @@ class LinksBox extends Component {
                            <button type="submit">Submit</button>
                         </form>
                      )}
-                     <button
-                        type="button"
-                        onClick={() =>
-                           this.setState({ showForm: !this.state.showForm })
-                        }
-                     >
-                        {this.state.showForm ? (
-                           <img className="x" src="/static/red-x.png" />
-                        ) : (
-                           <img className="plus" src="/static/green-plus.png" />
-                        )}
-                     </button>
+                     {this.props.member != null && (
+                        <button
+                           type="button"
+                           onClick={() =>
+                              this.setState({ showForm: !this.state.showForm })
+                           }
+                        >
+                           {this.state.showForm ? (
+                              <img className="x" src="/static/red-x.png" />
+                           ) : (
+                              <img
+                                 className="plus"
+                                 src="/static/green-plus.png"
+                              />
+                           )}
+                        </button>
+                     )}
                   </div>
                </StyledLinksBox>
             )}

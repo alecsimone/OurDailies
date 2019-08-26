@@ -104,7 +104,9 @@ class NarrativesBox extends Component {
 
    submitNarrative = async addNarrativeToThing => {
       console.log(addNarrativeToThing);
-      const res = await addNarrativeToThing();
+      const res = await addNarrativeToThing().catch(err => {
+         alert(err.message);
+      });
       this.setState({ addNarrative: '' });
    };
 
@@ -181,87 +183,103 @@ class NarrativesBox extends Component {
             {(addNarrativeToThing, { loading, error, called, data }) => (
                <StyledNarratives>
                   <h5 className="narratives">PART OF:</h5> {narrativeLinks}{' '}
-                  <ApolloConsumer>
-                     {client => (
-                        <Downshift
-                           onChange={async item => {
-                              this.setState({
-                                 addNarrative: "",
-                                 loading: true
-                              });
-                              const res = await client.mutate({
-                                 mutation: ADD_NARRATIVE_TO_THING_MUTATION,
-                                 variables: {
-                                    title: item.title,
-                                    thingID: this.props.thingID
-                                 },
-                                 refetchQueries: [
-                                    {
-                                       query: SINGLE_THING_QUERY,
-                                       variables: { id: this.props.thingID }
-                                    }
-                                 ]
-                              });
-                              this.setState({ loading: false });
-                           }}
-                           itemToString={item =>
-                              item === null ? '' : item.title
-                           }
-                        >
-                           {({
-                              getInputProps,
-                              getItemProps,
-                              isOpen,
-                              inputValue,
-                              highlightedIndex
-                           }) => (
-                              <form
-                                 onSubmit={async e => {
-                                    e.preventDefault();
-                                    const res = await addNarrativeToThing();
-                                    this.setState({ addNarrative: '' });
-                                 }}
-                              >
-                                 <input
-                                    {...getInputProps({
-                                       type: 'text',
-                                       id: "addNarrative",
-                                       name: "addNarrative",
-                                       placeholder: this.state.loading
-                                          ? 'Adding...'
-                                          : "+ Add a Narrative",
-                                       value: this.state.addNarrative,
-                                       disabled: this.state.loading,
-                                       onChange: e => {
-                                          e.persist();
-                                          this.handleChange(e, client);
-                                       }
-                                    })}
-                                 />
-                                 {this.state.narratives.length > 0 && isOpen && (
-                                    <div className="autocompleteSuggestions">
-                                       {this.state.narratives.map(
-                                          (item, index) => (
-                                             <div
-                                                className={
-                                                   index === highlightedIndex
-                                                      ? 'autocompleteSuggestionItem highlighted'
-                                                      : 'autoCompleteSuggestionItem'
-                                                }
-                                                {...getItemProps({ item })}
-                                                key={item.title}
-                                             >
-                                                {item.title}
-                                             </div>
-                                          )
+                  {this.props.member != null && (
+                     <ApolloConsumer>
+                        {client => (
+                           <Downshift
+                              onChange={async item => {
+                                 this.setState({
+                                    addNarrative: "",
+                                    loading: true
+                                 });
+                                 const res = await client
+                                    .mutate({
+                                       mutation: ADD_NARRATIVE_TO_THING_MUTATION,
+                                       variables: {
+                                          title: item.title,
+                                          thingID: this.props.thingID
+                                       },
+                                       refetchQueries: [
+                                          {
+                                             query: SINGLE_THING_QUERY,
+                                             variables: {
+                                                id: this.props.thingID
+                                             }
+                                          }
+                                       ]
+                                    })
+                                    .catch(err => {
+                                       alert(err.message);
+                                    });
+                                 this.setState({ loading: false });
+                              }}
+                              itemToString={item =>
+                                 item === null ? '' : item.title
+                              }
+                           >
+                              {({
+                                 getInputProps,
+                                 getItemProps,
+                                 isOpen,
+                                 inputValue,
+                                 highlightedIndex
+                              }) => (
+                                 <form
+                                    onSubmit={async e => {
+                                       e.preventDefault();
+                                       const res = await addNarrativeToThing().catch(
+                                          err => {
+                                             alert(err.message);
+                                          }
+                                       );
+                                       this.setState({ addNarrative: '' });
+                                    }}
+                                 >
+                                    <input
+                                       {...getInputProps({
+                                          type: 'text',
+                                          id: "addNarrative",
+                                          name: "addNarrative",
+                                          placeholder: this.state.loading
+                                             ? 'Adding...'
+                                             : "+ Add a Narrative",
+                                          value: this.state.addNarrative,
+                                          disabled: this.state.loading,
+                                          onChange: e => {
+                                             e.persist();
+                                             this.handleChange(e, client);
+                                          }
+                                       })}
+                                    />
+                                    {this.state.narratives.length > 0 &&
+                                       isOpen && (
+                                          <div className="autocompleteSuggestions">
+                                             {this.state.narratives.map(
+                                                (item, index) => (
+                                                   <div
+                                                      className={
+                                                         index ===
+                                                         highlightedIndex
+                                                            ? 'autocompleteSuggestionItem highlighted'
+                                                            : 'autoCompleteSuggestionItem'
+                                                      }
+                                                      {...getItemProps({
+                                                         item
+                                                      })}
+                                                      key={item.title}
+                                                   >
+                                                      {item.title}
+                                                   </div>
+                                                )
+                                             )}
+                                          </div>
                                        )}
-                                    </div>
-                                 )}
-                              </form>
-                           )}
-                        </Downshift>
-                     )}
-                  </ApolloConsumer>
+                                 </form>
+                              )}
+                           </Downshift>
+                        )}
+                     </ApolloConsumer>
+                  )}
                </StyledNarratives>
             )}
          </Mutation>

@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Link from 'next/link';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import ErrorMessage from '../ErrorMessage';
-import Comment from './Comment';
-import { SINGLE_THING_QUERY } from '../../pages/thing';
+import React, { Component } from "react";
+import styled from "styled-components";
+import Link from "next/link";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import ErrorMessage from "../ErrorMessage";
+import Comment from "./Comment";
+import { SINGLE_THING_QUERY } from "../../pages/thing";
+import MustSignIn from "../MustSignIn";
 
 const ADD_COMMENT_TO_THING_MUTATION = gql`
    mutation ADD_COMMENT_TO_THING_MUTATION($comment: String!, $thingID: ID!) {
@@ -40,18 +41,23 @@ const StyledComments = styled.section`
          transition: height 0.25s;
       }
    }
+   p.logInPrompt {
+      margin: 0;
+   }
 `;
 
 class Comments extends Component {
    state = {
-      commentToAdd: ""
+      commentToAdd: ''
    };
 
    handleKeyDown = (e, addCommentToThing) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+      if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
-         this.setState({ commentToAdd: '' });
-         addCommentToThing();
+         this.setState({ commentToAdd: "" });
+         addCommentToThing().catch(err => {
+            alert(err.message);
+         });
       }
    };
 
@@ -64,6 +70,7 @@ class Comments extends Component {
          <Comment
             data={comment.node}
             thingID={this.props.thingID}
+            member={this.props.member}
             key={comment.node.id}
          />
       ));
@@ -76,29 +83,33 @@ class Comments extends Component {
             ) : (
                <p className="noComments">No Comments Yet</p>
             )}
-            <Mutation
-               mutation={ADD_COMMENT_TO_THING_MUTATION}
-               variables={{
-                  comment: this.state.commentToAdd,
-                  thingID: this.props.thingID
-               }}
-               refetchQueries={[
-                  {
-                     query: SINGLE_THING_QUERY,
-                     variables: { id: this.props.thingID }
-                  }
-               ]}
-            >
-               {(addCommentToThing, { loading, error, called, data }) => (
-                  <textarea
-                     placeholder={loading ? "Adding..." : "Add Comment"}
-                     aria-disabled={loading}
-                     onKeyDown={e => this.handleKeyDown(e, addCommentToThing)}
-                     onChange={this.handleChange}
-                     value={this.state.commentToAdd}
-                  />
-               )}
-            </Mutation>
+            <MustSignIn prompt=" " redirect={false}>
+               <Mutation
+                  mutation={ADD_COMMENT_TO_THING_MUTATION}
+                  variables={{
+                     comment: this.state.commentToAdd,
+                     thingID: this.props.thingID
+                  }}
+                  refetchQueries={[
+                     {
+                        query: SINGLE_THING_QUERY,
+                        variables: { id: this.props.thingID }
+                     }
+                  ]}
+               >
+                  {(addCommentToThing, { loading, error, called, data }) => (
+                     <textarea
+                        placeholder={loading ? 'Adding...' : 'Add Comment'}
+                        aria-disabled={loading}
+                        onKeyDown={e =>
+                           this.handleKeyDown(e, addCommentToThing)
+                        }
+                        onChange={this.handleChange}
+                        value={this.state.commentToAdd}
+                     />
+                  )}
+               </Mutation>
+            </MustSignIn>
          </StyledComments>
       );
    }

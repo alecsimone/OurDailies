@@ -6,6 +6,7 @@ import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import { convertISOtoAgo } from '../lib/utils';
 import Error from "./ErrorMessage";
+import Member from "./Member";
 import VoteBar from "./ThingParts/VoteBar";
 import NarrativesBoxEditable from "./ThingParts/NarrativesBoxEditable";
 import LinksBox from "./ThingParts/LinksBox";
@@ -89,48 +90,57 @@ class FullThing extends Component {
       const { thing } = this.props;
 
       return (
-         <StyledFullThing>
-            <div className="lede">
-               <FeaturedImageCarousel
-                  featuredImage={thing.featuredImage}
-                  includedLinks={thing.includedLinks}
-                  headline={thing.title}
-                  thingID={thing.id}
-                  key={"FeaturedImageCarousel-" + thing.id}
-               />
-            </div>
-            <div className="meta">
-               {convertISOtoAgo(thing.createdAt)}
-               {" AGO "}
-               {thing.author ? (
-                  <div>Submitted by {thing.author.displayName}</div>
-               ) : (
-                  ""
-               )}
-            </div>
-            <Summary
-               summary={thing.summary}
-               thingID={thing.id}
-               key={"Summary-" + thing.id}
-            />
-            <NarrativesBoxEditable
-               partOfNarratives={thing.partOfNarratives}
-               thingID={thing.id}
-               key={"NarrativesBoxEditable-" + thing.id}
-            />
-            <VoteBar key={thing.id} />
-            <LinksBox
-               things={thing.includedThings}
-               links={thing.includedLinks}
-               thingID={thing.id}
-               key={"LinksBox-" + thing.id}
-            />
-            <Comments
-               comments={thing.comments}
-               thingID={thing.id}
-               key={"Comments-" + thing.id}
-            />
-         </StyledFullThing>
+         <Member>
+            {({ data: memberData }) => (
+               <StyledFullThing>
+                  <div className="lede">
+                     <FeaturedImageCarousel
+                        featuredImage={thing.featuredImage}
+                        includedLinks={thing.includedLinks}
+                        headline={thing.title}
+                        thingID={thing.id}
+                        member={memberData.me}
+                        key={"FeaturedImageCarousel-" + thing.id}
+                     />
+                  </div>
+                  <div className="meta">
+                     {convertISOtoAgo(thing.createdAt)}
+                     {" AGO "}
+                     {thing.author ? (
+                        <div>Submitted by {thing.author.displayName}</div>
+                     ) : (
+                        ""
+                     )}
+                  </div>
+                  <Summary
+                     summary={thing.summary}
+                     thingID={thing.id}
+                     member={memberData.me}
+                     key={"Summary-" + thing.id}
+                  />
+                  <NarrativesBoxEditable
+                     partOfNarratives={thing.partOfNarratives}
+                     thingID={thing.id}
+                     member={memberData.me}
+                     key={"NarrativesBoxEditable-" + thing.id}
+                  />
+                  <VoteBar key={thing.id} />
+                  <LinksBox
+                     things={thing.includedThings}
+                     links={thing.includedLinks}
+                     thingID={thing.id}
+                     member={memberData.me}
+                     key={"LinksBox-" + thing.id}
+                  />
+                  <Comments
+                     comments={thing.comments}
+                     thingID={thing.id}
+                     member={memberData.me}
+                     key={"Comments-" + thing.id}
+                  />
+               </StyledFullThing>
+            )}
+         </Member>
       );
    }
 }

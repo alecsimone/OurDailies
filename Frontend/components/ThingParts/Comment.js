@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import ErrorMessage from '../ErrorMessage';
-import { SINGLE_THING_QUERY } from '../../pages/thing';
-import { convertISOtoAgo } from '../../lib/utils';
+import React, { Component } from "react";
+import styled from "styled-components";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import ErrorMessage from "../ErrorMessage";
+import { SINGLE_THING_QUERY } from "../../pages/thing";
+import { convertISOtoAgo } from "../../lib/utils";
 
 const DELETE_COMMENT_MUTATION = gql`
    mutation DELETE_COMMENT_MUTATION($id: ID!) {
@@ -92,16 +92,16 @@ const StyledComment = styled.div`
 class Comment extends Component {
    render() {
       const { data } = this.props;
-      const paragraphsAndEmptyStrings = data.comment.split('\n');
+      const paragraphsAndEmptyStrings = data.comment.split("\n");
       const paragraphs = paragraphsAndEmptyStrings.filter(
-         string => string != ""
+         string => string != ''
       );
       const paragraphElements = paragraphs.map((commentString, index) => (
          <p className="commentParagraph" key={index}>
             {index === 0 ? (
                <span className="commenter">{data.author.displayName}</span>
             ) : (
-               ""
+               ''
             )}
             {commentString}
          </p>
@@ -119,34 +119,42 @@ class Comment extends Component {
                      {paragraphElements}
                   </div>
                </div>
-               <Mutation
-                  mutation={DELETE_COMMENT_MUTATION}
-                  variables={{
-                     id: data.id
-                  }}
-                  refetchQueries={[
-                     {
-                        query: SINGLE_THING_QUERY,
-                        variables: {
-                           id: this.props.thingID
-                        }
-                     }
-                  ]}
-               >
-                  {(deleteComment, { loading, error, called, data }) => (
-                     <img
-                        className={
-                           loading
-                              ? "deleteCommentButton loading"
-                              : "deleteCommentButton"
-                        }
-                        src="/static/red-x.png"
-                        onClick={() => {
-                           deleteComment();
+               {this.props.member != null &&
+                  (data.author.id === this.props.member.id ||
+                     this.props.member.roles.some(role =>
+                        ['Admin', 'Editor', 'Moderator'].includes(role)
+                     )) && (
+                     <Mutation
+                        mutation={DELETE_COMMENT_MUTATION}
+                        variables={{
+                           id: data.id
                         }}
-                     />
+                        refetchQueries={[
+                           {
+                              query: SINGLE_THING_QUERY,
+                              variables: {
+                                 id: this.props.thingID
+                              }
+                           }
+                        ]}
+                     >
+                        {(deleteComment, { loading, error, called, data }) => (
+                           <img
+                              className={
+                                 loading
+                                    ? 'deleteCommentButton loading'
+                                    : 'deleteCommentButton'
+                              }
+                              src="/static/red-x.png"
+                              onClick={() => {
+                                 deleteComment().catch(err => {
+                                    alert(err.message);
+                                 });
+                              }}
+                           />
+                        )}
+                     </Mutation>
                   )}
-               </Mutation>
             </div>
             <div className="commentMeta">{timeAgoString} AGO</div>
          </StyledComment>

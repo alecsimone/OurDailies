@@ -197,30 +197,45 @@ class FeaturedImageCarousel extends Component {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
-                  <Mutation
-                     mutation={SET_FEATURED_IMAGE_MUTATION}
-                     variables={{
-                        imageUrl: currentLink,
-                        thingID: this.props.thingID
-                     }}
-                     refetchQueries={[
-                        {
-                           query: SINGLE_THING_QUERY,
-                           variables: { id: this.props.thingID }
-                        }
-                     ]}
-                  >
-                     {(setFeaturedImage, { loading, error, called, data }) => (
-                        <input
-                           type="checkbox"
-                           checked={currentLink === this.props.featuredImage}
-                           onChange={e => {
-                              e.preventDefault();
-                              this.setFeaturedImageHandler(e, setFeaturedImage);
+                  {this.props.member != null &&
+                     this.props.member.roles.some(role =>
+                        ['Admin', 'Editor', 'Moderator'].includes(role)
+                     ) && (
+                        <Mutation
+                           mutation={SET_FEATURED_IMAGE_MUTATION}
+                           variables={{
+                              imageUrl: currentLink,
+                              thingID: this.props.thingID
                            }}
-                        />
+                           refetchQueries={[
+                              {
+                                 query: SINGLE_THING_QUERY,
+                                 variables: { id: this.props.thingID }
+                              }
+                           ]}
+                        >
+                           {(
+                              setFeaturedImage,
+                              { loading, error, called, data }
+                           ) => (
+                              <input
+                                 type="checkbox"
+                                 checked={
+                                    currentLink === this.props.featuredImage
+                                 }
+                                 onChange={e => {
+                                    e.preventDefault();
+                                    this.setFeaturedImageHandler(
+                                       e,
+                                       setFeaturedImage
+                                    ).catch(err => {
+                                       alert(err.message);
+                                    });
+                                 }}
+                              />
+                           )}
+                        </Mutation>
                      )}
-                  </Mutation>
                   <img src={currentLink} className="featured" />
                </div>
                <h3 className="headline">{this.props.headline}</h3>
