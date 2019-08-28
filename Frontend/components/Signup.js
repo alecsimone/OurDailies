@@ -4,87 +4,95 @@ import gql from 'graphql-tag';
 import styled from 'styled-components';
 import Router from 'next/router';
 import Error from './ErrorMessage.js';
-import {CURRENT_MEMBER_QUERY} from './Member';
+import { CURRENT_MEMBER_QUERY } from './Member';
 
 const SIGNUP_MUTATION = gql`
-    mutation SIGNUP_MUTATION($email: String!, $displayName: String!, $password: String!) {
-        signup(email: $email, displayName: $displayName, password: $password) {
-            id
-            email
-            displayName
-        }
-    }
+   mutation SIGNUP_MUTATION(
+      $email: String!
+      $displayName: String!
+      $password: String!
+   ) {
+      signup(email: $email, displayName: $displayName, password: $password) {
+         id
+         email
+         displayName
+      }
+   }
 `;
 
 class Signup extends Component {
-    state = {
-        displayName: "",
-        password: "",
-        email: "",
-    }
+   state = {
+      displayName: "",
+      password: "",
+      email: ''
+   };
 
-    saveToState = (e) => {
-        this.setState({[e.target.name]: e.target.value});
-    }
-    render() {
-        return (
-            <Mutation 
-                mutation={SIGNUP_MUTATION} 
-                variables={this.state}
-                refetchQueries={[{query: CURRENT_MEMBER_QUERY}]}
-            >
-                {(signup, {error, loading}) => {
-                    return(<form 
-                        method="post" 
-                        onSubmit={async e => {
-                            e.preventDefault();
-                            await signup();
-                            Router.push({
-                                pathname: '/',
-                            });
-                        }
-                    }>
-                        <fieldset disabled={loading} aria-busy={loading}>
-                            <h2>Sign Up</h2>
-                            <Error error={error} />
-                            <label htmlFor="displayName">
-                                Display Name
-                                <input 
-                                    type="text" 
-                                    name="displayName" 
-                                    placeholder="display name" 
-                                    value={this.state.displayName} 
-                                    onChange={this.saveToState} 
-                                    />
-                            </label>
-                            <label htmlFor="email">
-                                Email
-                                <input 
-                                    type="email" 
-                                    name="email" 
-                                    placeholder="email" 
-                                    value={this.state.email} 
-                                    onChange={this.saveToState} 
-                                    />
-                            </label>
-                            <label htmlFor="password">
-                                Password
-                                <input 
-                                type="password" 
-                                name="password" 
-                                placeholder="password" 
-                                value={this.state.password} 
-                                onChange={this.saveToState} 
-                                />
-                            </label>
+   saveToState = e => {
+      this.setState({ [e.target.name]: e.target.value });
+   };
 
-                            <button type="submit">Sign Up</button>
-                        </fieldset> 
-                    </form>)
-                }}
-            </Mutation>
-        );
-    }
+   render() {
+      return (
+         <Mutation
+            mutation={SIGNUP_MUTATION}
+            variables={this.state}
+            refetchQueries={[{ query: CURRENT_MEMBER_QUERY }]}
+         >
+            {(signup, { error, loading }) => (
+               <form
+                  method="post"
+                  onSubmit={async e => {
+                     e.preventDefault();
+                     await signup();
+                     Router.push({
+                        pathname: "/"
+                     });
+                     if (this.props.callBack) {
+                        this.props.callBack();
+                     }
+                  }}
+               >
+                  <fieldset disabled={loading} aria-busy={loading}>
+                     <h2>Sign Up</h2>
+                     <Error error={error} />
+                     <label htmlFor="displayName">
+                        Display Name
+                        <input
+                           type="text"
+                           name="displayName"
+                           placeholder="display name"
+                           value={this.state.displayName}
+                           onChange={this.saveToState}
+                        />
+                     </label>
+                     <label htmlFor="email">
+                        Email
+                        <input
+                           type="email"
+                           name="email"
+                           placeholder="email"
+                           value={this.state.email}
+                           onChange={this.saveToState}
+                        />
+                     </label>
+                     <label htmlFor="password">
+                        Password
+                        <input
+                           type="password"
+                           name="password"
+                           placeholder="password"
+                           value={this.state.password}
+                           onChange={this.saveToState}
+                        />
+                     </label>
+
+                     <button type="submit">Sign Up</button>
+                  </fieldset>
+               </form>
+            )}
+         </Mutation>
+      );
+   }
 }
 
 export default Signup;

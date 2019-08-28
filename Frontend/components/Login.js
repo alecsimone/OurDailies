@@ -44,6 +44,9 @@ class Login extends Component {
                            pathname: '/'
                         });
                      }
+                     if (this.props.callBack) {
+                        this.props.callBack();
+                     }
                   }}
                >
                   <fieldset disabled={loading} aria-busy={loading}>

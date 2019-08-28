@@ -56,6 +56,8 @@ type Query {
   storiesConnection(where: StoryWhereInput!): StoryConnection
   submissionsConnection(where: SubmissionWhereInput!): SubmissionConnection
   me: Member
+  thingsForMostRecentDay: [Thing]!
+  thingsForGivenDay(day: String!): [Thing]!
 }
 
 type Member {

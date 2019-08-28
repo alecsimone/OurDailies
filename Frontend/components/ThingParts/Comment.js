@@ -18,9 +18,10 @@ const StyledComment = styled.div`
    /* max-width: 800px; */
    margin: 0.75rem 0;
    font-size: ${props => props.theme.smallText};
-   line-height: 1.4;
+   font-weight: 400;
+   line-height: 1.25;
    background: ${props => props.theme.veryLowContrastCoolGrey};
-   padding: 0.75em;
+   padding: 1rem;
    border-radius: 3px;
    text-align: left;
    .commentContent {
@@ -83,7 +84,7 @@ const StyledComment = styled.div`
    }
    .commentMeta {
       font-size: ${props => props.theme.tinyText};
-      margin-top: 0.6em;
+      margin-top: 0.5rem;
       color: ${props => props.theme.highContrastGrey};
       opacity: 0.6;
    }
@@ -99,7 +100,9 @@ class Comment extends Component {
       const paragraphElements = paragraphs.map((commentString, index) => (
          <p className="commentParagraph" key={index}>
             {index === 0 ? (
-               <span className="commenter">{data.author.displayName}</span>
+               <span className="commenter">
+                  [{data.author.rep}] {data.author.displayName}
+               </span>
             ) : (
                ''
             )}

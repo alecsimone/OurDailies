@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import Router from 'next/router';
-import styled from 'styled-components';
-import Error from './ErrorMessage.js';
+import React, { Component } from "react";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import Router from "next/router";
+import styled from "styled-components";
+import Error from "./ErrorMessage.js";
 
 const CREATE_THING_MUTATION = gql`
    mutation CREATE_THING_MUTATION(
@@ -60,10 +60,10 @@ const StyledSubmitForm = styled.form`
 
 class SubmitForm extends Component {
    state = {
-      title: '',
-      originalSource: '',
+      title: "",
+      originalSource: "",
       summary: {
-         set: ['']
+         set: [""]
       }
    };
 
@@ -89,11 +89,14 @@ class SubmitForm extends Component {
                      e.preventDefault();
                      const res = await createThing();
                      Router.push({
-                        pathname: '/thing',
+                        pathname: "/thing",
                         query: {
                            id: res.data.createThing.id
                         }
                      });
+                     if (this.props.callBack) {
+                        this.props.callBack();
+                     }
                   }}
                >
                   <h2>Share a Thing</h2>

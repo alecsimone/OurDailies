@@ -1363,6 +1363,7 @@ type Thing {
   includedLinks(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
   includedThings(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Thing!]
   partOfNarratives(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Narrative!]
+  finalistDate: DateTime
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -1382,6 +1383,7 @@ input ThingCreateInput {
   includedLinks: LinkCreateManyInput
   includedThings: ThingCreateManyInput
   partOfNarratives: NarrativeCreateManyInput
+  finalistDate: DateTime
 }
 
 input ThingCreateManyInput {
@@ -1412,6 +1414,8 @@ enum ThingOrderByInput {
   featuredImage_DESC
   originalSource_ASC
   originalSource_DESC
+  finalistDate_ASC
+  finalistDate_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -1424,6 +1428,7 @@ type ThingPreviousValues {
   featuredImage: String
   originalSource: String!
   summary: [String!]!
+  finalistDate: DateTime
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -1455,6 +1460,7 @@ input ThingUpdateDataInput {
   includedLinks: LinkUpdateManyInput
   includedThings: ThingUpdateManyInput
   partOfNarratives: NarrativeUpdateManyInput
+  finalistDate: DateTime
 }
 
 input ThingUpdateInput {
@@ -1466,6 +1472,7 @@ input ThingUpdateInput {
   includedLinks: LinkUpdateManyInput
   includedThings: ThingUpdateManyInput
   partOfNarratives: NarrativeUpdateManyInput
+  finalistDate: DateTime
 }
 
 input ThingUpdateManyInput {
@@ -1573,6 +1580,14 @@ input ThingWhereInput {
   partOfNarratives_every: NarrativeWhereInput
   partOfNarratives_some: NarrativeWhereInput
   partOfNarratives_none: NarrativeWhereInput
+  finalistDate: DateTime
+  finalistDate_not: DateTime
+  finalistDate_in: [DateTime!]
+  finalistDate_not_in: [DateTime!]
+  finalistDate_lt: DateTime
+  finalistDate_lte: DateTime
+  finalistDate_gt: DateTime
+  finalistDate_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

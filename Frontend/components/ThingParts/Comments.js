@@ -83,7 +83,7 @@ class Comments extends Component {
             ) : (
                <p className="noComments">No Comments Yet</p>
             )}
-            <MustSignIn prompt=" " redirect={false}>
+            <MustSignIn prompt=" ">
                <Mutation
                   mutation={ADD_COMMENT_TO_THING_MUTATION}
                   variables={{
