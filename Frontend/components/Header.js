@@ -4,7 +4,7 @@ import styled from "styled-components";
 import LogoBox from "./LogoBox";
 import MemberBox from "./MemberBox";
 import StageBox from "./StageBox";
-import Modal from "./Modal";
+// import Modal from "./Modal";
 
 Router.onRouteChangeStart = () => {
    NProgress.start();
@@ -30,7 +30,6 @@ const Header = () => (
          <StageBox />
          <MemberBox />
       </div>
-      <Modal />
    </StyledHeader>
 );
 

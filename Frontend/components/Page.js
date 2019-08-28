@@ -1,27 +1,27 @@
-import React, { Component } from "react";
-import styled, { ThemeProvider, injectGlobal } from "styled-components";
-import Header from "./Header";
-import Meta from "./Meta";
+import React, { Component } from 'react';
+import styled, { ThemeProvider, injectGlobal } from 'styled-components';
+import Header from './Header';
+import Meta from './Meta';
 
 const theme = {
-   tinyText: "1rem",
-   smallText: "2rem",
-   bigText: "2.5rem",
-   smallHead: "4rem",
-   bigHead: "5rem",
+   tinyText: '1rem',
+   smallText: '2rem',
+   bigText: '2.5rem',
+   smallHead: '4rem',
+   bigHead: '5rem',
 
    // Collective
-   background: "hsl(216, 24%, 5%)",
-   mainText: "hsla(33, 17%, 88%, .9)",
-   majorColor: "hsl(210, 100%, 40%)",
-   primaryAccent: "hsl(120, 100%, 25%)",
-   secondaryAccent: "hsl(42, 79%, 64%)",
-   highContrastSecondaryAccent: "hsl(42, 100%, 100%, .1)",
-   lowContrastGrey: "hsl(30, 10%, 33%)",
-   veryLowContrastGrey: "hsla(30, 10%, 33%, .5)",
-   lowContrastCoolGrey: "hsl(210, 15%, 48%, .6)",
-   veryLowContrastCoolGrey: "hsl(210, 15%, 48%, .1)",
-   highContrastGrey: "hsl(28, 9%, 64%)"
+   background: 'hsl(216, 24%, 5%)',
+   mainText: 'hsla(33, 17%, 88%, .9)',
+   majorColor: 'hsl(210, 100%, 40%)',
+   primaryAccent: 'hsl(120, 100%, 25%)',
+   secondaryAccent: 'hsl(42, 79%, 64%)',
+   highContrastSecondaryAccent: 'hsl(42, 100%, 100%, .1)',
+   lowContrastGrey: 'hsl(30, 10%, 33%)',
+   veryLowContrastGrey: 'hsla(30, 10%, 33%, .5)',
+   lowContrastCoolGrey: 'hsl(210, 15%, 48%, .6)',
+   veryLowContrastCoolGrey: 'hsl(210, 15%, 48%, .1)',
+   highContrastGrey: 'hsl(28, 9%, 64%)'
 
    // Elite
    // background: 'hsl(216, 24%, 4%)',

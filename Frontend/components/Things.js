@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import DayContainer from './DayContainer';
-import Thing from "./Thing";
-import LittleThing from "./LittleThing";
-import TinyThing from "./TinyThing";
+import React, { Component } from 'react';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import DayContainer from "./DayContainer";
+import Thing from './Thing';
+import LittleThing from './LittleThing';
+import TinyThing from './TinyThing';
 
 const THINGS_FOR_GIVEN_DAY_QUERY = gql`
    query THINGS_FOR_GIVEN_DAY_QUERY($day: String!) {
@@ -95,11 +95,15 @@ class Things extends Component {
    };
 
    componentDidMount() {
-      window.addEventListener('scroll', this.handleScroll);
+      window.addEventListener("scroll", this.handleScroll);
    }
 
    handleScroll = e => {
-      const thingContainer = document.getElementById("thingContainer");
+      const thingContainer = document.getElementById('thingContainer');
+      if (thingContainer == null) {
+         window.removeEventListener("scroll", this.handleScroll);
+         return;
+      }
       const thingContainerBottom =
          thingContainer.offsetTop + thingContainer.scrollHeight;
       const windowHeight = window.innerHeight;
@@ -114,7 +118,7 @@ class Things extends Component {
    };
 
    getNextDaysThings = async () => {
-      console.log("Pulling more!");
+      console.log('Pulling more!');
       const { client } = this.props;
       const lastDateQueried = new Date(this.state.lastDayQueried);
       const nextDateToQuery = new Date(
@@ -125,12 +129,12 @@ class Things extends Component {
          variables: { day: nextDateToQuery.toISOString() }
       });
       if (thingsForDay.data.thingsForGivenDay.length === 0) {
-         console.log('We got back an empty array');
+         console.log("We got back an empty array");
          this.setState({
             pullingMore: false,
             noMorePosts: true
          });
-         window.removeEventListener('scroll', this.handleScroll);
+         window.removeEventListener("scroll", this.handleScroll);
          return;
       }
       console.log(thingsForDay.data.thingsForGivenDay.length);
@@ -161,12 +165,12 @@ class Things extends Component {
                   </div>
                </div>
             ) : (
-               ''
+               ""
             )}
             {this.state.noMorePosts ? (
                <p className="nextDayStatus">NO MORE POSTS</p>
             ) : (
-               ''
+               ""
             )}
          </ThingContainer>
       );

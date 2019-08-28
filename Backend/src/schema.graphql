@@ -60,6 +60,10 @@ type Query {
   thingsForGivenDay(day: String!): [Thing]!
 }
 
+type Subscription {
+   thing(where: ThingSubscriptionWhereInput): ThingSubscriptionPayload
+}
+
 type Member {
   id: ID!
   displayName: String!

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Mutation } from 'react-apollo';
+import { Mutation, Subscription } from 'react-apollo';
 import gql from 'graphql-tag';
 import { convertISOtoAgo } from "../lib/utils";
 import Error from './ErrorMessage';
@@ -13,6 +13,37 @@ import LinksBox from './ThingParts/LinksBox';
 import Summary from './ThingParts/Summary';
 import Comments from './ThingParts/Comments';
 import FeaturedImageCarousel from './ThingParts/FeaturedImageCarousel';
+
+const THING_SUBSCRIPTION = gql`
+   subscription THING_SUBSCRIPTION($id: ID!) {
+      thing(where: { node: { id: $id } }) {
+         node {
+            title
+            featuredImage
+            originalSource
+            summary
+            includedLinks {
+               title
+               url
+               id
+            }
+            includedThings {
+               id
+               title
+               originalSource
+               author {
+                  displayName
+               }
+               createdAt
+            }
+            partOfNarratives {
+               id
+               title
+            }
+         }
+      }
+   }
+`;
 
 const StyledFullThing = styled.article`
    position: relative;
@@ -92,53 +123,64 @@ class FullThing extends Component {
       return (
          <Member>
             {({ data: memberData }) => (
-               <StyledFullThing>
-                  <div className="lede">
-                     <FeaturedImageCarousel
-                        featuredImage={thing.featuredImage}
-                        includedLinks={thing.includedLinks}
-                        headline={thing.title}
-                        thingID={thing.id}
-                        member={memberData.me}
-                        key={'FeaturedImageCarousel-' + thing.id}
-                     />
-                  </div>
-                  <div className="meta">
-                     {convertISOtoAgo(thing.createdAt)}
-                     {' AGO '}
-                     {thing.author ? (
-                        <div>Submitted by {thing.author.displayName}</div>
-                     ) : (
-                        ''
-                     )}
-                  </div>
-                  <Summary
-                     summary={thing.summary}
-                     thingID={thing.id}
-                     member={memberData.me}
-                     key={'Summary-' + thing.id}
-                  />
-                  <NarrativesBoxEditable
-                     partOfNarratives={thing.partOfNarratives}
-                     thingID={thing.id}
-                     member={memberData.me}
-                     key={'NarrativesBoxEditable-' + thing.id}
-                  />
-                  <VoteBar key={thing.id} />
-                  <LinksBox
-                     things={thing.includedThings}
-                     links={thing.includedLinks}
-                     thingID={thing.id}
-                     member={memberData.me}
-                     key={'LinksBox-' + thing.id}
-                  />
-                  <Comments
-                     comments={thing.comments}
-                     thingID={thing.id}
-                     member={memberData.me}
-                     key={'Comments-' + thing.id}
-                  />
-               </StyledFullThing>
+               <Subscription
+                  subscription={THING_SUBSCRIPTION}
+                  variables={{ id: 'gibberish' }}
+               >
+                  {({ data: thingUpdates, loading }) =>
+                     console.log(thingUpdates) || (
+                        <StyledFullThing>
+                           <div className="lede">
+                              <FeaturedImageCarousel
+                                 featuredImage={thing.featuredImage}
+                                 includedLinks={thing.includedLinks}
+                                 headline={thing.title}
+                                 thingID={thing.id}
+                                 member={memberData.me}
+                                 key={'FeaturedImageCarousel-' + thing.id}
+                              />
+                           </div>
+                           <div className="meta">
+                              {convertISOtoAgo(thing.createdAt)}
+                              {' AGO '}
+                              {thing.author ? (
+                                 <div>
+                                    Submitted by {thing.author.displayName}
+                                 </div>
+                              ) : (
+                                 ''
+                              )}
+                           </div>
+                           <Summary
+                              summary={thing.summary}
+                              thingID={thing.id}
+                              member={memberData.me}
+                              key={'Summary-' + thing.id}
+                           />
+                           <NarrativesBoxEditable
+                              partOfNarratives={thing.partOfNarratives}
+                              thingID={thing.id}
+                              member={memberData.me}
+                              key={'NarrativesBoxEditable-' + thing.id}
+                           />
+                           <VoteBar key={thing.id} />
+                           <LinksBox
+                              things={thing.includedThings}
+                              links={thing.includedLinks}
+                              thingID={thing.id}
+                              member={memberData.me}
+                              key={'LinksBox-' + thing.id}
+                           />
+                           <Comments
+                              comments={thing.comments}
+                              thingID={thing.id}
+                              member={memberData.me}
+                              key={'Comments-' + thing.id}
+                           />
+                        </StyledFullThing>
+                     )
+                  }
+               </Subscription>
             )}
          </Member>
       );
