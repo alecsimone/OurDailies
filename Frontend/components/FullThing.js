@@ -66,6 +66,22 @@ const StyledFullThing = styled.article`
       margin: 0 0 1.5rem;
       text-align: center;
    }
+   .thingsAndLinks {
+      @media screen and (min-width: 800px) {
+         flex-wrap: nowrap;
+         .things {
+            max-width: 66%;
+            margin: 3rem 0;
+         }
+         .links {
+            max-width: 50%;
+            margin: 3rem 0;
+            ul {
+               padding-left: 4rem;
+            }
+         }
+      }
+   }
 `;
 
 class FullThing extends Component {
@@ -110,6 +126,7 @@ class FullThing extends Component {
             <VoteBar
                key={thing.id}
                voteData={thing.votes}
+               passData={thing.passes}
                thingID={thing.id}
                member={member.me}
             />

@@ -14,6 +14,7 @@ const StyledTinyThing = styled.article`
    background: ${props => props.theme.veryLowContrastCoolGrey};
    padding: 0.75rem 1.25rem;
    border-radius: 0 2px 2px 0;
+   min-width: 30rem;
    max-width: 1000px;
    overflow: hidden;
    overflow-wrap: break-word;

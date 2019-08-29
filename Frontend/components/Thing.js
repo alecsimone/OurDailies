@@ -203,11 +203,8 @@ class Thing extends Component {
                         {({ loading, error, data: voteData }) => (
                            <VoteBar
                               key={data.id}
-                              voteData={
-                                 voteData.votesConnection
-                                    ? voteData.votesConnection.edges
-                                    : []
-                              }
+                              voteData={data.votes}
+                              passData={data.passes}
                               thingID={data.id}
                               member={memberData.me}
                            />

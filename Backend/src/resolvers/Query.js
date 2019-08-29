@@ -9,6 +9,7 @@ const Query = {
    member: forwardTo('db'),
    commentsConnection: forwardTo('db'),
    votesConnection: forwardTo('db'),
+   thingsConnection: forwardTo('db'),
    me(parent, args, ctx, info) {
       if (!ctx.request.memberId) {
          return null;
@@ -70,6 +71,31 @@ const Query = {
          i++;
       }
       return thingsForDay;
+   },
+   async thingsForNew(parent, args, ctx, info) {
+      const thingsForNew = await ctx.db.query.things(
+         {
+            where: {
+               AND: {
+                  votes_none: {
+                     voter: {
+                        id: ctx.request.memberId
+                     }
+                  },
+                  passes_none: {
+                     passer: {
+                        id: ctx.request.memberId
+                     }
+                  },
+                  finalistDate: null
+               }
+            },
+            orderBy: 'createdAt_DESC',
+            first: 3
+         },
+         info
+      );
+      return thingsForNew;
    }
 };
 

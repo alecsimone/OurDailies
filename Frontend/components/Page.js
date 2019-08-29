@@ -23,7 +23,7 @@ const theme = {
    veryLowContrastGrey: 'hsla(30, 10%, 33%, .5)',
    lowContrastCoolGrey: 'hsl(210, 15%, 48%, .6)',
    veryLowContrastCoolGrey: 'hsl(210, 15%, 48%, .1)',
-   highContrastGrey: 'hsl(28, 9%, 64%)'
+   highContrastGrey: 'hsl(28, 9%, 64%, .9)'
 
    // Elite
    // background: 'hsl(216, 24%, 4%)',

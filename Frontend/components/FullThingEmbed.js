@@ -21,9 +21,19 @@ const StyledFullThing = styled.article`
    max-height: 90vh;
    .embed {
       width: 67%;
+      position: relative;
       iframe {
          width: 100%;
          height: 100%;
+         z-index: 2;
+      }
+      .warning {
+         position: absolute;
+         top: 0;
+         width: 80%;
+         left: 10%;
+         top: 40%;
+         z-index: -1;
       }
    }
    .thingInfo {
@@ -33,7 +43,7 @@ const StyledFullThing = styled.article`
       border-radius: 0 3px 3px 0;
       border-left: 3px solid ${props => props.theme.background};
       overflow: auto;
-      h3 {
+      h3.headline {
          margin: 0;
          font-size: ${props => props.theme.smallHead};
       }
@@ -48,6 +58,11 @@ const StyledFullThing = styled.article`
          padding-bottom: 1rem;
          border-bottom: 1px solid ${props => props.theme.lowContrastCoolGrey};
       }
+      .metaContainer p.meta {
+         border: none;
+         padding: 0;
+         margin: 0;
+      }
    }
 `;
 
@@ -59,10 +74,16 @@ class FullThingEmbed extends Component {
          <StyledFullThing>
             <div className="embed">
                <iframe src={thing.originalSource} frameBorder="0" />
+               <div className="warning">
+                  Many news sites do not allow their content to be embedded. If
+                  you're seeing a big black box here, that's probably what's
+                  happening. You can click the title over on the right and go
+                  straight to the content. Sorry about that.
+               </div>
             </div>
             <div className="thingInfo">
                <div className="lede" />
-               <h3>{thing.title}</h3>
+               <h3 className="headline">{thing.title}</h3>
                <div className="meta">
                   {convertISOtoAgo(thing.createdAt)}
                   {" AGO "}
@@ -87,6 +108,7 @@ class FullThingEmbed extends Component {
                <VoteBar
                   key={thing.id}
                   voteData={thing.votes}
+                  passData={thing.passes}
                   thingID={thing.id}
                   member={member.me}
                />

@@ -29,6 +29,13 @@ const StyledDayContainer = styled.div`
          z-index: -1;
       }
    }
+   .littleThings {
+      margin-top: 4rem;
+      display: flex;
+      align-items: stretch;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+   }
 `;
 
 const DayContainer = props => {
@@ -62,8 +69,10 @@ const DayContainer = props => {
    }
    const year = date.getFullYear();
 
-   const windowWidth = window.innerWidth;
-   console.log(windowWidth);
+   let windowWidth = 800;
+   try {
+      windowWidth = window.innerWidth;
+   } catch (windowError) {}
 
    const littleThingsArray = [];
    props.things.forEach((thing, index) => {

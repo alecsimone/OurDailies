@@ -19,6 +19,8 @@ const StyledMemberBox = styled.div`
    }
    img {
       width: 6rem;
+      height: 6rem;
+      object-fit: cover;
       border-radius: 50%;
       margin-left: 3rem;
    }

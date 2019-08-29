@@ -15,7 +15,7 @@ const StyledLittleThing = styled.article`
    width: 35rem;
    min-width: 35rem;
    flex-grow: 1;
-   /* max-width: 50rem; */
+   max-width: 60rem;
    position: relative;
    padding: 0 1rem;
    margin: 0 1.5rem 4rem;
@@ -185,11 +185,8 @@ class LittleThing extends Component {
                         {({ loading, error, data: voteData }) => (
                            <VoteBar
                               key={data.id}
-                              voteData={
-                                 voteData.votesConnection
-                                    ? voteData.votesConnection.edges
-                                    : []
-                              }
+                              voteData={data.votes}
+                              passData={data.passes}
                               thingID={data.id}
                               member={memberData.me}
                            />

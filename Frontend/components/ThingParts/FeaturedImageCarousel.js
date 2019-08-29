@@ -16,15 +16,12 @@ const SET_FEATURED_IMAGE_MUTATION = gql`
 
 const FeaturedImageContainer = styled.div`
    position: relative;
-   @media screen and (min-width: 800px) {
-      overflow: hidden;
-      max-width: calc(1440px - 4rem);
-      padding-bottom: 56.25%;
-      height: 0;
-   }
+   max-width: calc(1440px - 4rem);
    .featuredImageWrapper {
+      height: 100%;
       background: ${props => props.theme.background};
       position: relative;
+      height: 100%;
       input {
          position: absolute;
          right: 0;
@@ -49,6 +46,9 @@ const FeaturedImageContainer = styled.div`
    }
    img.featured {
       width: 100%;
+      height: 100%;
+      max-height: 800px;
+      object-fit: contain;
       z-index: -1;
    }
    button {
@@ -225,9 +225,7 @@ class FeaturedImageCarousel extends Component {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
-                  {leftButton}
                   <img src="/static/defaultPic.jpg" className="featured" />
-                  {rightButton}
                </div>
                <h3 className="headline">
                   <a
@@ -248,7 +246,6 @@ class FeaturedImageCarousel extends Component {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
-                  {leftButton}
                   {this.props.member != null &&
                      this.props.member.roles.some(role =>
                         ['Admin', 'Editor', 'Moderator'].includes(role)
@@ -287,7 +284,6 @@ class FeaturedImageCarousel extends Component {
                         </Mutation>
                      )}
                   <img src={currentLink} className="featured" />
-                  {rightButton}
                </div>
                <h3 className="headline">
                   <a
@@ -308,14 +304,12 @@ class FeaturedImageCarousel extends Component {
          featuredImage = (
             <>
                <div className="embed-container">
-                  {leftButton}
                   <iframe
                      src={`https://www.youtube.com/embed/${videoID}?autoplay=0&loop=1&playlist=${videoID}`}
                      frameBorder="0"
                      scrolling="no"
                      allowFullScreen
                   />
-                  {rightButton}
                </div>
                <h3 className="headline video">
                   <a
@@ -330,7 +324,13 @@ class FeaturedImageCarousel extends Component {
          );
       }
 
-      return <FeaturedImageContainer>{featuredImage}</FeaturedImageContainer>;
+      return (
+         <FeaturedImageContainer>
+            {leftButton}
+            {featuredImage}
+            {rightButton}
+         </FeaturedImageContainer>
+      );
    }
 }
 

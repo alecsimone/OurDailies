@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Mutation } from 'react-apollo';
-import gql from "graphql-tag";
-import ErrorMessage from '../ErrorMessage';
-import { SINGLE_THING_QUERY } from '../../pages/thing';
-import TinyThing from "../TinyThing";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Mutation } from "react-apollo";
+import gql from 'graphql-tag';
+import ErrorMessage from "../ErrorMessage";
+import { SINGLE_THING_QUERY } from "../../pages/thing";
+import TinyThing from '../TinyThing';
 
 const ADD_LINK_TO_THING_MUTATION = gql`
    mutation ADD_LINK_TO_THING_MUTATION(
@@ -22,28 +22,21 @@ const StyledLinksBox = styled.div`
    .thingsAndLinks {
       display: flex;
       flex-wrap: wrap;
-      @media screen and (min-width: 800px) {
-         flex-wrap: nowrap;
-      }
+      margin: 3rem 0;
    }
    .things {
-      margin: 3rem 0;
       flex-grow: 3;
-      @media screen and (min-width: 800px) {
-         max-width: 66%;
-      }
       article {
          margin-bottom: 1rem;
       }
    }
    .links {
-      margin: 3rem 0;
       flex-grow: 1;
-      @media screen and (min-width: 800px) {
-         max-width: 50%;
-      }
+      min-width: 20rem;
+      text-align: left;
       ul {
          margin: 0;
+         padding: 0;
          list-style-type: none;
          li {
             margin-bottom: 0.5rem;
@@ -120,8 +113,8 @@ const StyledLinksBox = styled.div`
 class LinksBox extends Component {
    state = {
       showForm: false,
-      linkTitle: "",
-      linkURL: "",
+      linkTitle: '',
+      linkURL: '',
       loading: false
    };
 
@@ -196,7 +189,7 @@ class LinksBox extends Component {
             ]}
          >
             {(addLinkToThing, { loading, error, called, data }) => (
-               <StyledLinksBox>
+               <StyledLinksBox className="linksBox">
                   <div className="thingsAndLinks">
                      {things}
                      {links}
@@ -210,23 +203,23 @@ class LinksBox extends Component {
                            onSubmit={async e => {
                               e.preventDefault();
                               if (
-                                 this.state.linkTitle == '' &&
+                                 this.state.linkTitle == "" &&
                                  !this.state.linkURL.includes(
-                                    'localhost:7777/thing?id='
+                                    "localhost:7777/thing?id="
                                  )
                               ) {
-                                 alert('You need to give that link a  title');
+                                 alert("You need to give that link a  title");
                                  return;
                               }
-                              if (this.state.linkURL == '') {
+                              if (this.state.linkURL == "") {
                                  alert("You didn't give a URL, dummy");
                                  return;
                               }
                               this.setState({ loading: true });
                               const res = await addLinkToThing();
                               this.setState({
-                                 linkTitle: "",
-                                 linkURL: "",
+                                 linkTitle: '',
+                                 linkURL: '',
                                  loading: false
                               });
                            }}

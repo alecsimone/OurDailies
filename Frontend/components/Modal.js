@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Query, Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import Signup from './Signup';
-import Login from './Login';
-import SubmitForm from './SubmitForm';
-import MustSignIn from './MustSignIn';
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Query, Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import Signup from "./Signup";
+import Login from "./Login";
+import SubmitForm from "./SubmitForm";
+import MustSignIn from "./MustSignIn";
 
 const LOCAL_STATE_QUERY = gql`
    query {
@@ -21,7 +21,7 @@ const TOGGLE_MODAL_MUTATION = gql`
 `;
 
 const StyledModal = styled.div`
-   display: ${props => (props.open ? 'block' : 'none')};
+   display: ${props => (props.open ? "block" : "none")};
    background: ${props => props.theme.lowContrastCoolGrey};
    position: fixed;
    left: 0;
@@ -37,6 +37,11 @@ const StyledModal = styled.div`
       left: 25%;
       top: 25%;
       text-align: center;
+      border-radius: 4px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       button.closeModal {
          border: none;
          font-size: ${props => props.theme.smallHead};
@@ -63,22 +68,22 @@ class Modal extends Component {
                            className="modalContent"
                            onClick={e => e.stopPropagation()}
                         >
-                           {data.modalContent === 'Signup' ? (
+                           {data.modalContent === "Signup" ? (
                               <Signup callBack={toggleModal} />
                            ) : (
-                              ''
+                              ""
                            )}
-                           {data.modalContent === 'Login' ? (
+                           {data.modalContent === "Login" ? (
                               <Login callBack={toggleModal} redirect={false} />
                            ) : (
-                              ''
+                              ""
                            )}
-                           {data.modalContent === 'Submit' ? (
+                           {data.modalContent === "Submit" ? (
                               <MustSignIn>
                                  <SubmitForm callBack={toggleModal} />
                               </MustSignIn>
                            ) : (
-                              ""
+                              ''
                            )}
                            <button className="closeModal" onClick={toggleModal}>
                               &times;

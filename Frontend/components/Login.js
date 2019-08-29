@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Router from "next/router";
 import Error from "./ErrorMessage";
 import { CURRENT_MEMBER_QUERY } from "./Member";
+import { StyledModal } from "../styles/ModalStyles";
 
 const LOGIN_MUTATION = gql`
    mutation LOGIN_MUTATION($email: String!, $password: String!) {
@@ -34,7 +35,7 @@ class Login extends Component {
             refetchQueries={[{ query: CURRENT_MEMBER_QUERY }]}
          >
             {(login, { error, loading }) => (
-               <form
+               <StyledModal
                   method="post"
                   onSubmit={async e => {
                      e.preventDefault();
@@ -50,24 +51,21 @@ class Login extends Component {
                   }}
                >
                   <fieldset disabled={loading} aria-busy={loading}>
-                     <h2>Log In</h2>
                      <Error error={error} />
                      <label htmlFor="email">
-                        Email
                         <input
                            type="email"
                            name="email"
-                           placeholder="email"
+                           placeholder="Email"
                            value={this.state.email}
                            onChange={this.saveToState}
                         />
                      </label>
                      <label htmlFor="password">
-                        Password
                         <input
                            type="password"
                            name="password"
-                           placeholder="password"
+                           placeholder="Password"
                            value={this.state.password}
                            onChange={this.saveToState}
                         />
@@ -75,7 +73,7 @@ class Login extends Component {
 
                      <button type="submit">Log In</button>
                   </fieldset>
-               </form>
+               </StyledModal>
             )}
          </Mutation>
       );

@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
-import styled from 'styled-components';
-import DayContainer from "./DayContainer";
-import Thing from './Thing';
-import LittleThing from './LittleThing';
-import TinyThing from './TinyThing';
+import React, { Component } from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import styled from "styled-components";
+import DayContainer from './DayContainer';
+import Thing from "./Thing";
+import LittleThing from "./LittleThing";
+import TinyThing from "./TinyThing";
 
 const THINGS_FOR_GIVEN_DAY_QUERY = gql`
    query THINGS_FOR_GIVEN_DAY_QUERY($day: String!) {
@@ -23,6 +23,23 @@ const THINGS_FOR_GIVEN_DAY_QUERY = gql`
             title
          }
          finalistDate
+         votes {
+            voter {
+               id
+               displayName
+               avatar
+               roles
+            }
+            value
+         }
+         passes {
+            passer {
+               id
+               displayName
+               avatar
+               roles
+            }
+         }
          createdAt
       }
    }
@@ -34,13 +51,6 @@ const ThingContainer = styled.div`
       width: 96%;
    }
    margin: auto;
-   .littleThings {
-      margin-top: 4rem;
-      display: flex;
-      align-items: stretch;
-      flex-wrap: wrap;
-      justify-content: space-around;
-   }
    p.nextDayStatus {
       text-align: center;
       font-size: ${props => props.theme.smallHead};
@@ -98,13 +108,13 @@ class Things extends Component {
    };
 
    componentDidMount() {
-      window.addEventListener("scroll", this.handleScroll);
+      window.addEventListener('scroll', this.handleScroll);
    }
 
    handleScroll = e => {
-      const thingContainer = document.getElementById('thingContainer');
+      const thingContainer = document.getElementById("thingContainer");
       if (thingContainer == null) {
-         window.removeEventListener("scroll", this.handleScroll);
+         window.removeEventListener('scroll', this.handleScroll);
          return;
       }
       const thingContainerBottom =
@@ -121,7 +131,7 @@ class Things extends Component {
    };
 
    getNextDaysThings = async () => {
-      console.log('Pulling more!');
+      console.log("Pulling more!");
       const { client } = this.props;
       const lastDateQueried = new Date(this.state.lastDayQueried);
       const nextDateToQuery = new Date(
@@ -136,7 +146,7 @@ class Things extends Component {
             pullingMore: false,
             noMorePosts: true
          });
-         window.removeEventListener("scroll", this.handleScroll);
+         window.removeEventListener('scroll', this.handleScroll);
          return;
       }
       const { thingDays } = this.state;
@@ -166,12 +176,12 @@ class Things extends Component {
                   </div>
                </div>
             ) : (
-               ""
+               ''
             )}
             {this.state.noMorePosts ? (
                <p className="nextDayStatus">NO MORE POSTS</p>
             ) : (
-               ""
+               ''
             )}
          </ThingContainer>
       );

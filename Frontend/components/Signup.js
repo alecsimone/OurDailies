@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import styled from 'styled-components';
-import Router from 'next/router';
-import Error from './ErrorMessage.js';
-import { CURRENT_MEMBER_QUERY } from './Member';
+import React, { Component } from "react";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import styled from "styled-components";
+import Router from "next/router";
+import Error from "./ErrorMessage.js";
+import { CURRENT_MEMBER_QUERY } from "./Member";
+import { StyledModal } from '../styles/ModalStyles';
 
 const SIGNUP_MUTATION = gql`
    mutation SIGNUP_MUTATION(
@@ -22,9 +23,9 @@ const SIGNUP_MUTATION = gql`
 
 class Signup extends Component {
    state = {
-      displayName: "",
-      password: "",
-      email: ''
+      displayName: '',
+      password: '',
+      email: ""
    };
 
    saveToState = e => {
@@ -39,13 +40,13 @@ class Signup extends Component {
             refetchQueries={[{ query: CURRENT_MEMBER_QUERY }]}
          >
             {(signup, { error, loading }) => (
-               <form
+               <StyledModal
                   method="post"
                   onSubmit={async e => {
                      e.preventDefault();
                      await signup();
                      Router.push({
-                        pathname: "/"
+                        pathname: '/'
                      });
                      if (this.props.callBack) {
                         this.props.callBack();
@@ -53,34 +54,30 @@ class Signup extends Component {
                   }}
                >
                   <fieldset disabled={loading} aria-busy={loading}>
-                     <h2>Sign Up</h2>
                      <Error error={error} />
                      <label htmlFor="displayName">
-                        Display Name
                         <input
                            type="text"
                            name="displayName"
-                           placeholder="display name"
+                           placeholder="Display Name"
                            value={this.state.displayName}
                            onChange={this.saveToState}
                         />
                      </label>
                      <label htmlFor="email">
-                        Email
                         <input
                            type="email"
                            name="email"
-                           placeholder="email"
+                           placeholder="Email"
                            value={this.state.email}
                            onChange={this.saveToState}
                         />
                      </label>
                      <label htmlFor="password">
-                        Password
                         <input
                            type="password"
                            name="password"
-                           placeholder="password"
+                           placeholder="Password"
                            value={this.state.password}
                            onChange={this.saveToState}
                         />
@@ -88,7 +85,7 @@ class Signup extends Component {
 
                      <button type="submit">Sign Up</button>
                   </fieldset>
-               </form>
+               </StyledModal>
             )}
          </Mutation>
       );

@@ -14,11 +14,7 @@ type AggregateNarrative {
   count: Int!
 }
 
-type AggregateStory {
-  count: Int!
-}
-
-type AggregateSubmission {
+type AggregatePass {
   count: Int!
 }
 
@@ -40,8 +36,6 @@ type Comment {
   comment: String!
   createdAt: DateTime!
   updatedAt: DateTime
-  onSubmission: Submission
-  onStory: Story
   onThing: Thing
   onLink: Link
   onComment: Comment
@@ -54,18 +48,40 @@ type CommentConnection {
 }
 
 input CommentCreateInput {
-  author: MemberCreateOneInput!
+  author: MemberCreateOneWithoutCommentsInput!
   comment: String!
-  onSubmission: SubmissionCreateOneInput
-  onStory: StoryCreateOneInput
-  onThing: ThingCreateOneInput
+  onThing: ThingCreateOneWithoutCommentsInput
   onLink: LinkCreateOneInput
   onComment: CommentCreateOneInput
+}
+
+input CommentCreateManyWithoutAuthorInput {
+  create: [CommentCreateWithoutAuthorInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CommentCreateManyWithoutOnThingInput {
+  create: [CommentCreateWithoutOnThingInput!]
+  connect: [CommentWhereUniqueInput!]
 }
 
 input CommentCreateOneInput {
   create: CommentCreateInput
   connect: CommentWhereUniqueInput
+}
+
+input CommentCreateWithoutAuthorInput {
+  comment: String!
+  onThing: ThingCreateOneWithoutCommentsInput
+  onLink: LinkCreateOneInput
+  onComment: CommentCreateOneInput
+}
+
+input CommentCreateWithoutOnThingInput {
+  author: MemberCreateOneWithoutCommentsInput!
+  comment: String!
+  onLink: LinkCreateOneInput
+  onComment: CommentCreateOneInput
 }
 
 type CommentEdge {
@@ -110,23 +126,37 @@ input CommentSubscriptionWhereInput {
 }
 
 input CommentUpdateDataInput {
-  author: MemberUpdateOneRequiredInput
+  author: MemberUpdateOneRequiredWithoutCommentsInput
   comment: String
-  onSubmission: SubmissionUpdateOneInput
-  onStory: StoryUpdateOneInput
-  onThing: ThingUpdateOneInput
+  onThing: ThingUpdateOneWithoutCommentsInput
   onLink: LinkUpdateOneInput
   onComment: CommentUpdateOneInput
 }
 
 input CommentUpdateInput {
-  author: MemberUpdateOneRequiredInput
+  author: MemberUpdateOneRequiredWithoutCommentsInput
   comment: String
-  onSubmission: SubmissionUpdateOneInput
-  onStory: StoryUpdateOneInput
-  onThing: ThingUpdateOneInput
+  onThing: ThingUpdateOneWithoutCommentsInput
   onLink: LinkUpdateOneInput
   onComment: CommentUpdateOneInput
+}
+
+input CommentUpdateManyWithoutAuthorInput {
+  create: [CommentCreateWithoutAuthorInput!]
+  delete: [CommentWhereUniqueInput!]
+  connect: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutAuthorInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input CommentUpdateManyWithoutOnThingInput {
+  create: [CommentCreateWithoutOnThingInput!]
+  delete: [CommentWhereUniqueInput!]
+  connect: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutOnThingInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutOnThingInput!]
 }
 
 input CommentUpdateOneInput {
@@ -138,9 +168,45 @@ input CommentUpdateOneInput {
   connect: CommentWhereUniqueInput
 }
 
+input CommentUpdateWithoutAuthorDataInput {
+  comment: String
+  onThing: ThingUpdateOneWithoutCommentsInput
+  onLink: LinkUpdateOneInput
+  onComment: CommentUpdateOneInput
+}
+
+input CommentUpdateWithoutOnThingDataInput {
+  author: MemberUpdateOneRequiredWithoutCommentsInput
+  comment: String
+  onLink: LinkUpdateOneInput
+  onComment: CommentUpdateOneInput
+}
+
+input CommentUpdateWithWhereUniqueWithoutAuthorInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateWithoutAuthorDataInput!
+}
+
+input CommentUpdateWithWhereUniqueWithoutOnThingInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateWithoutOnThingDataInput!
+}
+
 input CommentUpsertNestedInput {
   update: CommentUpdateDataInput!
   create: CommentCreateInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutAuthorInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutAuthorDataInput!
+  create: CommentCreateWithoutAuthorInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutOnThingInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutOnThingDataInput!
+  create: CommentCreateWithoutOnThingInput!
 }
 
 input CommentWhereInput {
@@ -189,8 +255,6 @@ input CommentWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  onSubmission: SubmissionWhereInput
-  onStory: StoryWhereInput
   onThing: ThingWhereInput
   onLink: LinkWhereInput
   onComment: CommentWhereInput
@@ -209,6 +273,7 @@ type Link {
   id: ID!
   title: String!
   url: String!
+  onThing: Thing
 }
 
 type LinkConnection {
@@ -220,16 +285,22 @@ type LinkConnection {
 input LinkCreateInput {
   title: String!
   url: String!
+  onThing: ThingCreateOneWithoutIncludedLinksInput
 }
 
-input LinkCreateManyInput {
-  create: [LinkCreateInput!]
+input LinkCreateManyWithoutOnThingInput {
+  create: [LinkCreateWithoutOnThingInput!]
   connect: [LinkWhereUniqueInput!]
 }
 
 input LinkCreateOneInput {
   create: LinkCreateInput
   connect: LinkWhereUniqueInput
+}
+
+input LinkCreateWithoutOnThingInput {
+  title: String!
+  url: String!
 }
 
 type LinkEdge {
@@ -277,20 +348,22 @@ input LinkSubscriptionWhereInput {
 input LinkUpdateDataInput {
   title: String
   url: String
+  onThing: ThingUpdateOneWithoutIncludedLinksInput
 }
 
 input LinkUpdateInput {
   title: String
   url: String
+  onThing: ThingUpdateOneWithoutIncludedLinksInput
 }
 
-input LinkUpdateManyInput {
-  create: [LinkCreateInput!]
+input LinkUpdateManyWithoutOnThingInput {
+  create: [LinkCreateWithoutOnThingInput!]
   delete: [LinkWhereUniqueInput!]
   connect: [LinkWhereUniqueInput!]
   disconnect: [LinkWhereUniqueInput!]
-  update: [LinkUpdateWithWhereUniqueNestedInput!]
-  upsert: [LinkUpsertWithWhereUniqueNestedInput!]
+  update: [LinkUpdateWithWhereUniqueWithoutOnThingInput!]
+  upsert: [LinkUpsertWithWhereUniqueWithoutOnThingInput!]
 }
 
 input LinkUpdateOneInput {
@@ -302,9 +375,14 @@ input LinkUpdateOneInput {
   connect: LinkWhereUniqueInput
 }
 
-input LinkUpdateWithWhereUniqueNestedInput {
+input LinkUpdateWithoutOnThingDataInput {
+  title: String
+  url: String
+}
+
+input LinkUpdateWithWhereUniqueWithoutOnThingInput {
   where: LinkWhereUniqueInput!
-  data: LinkUpdateDataInput!
+  data: LinkUpdateWithoutOnThingDataInput!
 }
 
 input LinkUpsertNestedInput {
@@ -312,10 +390,10 @@ input LinkUpsertNestedInput {
   create: LinkCreateInput!
 }
 
-input LinkUpsertWithWhereUniqueNestedInput {
+input LinkUpsertWithWhereUniqueWithoutOnThingInput {
   where: LinkWhereUniqueInput!
-  update: LinkUpdateDataInput!
-  create: LinkCreateInput!
+  update: LinkUpdateWithoutOnThingDataInput!
+  create: LinkCreateWithoutOnThingInput!
 }
 
 input LinkWhereInput {
@@ -361,6 +439,7 @@ input LinkWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
+  onThing: ThingWhereInput
   AND: [LinkWhereInput!]
   OR: [LinkWhereInput!]
   NOT: [LinkWhereInput!]
@@ -382,6 +461,10 @@ type Member {
   giveableRep: Int!
   twitchName: String
   email: String!
+  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  passes(where: PassWhereInput, orderBy: PassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Pass!]
+  submissions(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Thing!]
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   password: String!
   roles: [Role!]!
   resetToken: String
@@ -404,19 +487,110 @@ input MemberCreateInput {
   giveableRep: Int
   twitchName: String
   email: String!
+  votes: VoteCreateManyWithoutVoterInput
+  passes: PassCreateManyWithoutPasserInput
+  submissions: ThingCreateManyWithoutAuthorInput
+  comments: CommentCreateManyWithoutAuthorInput
   password: String!
   roles: MemberCreaterolesInput
   resetToken: String
   resetTokenExpiry: Float
 }
 
-input MemberCreateOneInput {
-  create: MemberCreateInput
+input MemberCreateOneWithoutCommentsInput {
+  create: MemberCreateWithoutCommentsInput
+  connect: MemberWhereUniqueInput
+}
+
+input MemberCreateOneWithoutPassesInput {
+  create: MemberCreateWithoutPassesInput
+  connect: MemberWhereUniqueInput
+}
+
+input MemberCreateOneWithoutSubmissionsInput {
+  create: MemberCreateWithoutSubmissionsInput
+  connect: MemberWhereUniqueInput
+}
+
+input MemberCreateOneWithoutVotesInput {
+  create: MemberCreateWithoutVotesInput
   connect: MemberWhereUniqueInput
 }
 
 input MemberCreaterolesInput {
   set: [Role!]
+}
+
+input MemberCreateWithoutCommentsInput {
+  displayName: String!
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String!
+  votes: VoteCreateManyWithoutVoterInput
+  passes: PassCreateManyWithoutPasserInput
+  submissions: ThingCreateManyWithoutAuthorInput
+  password: String!
+  roles: MemberCreaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
+}
+
+input MemberCreateWithoutPassesInput {
+  displayName: String!
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String!
+  votes: VoteCreateManyWithoutVoterInput
+  submissions: ThingCreateManyWithoutAuthorInput
+  comments: CommentCreateManyWithoutAuthorInput
+  password: String!
+  roles: MemberCreaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
+}
+
+input MemberCreateWithoutSubmissionsInput {
+  displayName: String!
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String!
+  votes: VoteCreateManyWithoutVoterInput
+  passes: PassCreateManyWithoutPasserInput
+  comments: CommentCreateManyWithoutAuthorInput
+  password: String!
+  roles: MemberCreaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
+}
+
+input MemberCreateWithoutVotesInput {
+  displayName: String!
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String!
+  passes: PassCreateManyWithoutPasserInput
+  submissions: ThingCreateManyWithoutAuthorInput
+  comments: CommentCreateManyWithoutAuthorInput
+  password: String!
+  roles: MemberCreaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
 }
 
 type MemberEdge {
@@ -490,21 +664,6 @@ input MemberSubscriptionWhereInput {
   NOT: [MemberSubscriptionWhereInput!]
 }
 
-input MemberUpdateDataInput {
-  displayName: String
-  name: String
-  avatar: String
-  rep: Int
-  points: Int
-  giveableRep: Int
-  twitchName: String
-  email: String
-  password: String
-  roles: MemberUpdaterolesInput
-  resetToken: String
-  resetTokenExpiry: Float
-}
-
 input MemberUpdateInput {
   displayName: String
   name: String
@@ -514,16 +673,41 @@ input MemberUpdateInput {
   giveableRep: Int
   twitchName: String
   email: String
+  votes: VoteUpdateManyWithoutVoterInput
+  passes: PassUpdateManyWithoutPasserInput
+  submissions: ThingUpdateManyWithoutAuthorInput
+  comments: CommentUpdateManyWithoutAuthorInput
   password: String
   roles: MemberUpdaterolesInput
   resetToken: String
   resetTokenExpiry: Float
 }
 
-input MemberUpdateOneRequiredInput {
-  create: MemberCreateInput
-  update: MemberUpdateDataInput
-  upsert: MemberUpsertNestedInput
+input MemberUpdateOneRequiredWithoutCommentsInput {
+  create: MemberCreateWithoutCommentsInput
+  update: MemberUpdateWithoutCommentsDataInput
+  upsert: MemberUpsertWithoutCommentsInput
+  connect: MemberWhereUniqueInput
+}
+
+input MemberUpdateOneRequiredWithoutPassesInput {
+  create: MemberCreateWithoutPassesInput
+  update: MemberUpdateWithoutPassesDataInput
+  upsert: MemberUpsertWithoutPassesInput
+  connect: MemberWhereUniqueInput
+}
+
+input MemberUpdateOneRequiredWithoutSubmissionsInput {
+  create: MemberCreateWithoutSubmissionsInput
+  update: MemberUpdateWithoutSubmissionsDataInput
+  upsert: MemberUpsertWithoutSubmissionsInput
+  connect: MemberWhereUniqueInput
+}
+
+input MemberUpdateOneRequiredWithoutVotesInput {
+  create: MemberCreateWithoutVotesInput
+  update: MemberUpdateWithoutVotesDataInput
+  upsert: MemberUpsertWithoutVotesInput
   connect: MemberWhereUniqueInput
 }
 
@@ -531,9 +715,96 @@ input MemberUpdaterolesInput {
   set: [Role!]
 }
 
-input MemberUpsertNestedInput {
-  update: MemberUpdateDataInput!
-  create: MemberCreateInput!
+input MemberUpdateWithoutCommentsDataInput {
+  displayName: String
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String
+  votes: VoteUpdateManyWithoutVoterInput
+  passes: PassUpdateManyWithoutPasserInput
+  submissions: ThingUpdateManyWithoutAuthorInput
+  password: String
+  roles: MemberUpdaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
+}
+
+input MemberUpdateWithoutPassesDataInput {
+  displayName: String
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String
+  votes: VoteUpdateManyWithoutVoterInput
+  submissions: ThingUpdateManyWithoutAuthorInput
+  comments: CommentUpdateManyWithoutAuthorInput
+  password: String
+  roles: MemberUpdaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
+}
+
+input MemberUpdateWithoutSubmissionsDataInput {
+  displayName: String
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String
+  votes: VoteUpdateManyWithoutVoterInput
+  passes: PassUpdateManyWithoutPasserInput
+  comments: CommentUpdateManyWithoutAuthorInput
+  password: String
+  roles: MemberUpdaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
+}
+
+input MemberUpdateWithoutVotesDataInput {
+  displayName: String
+  name: String
+  avatar: String
+  rep: Int
+  points: Int
+  giveableRep: Int
+  twitchName: String
+  email: String
+  passes: PassUpdateManyWithoutPasserInput
+  submissions: ThingUpdateManyWithoutAuthorInput
+  comments: CommentUpdateManyWithoutAuthorInput
+  password: String
+  roles: MemberUpdaterolesInput
+  resetToken: String
+  resetTokenExpiry: Float
+}
+
+input MemberUpsertWithoutCommentsInput {
+  update: MemberUpdateWithoutCommentsDataInput!
+  create: MemberCreateWithoutCommentsInput!
+}
+
+input MemberUpsertWithoutPassesInput {
+  update: MemberUpdateWithoutPassesDataInput!
+  create: MemberCreateWithoutPassesInput!
+}
+
+input MemberUpsertWithoutSubmissionsInput {
+  update: MemberUpdateWithoutSubmissionsDataInput!
+  create: MemberCreateWithoutSubmissionsInput!
+}
+
+input MemberUpsertWithoutVotesInput {
+  update: MemberUpdateWithoutVotesDataInput!
+  create: MemberCreateWithoutVotesInput!
 }
 
 input MemberWhereInput {
@@ -645,6 +916,18 @@ input MemberWhereInput {
   email_not_starts_with: String
   email_ends_with: String
   email_not_ends_with: String
+  votes_every: VoteWhereInput
+  votes_some: VoteWhereInput
+  votes_none: VoteWhereInput
+  passes_every: PassWhereInput
+  passes_some: PassWhereInput
+  passes_none: PassWhereInput
+  submissions_every: ThingWhereInput
+  submissions_some: ThingWhereInput
+  submissions_none: ThingWhereInput
+  comments_every: CommentWhereInput
+  comments_some: CommentWhereInput
+  comments_none: CommentWhereInput
   password: String
   password_not: String
   password_in: [String!]
@@ -724,18 +1007,12 @@ type Mutation {
   upsertNarrative(where: NarrativeWhereUniqueInput!, create: NarrativeCreateInput!, update: NarrativeUpdateInput!): Narrative!
   deleteNarrative(where: NarrativeWhereUniqueInput!): Narrative
   deleteManyNarratives(where: NarrativeWhereInput): BatchPayload!
-  createStory(data: StoryCreateInput!): Story!
-  updateStory(data: StoryUpdateInput!, where: StoryWhereUniqueInput!): Story
-  updateManyStories(data: StoryUpdateInput!, where: StoryWhereInput): BatchPayload!
-  upsertStory(where: StoryWhereUniqueInput!, create: StoryCreateInput!, update: StoryUpdateInput!): Story!
-  deleteStory(where: StoryWhereUniqueInput!): Story
-  deleteManyStories(where: StoryWhereInput): BatchPayload!
-  createSubmission(data: SubmissionCreateInput!): Submission!
-  updateSubmission(data: SubmissionUpdateInput!, where: SubmissionWhereUniqueInput!): Submission
-  updateManySubmissions(data: SubmissionUpdateInput!, where: SubmissionWhereInput): BatchPayload!
-  upsertSubmission(where: SubmissionWhereUniqueInput!, create: SubmissionCreateInput!, update: SubmissionUpdateInput!): Submission!
-  deleteSubmission(where: SubmissionWhereUniqueInput!): Submission
-  deleteManySubmissions(where: SubmissionWhereInput): BatchPayload!
+  createPass(data: PassCreateInput!): Pass!
+  updatePass(data: PassUpdateInput!, where: PassWhereUniqueInput!): Pass
+  updateManyPasses(data: PassUpdateInput!, where: PassWhereInput): BatchPayload!
+  upsertPass(where: PassWhereUniqueInput!, create: PassCreateInput!, update: PassUpdateInput!): Pass!
+  deletePass(where: PassWhereUniqueInput!): Pass
+  deleteManyPasses(where: PassWhereInput): BatchPayload!
   createThing(data: ThingCreateInput!): Thing!
   updateThing(data: ThingUpdateInput!, where: ThingWhereUniqueInput!): Thing
   updateManyThings(data: ThingUpdateInput!, where: ThingWhereInput): BatchPayload!
@@ -893,6 +1170,166 @@ type PageInfo {
   endCursor: String
 }
 
+type Pass {
+  id: ID!
+  passer: Member!
+  onThing: Thing
+  createdAt: DateTime!
+}
+
+type PassConnection {
+  pageInfo: PageInfo!
+  edges: [PassEdge]!
+  aggregate: AggregatePass!
+}
+
+input PassCreateInput {
+  passer: MemberCreateOneWithoutPassesInput!
+  onThing: ThingCreateOneWithoutPassesInput
+}
+
+input PassCreateManyWithoutOnThingInput {
+  create: [PassCreateWithoutOnThingInput!]
+  connect: [PassWhereUniqueInput!]
+}
+
+input PassCreateManyWithoutPasserInput {
+  create: [PassCreateWithoutPasserInput!]
+  connect: [PassWhereUniqueInput!]
+}
+
+input PassCreateWithoutOnThingInput {
+  passer: MemberCreateOneWithoutPassesInput!
+}
+
+input PassCreateWithoutPasserInput {
+  onThing: ThingCreateOneWithoutPassesInput
+}
+
+type PassEdge {
+  node: Pass!
+  cursor: String!
+}
+
+enum PassOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PassPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+}
+
+type PassSubscriptionPayload {
+  mutation: MutationType!
+  node: Pass
+  updatedFields: [String!]
+  previousValues: PassPreviousValues
+}
+
+input PassSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PassWhereInput
+  AND: [PassSubscriptionWhereInput!]
+  OR: [PassSubscriptionWhereInput!]
+  NOT: [PassSubscriptionWhereInput!]
+}
+
+input PassUpdateInput {
+  passer: MemberUpdateOneRequiredWithoutPassesInput
+  onThing: ThingUpdateOneWithoutPassesInput
+}
+
+input PassUpdateManyWithoutOnThingInput {
+  create: [PassCreateWithoutOnThingInput!]
+  delete: [PassWhereUniqueInput!]
+  connect: [PassWhereUniqueInput!]
+  disconnect: [PassWhereUniqueInput!]
+  update: [PassUpdateWithWhereUniqueWithoutOnThingInput!]
+  upsert: [PassUpsertWithWhereUniqueWithoutOnThingInput!]
+}
+
+input PassUpdateManyWithoutPasserInput {
+  create: [PassCreateWithoutPasserInput!]
+  delete: [PassWhereUniqueInput!]
+  connect: [PassWhereUniqueInput!]
+  disconnect: [PassWhereUniqueInput!]
+  update: [PassUpdateWithWhereUniqueWithoutPasserInput!]
+  upsert: [PassUpsertWithWhereUniqueWithoutPasserInput!]
+}
+
+input PassUpdateWithoutOnThingDataInput {
+  passer: MemberUpdateOneRequiredWithoutPassesInput
+}
+
+input PassUpdateWithoutPasserDataInput {
+  onThing: ThingUpdateOneWithoutPassesInput
+}
+
+input PassUpdateWithWhereUniqueWithoutOnThingInput {
+  where: PassWhereUniqueInput!
+  data: PassUpdateWithoutOnThingDataInput!
+}
+
+input PassUpdateWithWhereUniqueWithoutPasserInput {
+  where: PassWhereUniqueInput!
+  data: PassUpdateWithoutPasserDataInput!
+}
+
+input PassUpsertWithWhereUniqueWithoutOnThingInput {
+  where: PassWhereUniqueInput!
+  update: PassUpdateWithoutOnThingDataInput!
+  create: PassCreateWithoutOnThingInput!
+}
+
+input PassUpsertWithWhereUniqueWithoutPasserInput {
+  where: PassWhereUniqueInput!
+  update: PassUpdateWithoutPasserDataInput!
+  create: PassCreateWithoutPasserInput!
+}
+
+input PassWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  passer: MemberWhereInput
+  onThing: ThingWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  AND: [PassWhereInput!]
+  OR: [PassWhereInput!]
+  NOT: [PassWhereInput!]
+}
+
+input PassWhereUniqueInput {
+  id: ID
+}
+
 type Query {
   comment(where: CommentWhereUniqueInput!): Comment
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
@@ -906,12 +1343,9 @@ type Query {
   narrative(where: NarrativeWhereUniqueInput!): Narrative
   narratives(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Narrative]!
   narrativesConnection(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): NarrativeConnection!
-  story(where: StoryWhereUniqueInput!): Story
-  stories(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Story]!
-  storiesConnection(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StoryConnection!
-  submission(where: SubmissionWhereUniqueInput!): Submission
-  submissions(where: SubmissionWhereInput, orderBy: SubmissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Submission]!
-  submissionsConnection(where: SubmissionWhereInput, orderBy: SubmissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SubmissionConnection!
+  pass(where: PassWhereUniqueInput!): Pass
+  passes(where: PassWhereInput, orderBy: PassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Pass]!
+  passesConnection(where: PassWhereInput, orderBy: PassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PassConnection!
   thing(where: ThingWhereUniqueInput!): Thing
   things(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Thing]!
   thingsConnection(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ThingConnection!
@@ -929,426 +1363,12 @@ enum Role {
   LiteMember
 }
 
-type Story {
-  id: ID!
-  title: String!
-  featuredImage: String
-  summary: [String!]!
-  partOfNarratives(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Narrative!]
-  includedSubmissions(where: SubmissionWhereInput, orderBy: SubmissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Submission!]
-  includedLinks(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-type StoryConnection {
-  pageInfo: PageInfo!
-  edges: [StoryEdge]!
-  aggregate: AggregateStory!
-}
-
-input StoryCreateInput {
-  title: String!
-  featuredImage: String
-  summary: StoryCreatesummaryInput
-  partOfNarratives: NarrativeCreateManyInput
-  includedSubmissions: SubmissionCreateManyInput
-  includedLinks: LinkCreateManyInput
-}
-
-input StoryCreateOneInput {
-  create: StoryCreateInput
-  connect: StoryWhereUniqueInput
-}
-
-input StoryCreatesummaryInput {
-  set: [String!]
-}
-
-type StoryEdge {
-  node: Story!
-  cursor: String!
-}
-
-enum StoryOrderByInput {
-  id_ASC
-  id_DESC
-  title_ASC
-  title_DESC
-  featuredImage_ASC
-  featuredImage_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type StoryPreviousValues {
-  id: ID!
-  title: String!
-  featuredImage: String
-  summary: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-type StorySubscriptionPayload {
-  mutation: MutationType!
-  node: Story
-  updatedFields: [String!]
-  previousValues: StoryPreviousValues
-}
-
-input StorySubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: StoryWhereInput
-  AND: [StorySubscriptionWhereInput!]
-  OR: [StorySubscriptionWhereInput!]
-  NOT: [StorySubscriptionWhereInput!]
-}
-
-input StoryUpdateDataInput {
-  title: String
-  featuredImage: String
-  summary: StoryUpdatesummaryInput
-  partOfNarratives: NarrativeUpdateManyInput
-  includedSubmissions: SubmissionUpdateManyInput
-  includedLinks: LinkUpdateManyInput
-}
-
-input StoryUpdateInput {
-  title: String
-  featuredImage: String
-  summary: StoryUpdatesummaryInput
-  partOfNarratives: NarrativeUpdateManyInput
-  includedSubmissions: SubmissionUpdateManyInput
-  includedLinks: LinkUpdateManyInput
-}
-
-input StoryUpdateOneInput {
-  create: StoryCreateInput
-  update: StoryUpdateDataInput
-  upsert: StoryUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: StoryWhereUniqueInput
-}
-
-input StoryUpdatesummaryInput {
-  set: [String!]
-}
-
-input StoryUpsertNestedInput {
-  update: StoryUpdateDataInput!
-  create: StoryCreateInput!
-}
-
-input StoryWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  title: String
-  title_not: String
-  title_in: [String!]
-  title_not_in: [String!]
-  title_lt: String
-  title_lte: String
-  title_gt: String
-  title_gte: String
-  title_contains: String
-  title_not_contains: String
-  title_starts_with: String
-  title_not_starts_with: String
-  title_ends_with: String
-  title_not_ends_with: String
-  featuredImage: String
-  featuredImage_not: String
-  featuredImage_in: [String!]
-  featuredImage_not_in: [String!]
-  featuredImage_lt: String
-  featuredImage_lte: String
-  featuredImage_gt: String
-  featuredImage_gte: String
-  featuredImage_contains: String
-  featuredImage_not_contains: String
-  featuredImage_starts_with: String
-  featuredImage_not_starts_with: String
-  featuredImage_ends_with: String
-  featuredImage_not_ends_with: String
-  partOfNarratives_every: NarrativeWhereInput
-  partOfNarratives_some: NarrativeWhereInput
-  partOfNarratives_none: NarrativeWhereInput
-  includedSubmissions_every: SubmissionWhereInput
-  includedSubmissions_some: SubmissionWhereInput
-  includedSubmissions_none: SubmissionWhereInput
-  includedLinks_every: LinkWhereInput
-  includedLinks_some: LinkWhereInput
-  includedLinks_none: LinkWhereInput
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  AND: [StoryWhereInput!]
-  OR: [StoryWhereInput!]
-  NOT: [StoryWhereInput!]
-}
-
-input StoryWhereUniqueInput {
-  id: ID
-}
-
-type Submission {
-  id: ID!
-  title: String!
-  url: String!
-  author: Member!
-  description: String!
-  partOfNarratives(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Narrative!]
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-type SubmissionConnection {
-  pageInfo: PageInfo!
-  edges: [SubmissionEdge]!
-  aggregate: AggregateSubmission!
-}
-
-input SubmissionCreateInput {
-  title: String!
-  url: String!
-  author: MemberCreateOneInput!
-  description: String!
-  partOfNarratives: NarrativeCreateManyInput
-}
-
-input SubmissionCreateManyInput {
-  create: [SubmissionCreateInput!]
-  connect: [SubmissionWhereUniqueInput!]
-}
-
-input SubmissionCreateOneInput {
-  create: SubmissionCreateInput
-  connect: SubmissionWhereUniqueInput
-}
-
-type SubmissionEdge {
-  node: Submission!
-  cursor: String!
-}
-
-enum SubmissionOrderByInput {
-  id_ASC
-  id_DESC
-  title_ASC
-  title_DESC
-  url_ASC
-  url_DESC
-  description_ASC
-  description_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type SubmissionPreviousValues {
-  id: ID!
-  title: String!
-  url: String!
-  description: String!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-type SubmissionSubscriptionPayload {
-  mutation: MutationType!
-  node: Submission
-  updatedFields: [String!]
-  previousValues: SubmissionPreviousValues
-}
-
-input SubmissionSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: SubmissionWhereInput
-  AND: [SubmissionSubscriptionWhereInput!]
-  OR: [SubmissionSubscriptionWhereInput!]
-  NOT: [SubmissionSubscriptionWhereInput!]
-}
-
-input SubmissionUpdateDataInput {
-  title: String
-  url: String
-  author: MemberUpdateOneRequiredInput
-  description: String
-  partOfNarratives: NarrativeUpdateManyInput
-}
-
-input SubmissionUpdateInput {
-  title: String
-  url: String
-  author: MemberUpdateOneRequiredInput
-  description: String
-  partOfNarratives: NarrativeUpdateManyInput
-}
-
-input SubmissionUpdateManyInput {
-  create: [SubmissionCreateInput!]
-  delete: [SubmissionWhereUniqueInput!]
-  connect: [SubmissionWhereUniqueInput!]
-  disconnect: [SubmissionWhereUniqueInput!]
-  update: [SubmissionUpdateWithWhereUniqueNestedInput!]
-  upsert: [SubmissionUpsertWithWhereUniqueNestedInput!]
-}
-
-input SubmissionUpdateOneInput {
-  create: SubmissionCreateInput
-  update: SubmissionUpdateDataInput
-  upsert: SubmissionUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: SubmissionWhereUniqueInput
-}
-
-input SubmissionUpdateWithWhereUniqueNestedInput {
-  where: SubmissionWhereUniqueInput!
-  data: SubmissionUpdateDataInput!
-}
-
-input SubmissionUpsertNestedInput {
-  update: SubmissionUpdateDataInput!
-  create: SubmissionCreateInput!
-}
-
-input SubmissionUpsertWithWhereUniqueNestedInput {
-  where: SubmissionWhereUniqueInput!
-  update: SubmissionUpdateDataInput!
-  create: SubmissionCreateInput!
-}
-
-input SubmissionWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  title: String
-  title_not: String
-  title_in: [String!]
-  title_not_in: [String!]
-  title_lt: String
-  title_lte: String
-  title_gt: String
-  title_gte: String
-  title_contains: String
-  title_not_contains: String
-  title_starts_with: String
-  title_not_starts_with: String
-  title_ends_with: String
-  title_not_ends_with: String
-  url: String
-  url_not: String
-  url_in: [String!]
-  url_not_in: [String!]
-  url_lt: String
-  url_lte: String
-  url_gt: String
-  url_gte: String
-  url_contains: String
-  url_not_contains: String
-  url_starts_with: String
-  url_not_starts_with: String
-  url_ends_with: String
-  url_not_ends_with: String
-  author: MemberWhereInput
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
-  partOfNarratives_every: NarrativeWhereInput
-  partOfNarratives_some: NarrativeWhereInput
-  partOfNarratives_none: NarrativeWhereInput
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  AND: [SubmissionWhereInput!]
-  OR: [SubmissionWhereInput!]
-  NOT: [SubmissionWhereInput!]
-}
-
-input SubmissionWhereUniqueInput {
-  id: ID
-  url: String
-}
-
 type Subscription {
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
   link(where: LinkSubscriptionWhereInput): LinkSubscriptionPayload
   member(where: MemberSubscriptionWhereInput): MemberSubscriptionPayload
   narrative(where: NarrativeSubscriptionWhereInput): NarrativeSubscriptionPayload
-  story(where: StorySubscriptionWhereInput): StorySubscriptionPayload
-  submission(where: SubmissionSubscriptionWhereInput): SubmissionSubscriptionPayload
+  pass(where: PassSubscriptionWhereInput): PassSubscriptionPayload
   thing(where: ThingSubscriptionWhereInput): ThingSubscriptionPayload
   vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
 }
@@ -1363,6 +1383,10 @@ type Thing {
   includedLinks(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
   includedThings(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Thing!]
   partOfNarratives(where: NarrativeWhereInput, orderBy: NarrativeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Narrative!]
+  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  passes(where: PassWhereInput, orderBy: PassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Pass!]
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  eliminated: Boolean!
   finalistDate: DateTime
   createdAt: DateTime!
   updatedAt: DateTime
@@ -1376,13 +1400,17 @@ type ThingConnection {
 
 input ThingCreateInput {
   title: String!
-  author: MemberCreateOneInput!
+  author: MemberCreateOneWithoutSubmissionsInput!
   featuredImage: String
   originalSource: String!
   summary: ThingCreatesummaryInput
-  includedLinks: LinkCreateManyInput
+  includedLinks: LinkCreateManyWithoutOnThingInput
   includedThings: ThingCreateManyInput
   partOfNarratives: NarrativeCreateManyInput
+  votes: VoteCreateManyWithoutOnThingInput
+  passes: PassCreateManyWithoutOnThingInput
+  comments: CommentCreateManyWithoutOnThingInput
+  eliminated: Boolean
   finalistDate: DateTime
 }
 
@@ -1391,13 +1419,108 @@ input ThingCreateManyInput {
   connect: [ThingWhereUniqueInput!]
 }
 
-input ThingCreateOneInput {
-  create: ThingCreateInput
+input ThingCreateManyWithoutAuthorInput {
+  create: [ThingCreateWithoutAuthorInput!]
+  connect: [ThingWhereUniqueInput!]
+}
+
+input ThingCreateOneWithoutCommentsInput {
+  create: ThingCreateWithoutCommentsInput
+  connect: ThingWhereUniqueInput
+}
+
+input ThingCreateOneWithoutIncludedLinksInput {
+  create: ThingCreateWithoutIncludedLinksInput
+  connect: ThingWhereUniqueInput
+}
+
+input ThingCreateOneWithoutPassesInput {
+  create: ThingCreateWithoutPassesInput
+  connect: ThingWhereUniqueInput
+}
+
+input ThingCreateOneWithoutVotesInput {
+  create: ThingCreateWithoutVotesInput
   connect: ThingWhereUniqueInput
 }
 
 input ThingCreatesummaryInput {
   set: [String!]
+}
+
+input ThingCreateWithoutAuthorInput {
+  title: String!
+  featuredImage: String
+  originalSource: String!
+  summary: ThingCreatesummaryInput
+  includedLinks: LinkCreateManyWithoutOnThingInput
+  includedThings: ThingCreateManyInput
+  partOfNarratives: NarrativeCreateManyInput
+  votes: VoteCreateManyWithoutOnThingInput
+  passes: PassCreateManyWithoutOnThingInput
+  comments: CommentCreateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingCreateWithoutCommentsInput {
+  title: String!
+  author: MemberCreateOneWithoutSubmissionsInput!
+  featuredImage: String
+  originalSource: String!
+  summary: ThingCreatesummaryInput
+  includedLinks: LinkCreateManyWithoutOnThingInput
+  includedThings: ThingCreateManyInput
+  partOfNarratives: NarrativeCreateManyInput
+  votes: VoteCreateManyWithoutOnThingInput
+  passes: PassCreateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingCreateWithoutIncludedLinksInput {
+  title: String!
+  author: MemberCreateOneWithoutSubmissionsInput!
+  featuredImage: String
+  originalSource: String!
+  summary: ThingCreatesummaryInput
+  includedThings: ThingCreateManyInput
+  partOfNarratives: NarrativeCreateManyInput
+  votes: VoteCreateManyWithoutOnThingInput
+  passes: PassCreateManyWithoutOnThingInput
+  comments: CommentCreateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingCreateWithoutPassesInput {
+  title: String!
+  author: MemberCreateOneWithoutSubmissionsInput!
+  featuredImage: String
+  originalSource: String!
+  summary: ThingCreatesummaryInput
+  includedLinks: LinkCreateManyWithoutOnThingInput
+  includedThings: ThingCreateManyInput
+  partOfNarratives: NarrativeCreateManyInput
+  votes: VoteCreateManyWithoutOnThingInput
+  comments: CommentCreateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingCreateWithoutVotesInput {
+  title: String!
+  author: MemberCreateOneWithoutSubmissionsInput!
+  featuredImage: String
+  originalSource: String!
+  summary: ThingCreatesummaryInput
+  includedLinks: LinkCreateManyWithoutOnThingInput
+  includedThings: ThingCreateManyInput
+  partOfNarratives: NarrativeCreateManyInput
+  passes: PassCreateManyWithoutOnThingInput
+  comments: CommentCreateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
 }
 
 type ThingEdge {
@@ -1414,6 +1537,8 @@ enum ThingOrderByInput {
   featuredImage_DESC
   originalSource_ASC
   originalSource_DESC
+  eliminated_ASC
+  eliminated_DESC
   finalistDate_ASC
   finalistDate_DESC
   createdAt_ASC
@@ -1428,6 +1553,7 @@ type ThingPreviousValues {
   featuredImage: String
   originalSource: String!
   summary: [String!]!
+  eliminated: Boolean!
   finalistDate: DateTime
   createdAt: DateTime!
   updatedAt: DateTime
@@ -1453,25 +1579,33 @@ input ThingSubscriptionWhereInput {
 
 input ThingUpdateDataInput {
   title: String
-  author: MemberUpdateOneRequiredInput
+  author: MemberUpdateOneRequiredWithoutSubmissionsInput
   featuredImage: String
   originalSource: String
   summary: ThingUpdatesummaryInput
-  includedLinks: LinkUpdateManyInput
+  includedLinks: LinkUpdateManyWithoutOnThingInput
   includedThings: ThingUpdateManyInput
   partOfNarratives: NarrativeUpdateManyInput
+  votes: VoteUpdateManyWithoutOnThingInput
+  passes: PassUpdateManyWithoutOnThingInput
+  comments: CommentUpdateManyWithoutOnThingInput
+  eliminated: Boolean
   finalistDate: DateTime
 }
 
 input ThingUpdateInput {
   title: String
-  author: MemberUpdateOneRequiredInput
+  author: MemberUpdateOneRequiredWithoutSubmissionsInput
   featuredImage: String
   originalSource: String
   summary: ThingUpdatesummaryInput
-  includedLinks: LinkUpdateManyInput
+  includedLinks: LinkUpdateManyWithoutOnThingInput
   includedThings: ThingUpdateManyInput
   partOfNarratives: NarrativeUpdateManyInput
+  votes: VoteUpdateManyWithoutOnThingInput
+  passes: PassUpdateManyWithoutOnThingInput
+  comments: CommentUpdateManyWithoutOnThingInput
+  eliminated: Boolean
   finalistDate: DateTime
 }
 
@@ -1484,10 +1618,46 @@ input ThingUpdateManyInput {
   upsert: [ThingUpsertWithWhereUniqueNestedInput!]
 }
 
-input ThingUpdateOneInput {
-  create: ThingCreateInput
-  update: ThingUpdateDataInput
-  upsert: ThingUpsertNestedInput
+input ThingUpdateManyWithoutAuthorInput {
+  create: [ThingCreateWithoutAuthorInput!]
+  delete: [ThingWhereUniqueInput!]
+  connect: [ThingWhereUniqueInput!]
+  disconnect: [ThingWhereUniqueInput!]
+  update: [ThingUpdateWithWhereUniqueWithoutAuthorInput!]
+  upsert: [ThingUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input ThingUpdateOneWithoutCommentsInput {
+  create: ThingCreateWithoutCommentsInput
+  update: ThingUpdateWithoutCommentsDataInput
+  upsert: ThingUpsertWithoutCommentsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ThingWhereUniqueInput
+}
+
+input ThingUpdateOneWithoutIncludedLinksInput {
+  create: ThingCreateWithoutIncludedLinksInput
+  update: ThingUpdateWithoutIncludedLinksDataInput
+  upsert: ThingUpsertWithoutIncludedLinksInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ThingWhereUniqueInput
+}
+
+input ThingUpdateOneWithoutPassesInput {
+  create: ThingCreateWithoutPassesInput
+  update: ThingUpdateWithoutPassesDataInput
+  upsert: ThingUpsertWithoutPassesInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ThingWhereUniqueInput
+}
+
+input ThingUpdateOneWithoutVotesInput {
+  create: ThingCreateWithoutVotesInput
+  update: ThingUpdateWithoutVotesDataInput
+  upsert: ThingUpsertWithoutVotesInput
   delete: Boolean
   disconnect: Boolean
   connect: ThingWhereUniqueInput
@@ -1497,20 +1667,121 @@ input ThingUpdatesummaryInput {
   set: [String!]
 }
 
+input ThingUpdateWithoutAuthorDataInput {
+  title: String
+  featuredImage: String
+  originalSource: String
+  summary: ThingUpdatesummaryInput
+  includedLinks: LinkUpdateManyWithoutOnThingInput
+  includedThings: ThingUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyInput
+  votes: VoteUpdateManyWithoutOnThingInput
+  passes: PassUpdateManyWithoutOnThingInput
+  comments: CommentUpdateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingUpdateWithoutCommentsDataInput {
+  title: String
+  author: MemberUpdateOneRequiredWithoutSubmissionsInput
+  featuredImage: String
+  originalSource: String
+  summary: ThingUpdatesummaryInput
+  includedLinks: LinkUpdateManyWithoutOnThingInput
+  includedThings: ThingUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyInput
+  votes: VoteUpdateManyWithoutOnThingInput
+  passes: PassUpdateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingUpdateWithoutIncludedLinksDataInput {
+  title: String
+  author: MemberUpdateOneRequiredWithoutSubmissionsInput
+  featuredImage: String
+  originalSource: String
+  summary: ThingUpdatesummaryInput
+  includedThings: ThingUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyInput
+  votes: VoteUpdateManyWithoutOnThingInput
+  passes: PassUpdateManyWithoutOnThingInput
+  comments: CommentUpdateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingUpdateWithoutPassesDataInput {
+  title: String
+  author: MemberUpdateOneRequiredWithoutSubmissionsInput
+  featuredImage: String
+  originalSource: String
+  summary: ThingUpdatesummaryInput
+  includedLinks: LinkUpdateManyWithoutOnThingInput
+  includedThings: ThingUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyInput
+  votes: VoteUpdateManyWithoutOnThingInput
+  comments: CommentUpdateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingUpdateWithoutVotesDataInput {
+  title: String
+  author: MemberUpdateOneRequiredWithoutSubmissionsInput
+  featuredImage: String
+  originalSource: String
+  summary: ThingUpdatesummaryInput
+  includedLinks: LinkUpdateManyWithoutOnThingInput
+  includedThings: ThingUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyInput
+  passes: PassUpdateManyWithoutOnThingInput
+  comments: CommentUpdateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
 input ThingUpdateWithWhereUniqueNestedInput {
   where: ThingWhereUniqueInput!
   data: ThingUpdateDataInput!
 }
 
-input ThingUpsertNestedInput {
-  update: ThingUpdateDataInput!
-  create: ThingCreateInput!
+input ThingUpdateWithWhereUniqueWithoutAuthorInput {
+  where: ThingWhereUniqueInput!
+  data: ThingUpdateWithoutAuthorDataInput!
+}
+
+input ThingUpsertWithoutCommentsInput {
+  update: ThingUpdateWithoutCommentsDataInput!
+  create: ThingCreateWithoutCommentsInput!
+}
+
+input ThingUpsertWithoutIncludedLinksInput {
+  update: ThingUpdateWithoutIncludedLinksDataInput!
+  create: ThingCreateWithoutIncludedLinksInput!
+}
+
+input ThingUpsertWithoutPassesInput {
+  update: ThingUpdateWithoutPassesDataInput!
+  create: ThingCreateWithoutPassesInput!
+}
+
+input ThingUpsertWithoutVotesInput {
+  update: ThingUpdateWithoutVotesDataInput!
+  create: ThingCreateWithoutVotesInput!
 }
 
 input ThingUpsertWithWhereUniqueNestedInput {
   where: ThingWhereUniqueInput!
   update: ThingUpdateDataInput!
   create: ThingCreateInput!
+}
+
+input ThingUpsertWithWhereUniqueWithoutAuthorInput {
+  where: ThingWhereUniqueInput!
+  update: ThingUpdateWithoutAuthorDataInput!
+  create: ThingCreateWithoutAuthorInput!
 }
 
 input ThingWhereInput {
@@ -1580,6 +1851,17 @@ input ThingWhereInput {
   partOfNarratives_every: NarrativeWhereInput
   partOfNarratives_some: NarrativeWhereInput
   partOfNarratives_none: NarrativeWhereInput
+  votes_every: VoteWhereInput
+  votes_some: VoteWhereInput
+  votes_none: VoteWhereInput
+  passes_every: PassWhereInput
+  passes_some: PassWhereInput
+  passes_none: PassWhereInput
+  comments_every: CommentWhereInput
+  comments_some: CommentWhereInput
+  comments_none: CommentWhereInput
+  eliminated: Boolean
+  eliminated_not: Boolean
   finalistDate: DateTime
   finalistDate_not: DateTime
   finalistDate_in: [DateTime!]
@@ -1630,8 +1912,30 @@ type VoteConnection {
 }
 
 input VoteCreateInput {
-  voter: MemberCreateOneInput!
-  onThing: ThingCreateOneInput
+  voter: MemberCreateOneWithoutVotesInput!
+  onThing: ThingCreateOneWithoutVotesInput
+  onComment: CommentCreateOneInput
+  value: Int!
+}
+
+input VoteCreateManyWithoutOnThingInput {
+  create: [VoteCreateWithoutOnThingInput!]
+  connect: [VoteWhereUniqueInput!]
+}
+
+input VoteCreateManyWithoutVoterInput {
+  create: [VoteCreateWithoutVoterInput!]
+  connect: [VoteWhereUniqueInput!]
+}
+
+input VoteCreateWithoutOnThingInput {
+  voter: MemberCreateOneWithoutVotesInput!
+  onComment: CommentCreateOneInput
+  value: Int!
+}
+
+input VoteCreateWithoutVoterInput {
+  onThing: ThingCreateOneWithoutVotesInput
   onComment: CommentCreateOneInput
   value: Int!
 }
@@ -1677,10 +1981,62 @@ input VoteSubscriptionWhereInput {
 }
 
 input VoteUpdateInput {
-  voter: MemberUpdateOneRequiredInput
-  onThing: ThingUpdateOneInput
+  voter: MemberUpdateOneRequiredWithoutVotesInput
+  onThing: ThingUpdateOneWithoutVotesInput
   onComment: CommentUpdateOneInput
   value: Int
+}
+
+input VoteUpdateManyWithoutOnThingInput {
+  create: [VoteCreateWithoutOnThingInput!]
+  delete: [VoteWhereUniqueInput!]
+  connect: [VoteWhereUniqueInput!]
+  disconnect: [VoteWhereUniqueInput!]
+  update: [VoteUpdateWithWhereUniqueWithoutOnThingInput!]
+  upsert: [VoteUpsertWithWhereUniqueWithoutOnThingInput!]
+}
+
+input VoteUpdateManyWithoutVoterInput {
+  create: [VoteCreateWithoutVoterInput!]
+  delete: [VoteWhereUniqueInput!]
+  connect: [VoteWhereUniqueInput!]
+  disconnect: [VoteWhereUniqueInput!]
+  update: [VoteUpdateWithWhereUniqueWithoutVoterInput!]
+  upsert: [VoteUpsertWithWhereUniqueWithoutVoterInput!]
+}
+
+input VoteUpdateWithoutOnThingDataInput {
+  voter: MemberUpdateOneRequiredWithoutVotesInput
+  onComment: CommentUpdateOneInput
+  value: Int
+}
+
+input VoteUpdateWithoutVoterDataInput {
+  onThing: ThingUpdateOneWithoutVotesInput
+  onComment: CommentUpdateOneInput
+  value: Int
+}
+
+input VoteUpdateWithWhereUniqueWithoutOnThingInput {
+  where: VoteWhereUniqueInput!
+  data: VoteUpdateWithoutOnThingDataInput!
+}
+
+input VoteUpdateWithWhereUniqueWithoutVoterInput {
+  where: VoteWhereUniqueInput!
+  data: VoteUpdateWithoutVoterDataInput!
+}
+
+input VoteUpsertWithWhereUniqueWithoutOnThingInput {
+  where: VoteWhereUniqueInput!
+  update: VoteUpdateWithoutOnThingDataInput!
+  create: VoteCreateWithoutOnThingInput!
+}
+
+input VoteUpsertWithWhereUniqueWithoutVoterInput {
+  where: VoteWhereUniqueInput!
+  update: VoteUpdateWithoutVoterDataInput!
+  create: VoteCreateWithoutVoterInput!
 }
 
 input VoteWhereInput {

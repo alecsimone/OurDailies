@@ -1,11 +1,11 @@
-import styled from 'styled-components';
-import gql from 'graphql-tag';
-import { Query, Subscription } from 'react-apollo';
-import Head from 'next/head';
-import FullThing from '../components/FullThing';
-import FullThingEmbed from '../components/FullThingEmbed';
-import Error from '../components/ErrorMessage';
-import Member from '../components/Member';
+import styled from "styled-components";
+import gql from "graphql-tag";
+import { Query, Subscription } from "react-apollo";
+import Head from "next/head";
+import FullThing from "../components/FullThing";
+import FullThingEmbed from "../components/FullThingEmbed";
+import Error from "../components/ErrorMessage";
+import Member from "../components/Member";
 
 const SINGLE_THING_QUERY = gql`
    query SINGLE_THING_QUERY($id: ID!) {
@@ -36,37 +36,37 @@ const SINGLE_THING_QUERY = gql`
             id
             title
          }
+         comments {
+            id
+            author {
+               id
+               displayName
+               avatar
+               rep
+            }
+            comment
+            createdAt
+            updatedAt
+         }
+         votes {
+            voter {
+               id
+               displayName
+               avatar
+               roles
+            }
+            value
+         }
+         passes {
+            passer {
+               id
+               displayName
+               avatar
+               roles
+            }
+         }
          createdAt
          updatedAt
-      }
-      commentsConnection(where: { onThing: { id: $id } }) {
-         edges {
-            node {
-               id
-               author {
-                  id
-                  displayName
-                  avatar
-                  rep
-               }
-               comment
-               createdAt
-               updatedAt
-            }
-         }
-      }
-      votesConnection(where: { onThing: { id: $id } }) {
-         edges {
-            node {
-               voter {
-                  id
-                  displayName
-                  avatar
-                  roles
-               }
-               value
-            }
-         }
       }
    }
 `;
@@ -101,17 +101,27 @@ const SingleThing = props => (
                if (!data.thing) {
                   return <p>No thing found</p>;
                }
-               data.thing.comments = data.commentsConnection.edges;
-               data.thing.votes = data.votesConnection.edges;
 
-               let thingComponent = (
-                  <FullThingEmbed thing={data.thing} member={memberData} />
-               );
+               let windowWidth = 800;
+               try {
+                  windowWidth = window.innerWidth;
+               } catch (windowError) {}
+
+               let thingComponent;
+               if (windowWidth < 800) {
+                  thingComponent = (
+                     <FullThing thing={data.thing} member={memberData} />
+                  );
+               } else {
+                  thingComponent = (
+                     <FullThingEmbed thing={data.thing} member={memberData} />
+                  );
+               }
                data.thing.includedLinks.forEach(link => {
                   if (
-                     link.url.includes("jpg") ||
-                     link.url.includes("png") ||
-                     link.url.includes("gif")
+                     link.url.includes('jpg') ||
+                     link.url.includes('png') ||
+                     link.url.includes('gif')
                   ) {
                      thingComponent = (
                         <FullThing thing={data.thing} member={memberData} />

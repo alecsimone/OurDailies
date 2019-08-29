@@ -10,13 +10,6 @@ type Mutation {
     originalSource: String!
     summary: ThingCreatesummaryInput!
   ): Thing!
-  updateSubmission(
-    id: ID!
-    title: String
-    url: String
-    description: String
-  ): Submission!
-  deleteSubmission(id: ID!): Submission
   signup(
     email: String!
     password: String!
@@ -40,13 +33,10 @@ type Mutation {
   addCommentToThing(comment: String!, thingID: ID!): Comment!
   deleteComment(id: ID!): Comment!
   voteOnThing(thingID: ID!): Vote
+  passOnThing(thingID: ID!): Pass
 }
 
 type Query {
-  submissions: [Submission]!
-  submission(where: SubmissionWhereUniqueInput!): Submission
-  stories(orderBy: StoryOrderByInput): [Story]!
-  story(where: StoryWhereUniqueInput!): Story
   thing(where: ThingWhereUniqueInput!): Thing
   things(orderBy: ThingOrderByInput, first: Int, last: Int): [Thing]!
   narratives(where: NarrativeWhereInput, last: Int): [Narrative]!
@@ -55,9 +45,11 @@ type Query {
   member(where: MemberWhereUniqueInput!): Member!
   commentsConnection(where: CommentWhereInput!): CommentConnection
   votesConnection(where: VoteWhereInput!): VoteConnection
+  thingsConnection(where: ThingWhereInput): ThingConnection
   me: Member
   thingsForMostRecentDay: [Thing]!
   thingsForGivenDay(day: String!): [Thing]!
+  thingsForNew: [Thing]!
 }
 
 type Subscription {

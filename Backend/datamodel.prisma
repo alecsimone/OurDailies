@@ -1,26 +1,3 @@
-type Submission {
-  id: ID! @id @unique
-  title: String!
-  url: String! @unique
-  author: Member!
-  description: String!
-  partOfNarratives: [Narrative]
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime @updatedAt
-}
-
-type Story {
-  id: ID! @id @unique
-  title: String!
-  featuredImage: String
-  summary: [String] @scalarList(strategy:RELATION)
-  partOfNarratives: [Narrative]
-  includedSubmissions: [Submission!]!
-  includedLinks: [Link]
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime @updatedAt
-}
-
 type Thing {
   id: ID! @id @unique
   title: String!
@@ -31,6 +8,10 @@ type Thing {
   includedLinks: [Link]
   includedThings: [Thing]
   partOfNarratives: [Narrative]
+  votes: [Vote]
+  passes: [Pass]
+  comments: [Comment]
+  eliminated: Boolean! @default(value: false)
   finalistDate: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
@@ -47,8 +28,6 @@ type Comment {
   comment: String!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
-  onSubmission: Submission
-  onStory: Story
   onThing: Thing
   onLink: Link
   onComment: Comment
@@ -58,6 +37,7 @@ type Link {
   id: ID! @id @unique
   title: String!
   url: String!
+  onThing: Thing
 }
 
 type Vote {
@@ -67,6 +47,13 @@ type Vote {
   onComment: Comment
   value: Int!
   createdAt: DateTime! @createdAt
+}
+
+type Pass {
+   id: ID! @id @unique
+   passer: Member!
+   onThing: Thing
+   createdAt: DateTime! @createdAt
 }
 
 type Member {
@@ -79,6 +66,10 @@ type Member {
   giveableRep: Int! @default(value: 0)
   twitchName: String
   email: String! @unique
+  votes: [Vote]
+  passes: [Pass]
+  submissions: [Thing]
+  comments: [Comment]
   password: String!
   roles: [Role!] @scalarList(strategy: RELATION)
   resetToken: String
