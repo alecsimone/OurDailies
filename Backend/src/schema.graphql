@@ -39,6 +39,7 @@ type Mutation {
   removeSummaryLineFromThing(summaryLine: String!, thingID: ID!): Thing!
   addCommentToThing(comment: String!, thingID: ID!): Comment!
   deleteComment(id: ID!): Comment!
+  voteOnThing(thingID: ID!): Vote
 }
 
 type Query {
@@ -53,8 +54,7 @@ type Query {
   members(where: MemberWhereInput): [Member]!
   member(where: MemberWhereUniqueInput!): Member!
   commentsConnection(where: CommentWhereInput!): CommentConnection
-  storiesConnection(where: StoryWhereInput!): StoryConnection
-  submissionsConnection(where: SubmissionWhereInput!): SubmissionConnection
+  votesConnection(where: VoteWhereInput!): VoteConnection
   me: Member
   thingsForMostRecentDay: [Thing]!
   thingsForGivenDay(day: String!): [Thing]!

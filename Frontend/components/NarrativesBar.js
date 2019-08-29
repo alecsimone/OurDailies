@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
-import styled from 'styled-components';
-import Link from 'next/link';
+import React, { Component } from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import styled from "styled-components";
+import Link from "next/link";
 
 const ALL_NARRATIVES_QUERY = gql`
    query ALL_NARRATIVES_QUERY {
-      narratives(last: 12) {
+      narratives(last: 10) {
          id
          title
       }
@@ -14,13 +14,16 @@ const ALL_NARRATIVES_QUERY = gql`
 `;
 
 const StyledNarrativesBar = styled.div`
-   width: 97.5%;
-   margin: 8rem auto 0rem;
+   width: 90%;
+   margin: 2rem auto 3rem;
    display: flex;
    align-items: center;
    justify-content: center;
    flex-wrap: wrap;
-   line-height: 1.4;
+   line-height: 1.6;
+   @media screen and (min-width: 800px) {
+      width: 96%;
+   }
    h5 {
       color: ${props => props.theme.primaryAccent};
       display: inline;
@@ -59,7 +62,7 @@ class NarrativesBar extends Component {
                               <span key={narrative.title}>
                                  <Link
                                     href={{
-                                       pathname: "/narrative",
+                                       pathname: '/narrative',
                                        query: {
                                           id: narrative.id
                                        }
@@ -75,7 +78,7 @@ class NarrativesBar extends Component {
                            <span key={narrative.title}>
                               <Link
                                  href={{
-                                    pathname: "/narrative",
+                                    pathname: '/narrative',
                                     query: {
                                        id: narrative.id
                                     }

@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import Link from "next/link";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import Error from "./ErrorMessage";
-import { convertISOtoAgo } from "../lib/utils";
-import VoteBar from './ThingParts/VoteBar';
-import NarrativesBoxEditable from './ThingParts/NarrativesBoxEditable';
-import LinksBox from './ThingParts/LinksBox';
-import Summary from './ThingParts/Summary';
-import Comments from './ThingParts/Comments';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import Error from './ErrorMessage';
+import { convertISOtoAgo } from '../lib/utils';
+import VoteBar from "./ThingParts/VoteBar";
+import NarrativesBoxEditable from "./ThingParts/NarrativesBoxEditable";
+import LinksBox from "./ThingParts/LinksBox";
+import Summary from "./ThingParts/Summary";
+import Comments from "./ThingParts/Comments";
 
 const StyledFullThing = styled.article`
    position: relative;
@@ -38,7 +38,7 @@ const StyledFullThing = styled.article`
          font-size: ${props => props.theme.smallHead};
       }
       .meta {
-         color: ${props => props.theme.lightGrey};
+         color: ${props => props.theme.highContrastGrey};
          font-size: ${props => props.theme.tinyText};
          line-height: 1;
          opacity: 0.6;
@@ -53,7 +53,7 @@ const StyledFullThing = styled.article`
 
 class FullThingEmbed extends Component {
    render() {
-      const { thing } = this.props;
+      const { thing, member } = this.props;
 
       return (
          <StyledFullThing>
@@ -65,34 +65,43 @@ class FullThingEmbed extends Component {
                <h3>{thing.title}</h3>
                <div className="meta">
                   {convertISOtoAgo(thing.createdAt)}
-                  {' AGO '}
+                  {" AGO "}
                   {thing.author ? (
                      <div>Submitted by {thing.author.displayName}</div>
                   ) : (
-                     ''
+                     ""
                   )}
                </div>
                <Summary
                   summary={thing.summary}
                   thingID={thing.id}
-                  key={'Summary-' + thing.id}
+                  member={member.me}
+                  key={"Summary-" + thing.id}
                />
                <NarrativesBoxEditable
                   partOfNarratives={thing.partOfNarratives}
                   thingID={thing.id}
-                  key={'NarrativesBoxEditable-' + thing.id}
+                  member={member.me}
+                  key={"NarrativesBoxEditable-" + thing.id}
                />
-               <VoteBar key={thing.id} />
+               <VoteBar
+                  key={thing.id}
+                  voteData={thing.votes}
+                  thingID={thing.id}
+                  member={member.me}
+               />
                <LinksBox
                   things={thing.includedThings}
                   links={thing.includedLinks}
                   thingID={thing.id}
-                  key={'LinksBox-' + thing.id}
+                  member={member.me}
+                  key={"LinksBox-" + thing.id}
                />
                <Comments
                   comments={thing.comments}
                   thingID={thing.id}
-                  key={'Comments-' + thing.id}
+                  member={member.me}
+                  key={"Comments-" + thing.id}
                />
             </div>
          </StyledFullThing>

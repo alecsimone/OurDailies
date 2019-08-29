@@ -1,48 +1,51 @@
-import withApollo from 'next-with-apollo';
-import { ApolloClient } from "apollo-client";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { HttpLink } from "apollo-link-http";
-import { onError } from "apollo-link-error";
-import { withClientState } from 'apollo-link-state';
-import { ApolloLink, Observable, split } from "apollo-link";
-import { WebSocketLink } from "apollo-link-ws";
-import { getMainDefinition } from "apollo-utilities";
-import { endpoint } from '../config';
-import { LOCAL_STATE_QUERY, TOGGLE_MODAL_MUTATION } from "../components/Modal";
+import withApollo from "next-with-apollo";
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
+import { onError } from 'apollo-link-error';
+import { withClientState } from "apollo-link-state";
+import { ApolloLink, Observable, split } from 'apollo-link';
+import { WebSocketLink } from 'apollo-link-ws';
+import { getMainDefinition } from 'apollo-utilities';
+import { endpoint } from "../config";
+import { LOCAL_STATE_QUERY, TOGGLE_MODAL_MUTATION } from '../components/Modal';
 
 function createClient({ headers }) {
    const cache = new InMemoryCache();
+   cache.writeData({
+      data: {
+         modalOpen: false,
+         modalContent: "You shouldn't be seeing this"
+      }
+   });
 
    const request = async operation => {
       operation.setContext({
          fetchOptions: {
-            credentials: 'include'
+            credentials: "include"
          },
          headers
       });
    };
 
    const httpLink = new HttpLink({
-      uri: process.env.NODE_ENV === 'development' ? endpoint : endpoint,
-      credentials: "same-origin"
+      uri: process.env.NODE_ENV === "development" ? endpoint : endpoint,
+      credentials: 'same-origin'
    });
 
    const wsLink = process.browser
       ? new WebSocketLink({
-           uri: `ws://localhost:4444/`,
+           uri: `ws://localhost:4444/subscriptions`,
            options: {
               reconnect: true
            }
         })
-      : () => console.log('SSR');
+      : () => console.log("SSR");
 
    const link = split(
       ({ query }) => {
-         const definition = getMainDefinition(query);
-         return (
-            definition.kind === "operationDefinition" &&
-            definition.operation === "subscription"
-         );
+         const { kind, operation } = getMainDefinition(query);
+         return kind === "operationDefinition" && operation === "subscription";
       },
       wsLink,
       httpLink
@@ -81,17 +84,26 @@ function createClient({ headers }) {
             if (networkError) console.log(`[Network error]: ${networkError}`);
          }),
          requestLink,
-         withClientState({
-            defaults: {
-               modalOpen: false,
-               modalContent: ''
-            },
-            resolvers: {},
-            cache
-         }),
          link
       ]),
-      cache
+      cache,
+      resolvers: {
+         Mutation: {
+            toggleModal(_, variables, { cache }) {
+               const { modalOpen } = cache.readQuery({
+                  query: LOCAL_STATE_QUERY
+               });
+               const data = {
+                  data: {
+                     modalOpen: !modalOpen,
+                     modalContent: variables.modalContent
+                  }
+               };
+               cache.writeData(data);
+               return data;
+            }
+         }
+      }
    });
 }
 

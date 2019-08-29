@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import Link from "next/link";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import ErrorMessage from "../ErrorMessage";
-import Comment from "./Comment";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
-import MustSignIn from "../MustSignIn";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import ErrorMessage from '../ErrorMessage';
+import Comment from './Comment';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
+import MustSignIn from '../MustSignIn';
 
 const ADD_COMMENT_TO_THING_MUTATION = gql`
    mutation ADD_COMMENT_TO_THING_MUTATION($comment: String!, $thingID: ID!) {
@@ -19,8 +19,11 @@ const ADD_COMMENT_TO_THING_MUTATION = gql`
 
 const StyledComments = styled.section`
    border-top: 1px solid ${props => props.theme.veryLowContrastGrey};
-   margin: auto;
-   padding: 2rem;
+   margin: 2rem auto;
+   padding: 2rem 0;
+   @media screen and (min-width: 800px) {
+      padding: 2rem;
+   }
    text-align: center;
    p.noComments {
       margin-top: 2rem;
@@ -48,13 +51,13 @@ const StyledComments = styled.section`
 
 class Comments extends Component {
    state = {
-      commentToAdd: ''
+      commentToAdd: ""
    };
 
    handleKeyDown = (e, addCommentToThing) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+      if (e.key === "Enter" && !e.shiftKey) {
          e.preventDefault();
-         this.setState({ commentToAdd: "" });
+         this.setState({ commentToAdd: '' });
          addCommentToThing().catch(err => {
             alert(err.message);
          });
@@ -99,7 +102,7 @@ class Comments extends Component {
                >
                   {(addCommentToThing, { loading, error, called, data }) => (
                      <textarea
-                        placeholder={loading ? 'Adding...' : 'Add Comment'}
+                        placeholder={loading ? "Adding..." : "Add Comment"}
                         aria-disabled={loading}
                         onKeyDown={e =>
                            this.handleKeyDown(e, addCommentToThing)

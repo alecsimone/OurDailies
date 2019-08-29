@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import Link from 'next/link';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import psl from 'psl';
-import Error from './ErrorMessage.js';
-import { convertISOtoAgo, extractHostname } from '../lib/utils';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import Link from "next/link";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import psl from "psl";
+import Error from "./ErrorMessage.js";
+import { convertISOtoAgo, extractHostname } from "../lib/utils";
 
 const StyledTinyThing = styled.article`
    position: relative;
@@ -49,7 +49,7 @@ const StyledTinyThing = styled.article`
          color: ${props => props.theme.highContrastGrey};
          font-size: ${props => props.theme.tinyText};
          line-height: 1;
-         opacity: 0.4;
+         opacity: 0.6;
          display: inline-block;
       }
       a.SubTitleLink {
@@ -98,7 +98,7 @@ class TinyThing extends Component {
          <StyledTinyThing>
             <Link
                href={{
-                  pathname: '/thing',
+                  pathname: "/thing",
                   query: {
                      id: thing.id
                   }
@@ -111,19 +111,19 @@ class TinyThing extends Component {
             <div className="metaContainer">
                <p className="meta">
                   {convertISOtoAgo(thing.createdAt)}
-                  {' AGO '}
+                  {" AGO "}
                   <span>via</span>
                </p>
                <a
                   className="SubTitleLink"
-                  href={thing.originalSource ? thing.originalSource : ''}
+                  href={thing.originalSource ? thing.originalSource : ""}
                   target="_blank"
                >
                   {thing.originalSource
                      ? psl
                           .parse(extractHostname(thing.originalSource))
                           .sld.toUpperCase()
-                     : ''}
+                     : ""}
                </a>
             </div>
          </StyledTinyThing>

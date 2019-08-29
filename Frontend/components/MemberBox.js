@@ -3,7 +3,7 @@ import { Mutation } from "react-apollo";
 import styled from 'styled-components';
 import Link from 'next/link';
 import Member from './Member';
-// import { TOGGLE_MODAL_MUTATION } from "./Modal";
+import { TOGGLE_MODAL_MUTATION } from './Modal';
 
 const StyledMemberBox = styled.div`
    color: ${props => props.theme.secondaryAccent};
@@ -41,15 +41,21 @@ const MemberBox = () => (
             );
          }
          return (
-            <StyledMemberBox>
+            <StyledMemberBox className="memberBox">
                <p>
-                  <Link href="/signup">
-                     <a>Sign up</a>
-                  </Link>
+                  <Mutation
+                     mutation={TOGGLE_MODAL_MUTATION}
+                     variables={{ modalContent: 'Signup' }}
+                  >
+                     {toggleModal => <a onClick={toggleModal}>Sign up</a>}
+                  </Mutation>
                   or
-                  <Link href="/login">
-                     <a>Log in</a>
-                  </Link>
+                  <Mutation
+                     mutation={TOGGLE_MODAL_MUTATION}
+                     variables={{ modalContent: 'Login' }}
+                  >
+                     {toggleModal => <a onClick={toggleModal}>Log in</a>}
+                  </Mutation>
                </p>
             </StyledMemberBox>
          );

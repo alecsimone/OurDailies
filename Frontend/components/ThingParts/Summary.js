@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Mutation, ApolloConsumer } from "react-apollo";
-import gql from "graphql-tag";
-import ErrorMessage from "../ErrorMessage";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Mutation, ApolloConsumer } from 'react-apollo';
+import gql from 'graphql-tag';
+import ErrorMessage from '../ErrorMessage';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
 
 const ADD_SUMMARY_LINE_TO_THING_MUTATION = gql`
    mutation ADD_SUMMARY_LINE_TO_THING_MUTATION(
@@ -31,7 +31,7 @@ const REMOVE_SUMMARY_LINE_FROM_THING_MUTATION = gql`
 
 const StyledSummary = styled.div`
    ul {
-      margin: 3rem 0 0;
+      margin: 0;
       padding: 0;
       li {
          font-size: ${props => props.theme.smallText};
@@ -41,10 +41,16 @@ const StyledSummary = styled.div`
          align-items: center;
          justify-content: space-between;
          margin: 2rem 0;
-         span {
-            max-width: calc(100% - 3rem);
+         @media screen and (min-width: 800px) {
+            span {
+               max-width: calc(100% - 3rem);
+            }
          }
          img {
+            display: none;
+            @media screen and (min-width: 800px) {
+               display: block;
+            }
             width: 2rem;
             height: 2rem;
             cursor: pointer;
@@ -89,13 +95,13 @@ const StyledSummary = styled.div`
 
 class Summary extends Component {
    state = {
-      lineToAdd: ""
+      lineToAdd: ''
    };
 
    handleKeyDown = (e, addSummaryLineToThing) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+      if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
-         this.setState({ lineToAdd: '' });
+         this.setState({ lineToAdd: "" });
          addSummaryLineToThing();
       }
    };
@@ -110,7 +116,7 @@ class Summary extends Component {
             <span>- {bullet}</span>
             {this.props.member != null &&
                this.props.member.roles.some(role =>
-                  ['Admin', 'Editor', 'Moderator'].includes(role)
+                  ["Admin", "Editor", "Moderator"].includes(role)
                ) && (
                   <Mutation
                      mutation={REMOVE_SUMMARY_LINE_FROM_THING_MUTATION}
@@ -131,7 +137,7 @@ class Summary extends Component {
                      ) => (
                         <img
                            src="/static/red-x.png"
-                           className={loading ? 'loading' : ''}
+                           className={loading ? "loading" : ""}
                            onClick={() => {
                               removeSummaryLineFromThing().catch(err => {
                                  alert(err.message);
@@ -164,11 +170,11 @@ class Summary extends Component {
                   <ErrorMessage error={error} />
                   {this.props.member != null &&
                      this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator'].includes(role)
+                        ["Admin", "Editor", "Moderator"].includes(role)
                      ) && (
                         <textarea
                            placeholder={
-                              loading ? 'Adding...' : '- Add summary line'
+                              loading ? "Adding..." : "- Add summary line"
                            }
                            onKeyDown={e =>
                               this.handleKeyDown(e, addSummaryLineToThing)

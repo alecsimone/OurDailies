@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import Header from './Header';
 import Meta from './Meta';
+import Logout from './Logout';
+import Member from './Member';
 
 const theme = {
-   tinyText: '1rem',
+   tinyText: '1.25rem',
    smallText: '2rem',
    bigText: '2.5rem',
    smallHead: '4rem',
@@ -84,7 +86,7 @@ injectGlobal`
       color: ${theme.mainText};
       font-family: "Proxima Nova", sans-serif;
       box-sizing: border-box;
-      font-size: 6px;
+      font-size: 8px;
       @media screen and (min-width: 800px) {
          font-size: 10px;
       }
@@ -154,7 +156,10 @@ injectGlobal`
 `;
 
 const StyledPage = styled.div`
-   width: 94%;
+   width: 100%;
+   @media screen and (min-width: 800px) {
+      width: 94%;
+   }
    margin: 4rem auto;
 `;
 
@@ -166,6 +171,7 @@ class Page extends Component {
                <Meta />
                <Header />
                {this.props.children}
+               <Member>{({ data: { me } }) => me && <Logout />}</Member>
             </StyledPage>
          </ThemeProvider>
       );

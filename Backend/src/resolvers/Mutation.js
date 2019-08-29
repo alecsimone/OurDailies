@@ -1,13 +1,13 @@
-const bcrypt = require('bcryptjs');
-const { randomBytes } = require('crypto');
-const { promisify } = require('util');
-const jwt = require('jsonwebtoken');
-const { transport, basicEmailTemplate } = require('../mail');
+const bcrypt = require("bcryptjs");
+const { randomBytes } = require("crypto");
+const { promisify } = require("util");
+const jwt = require("jsonwebtoken");
+const { transport, basicEmailTemplate } = require("../mail");
 
 const Mutations = {
    async createThing(parent, args, ctx, info) {
       if (!ctx.request.memberId) {
-         throw new Error('You must be logged in to do that');
+         throw new Error("You must be logged in to do that");
       }
 
       const thing = await ctx.db.mutation.createThing(
@@ -55,13 +55,13 @@ const Mutations = {
             data: {
                ...args,
                password,
-               roles: { set: ['LiteMember'] }
+               roles: { set: ["LiteMember"] }
             }
          },
          info
       );
       const token = jwt.sign({ memberId: member.id }, process.env.APP_SECRET);
-      ctx.response.cookie('token', token, {
+      ctx.response.cookie("token", token, {
          httpOnly: true,
          maxAge: 1000 * 60 * 60 * 24 * 365 * 4
       });
@@ -75,11 +75,11 @@ const Mutations = {
 
       const valid = await bcrypt.compare(password, member.password);
       if (!valid) {
-         throw new Error('Wrong Password');
+         throw new Error("Wrong Password");
       }
 
       const token = jwt.sign({ memberId: member.id }, process.env.APP_SECRET);
-      ctx.response.cookie('token', token, {
+      ctx.response.cookie("token", token, {
          httpOnly: true,
          maxAge: 1000 * 60 * 60 * 24 * 365 * 4
       });
@@ -87,8 +87,8 @@ const Mutations = {
       return member;
    },
    logout(parent, args, ctx, info) {
-      ctx.response.clearCookie('token');
-      return { message: 'Successfully logged out' };
+      ctx.response.clearCookie("token");
+      return { message: "Successfully logged out" };
    },
    async requestReset(parent, args, ctx, info) {
       const member = await ctx.db.query.member({
@@ -98,7 +98,7 @@ const Mutations = {
          throw new Error("We don't know anyone with that email address");
       }
 
-      const resetToken = (await promisify(randomBytes)(20)).toString('hex');
+      const resetToken = (await promisify(randomBytes)(20)).toString("hex");
       const resetTokenExpiry = Date.now() + 1000 * 60 * 60;
       const res = await ctx.db.mutation.updateMember({
          where: { email: args.email },
@@ -106,9 +106,9 @@ const Mutations = {
       });
 
       const mailRes = await transport.sendMail({
-         from: 'alec@dailies.gg',
+         from: "alec@dailies.gg",
          to: member.email,
-         subject: 'Reset your password',
+         subject: "Reset your password",
          html: basicEmailTemplate(`Someone requested a password reset for the account associated with this email.
             \n\n
             If it was you, choose a new password <a href="${
@@ -116,11 +116,11 @@ const Mutations = {
             }/passwordreset?resetToken=${resetToken}">here</a>`)
       });
 
-      return { message: 'Password reset initiated' };
+      return { message: "Password reset initiated" };
    },
    async resetPassword(parent, args, ctx, info) {
       if (args.password !== args.confirmPassword) {
-         throw new Error('Passwords do not match');
+         throw new Error("Passwords do not match");
       }
 
       const [member] = await ctx.db.query.members({
@@ -130,7 +130,7 @@ const Mutations = {
          }
       });
       if (!member) {
-         throw new Error('Token either invalid or expired');
+         throw new Error("Token either invalid or expired");
       }
 
       const password = await bcrypt.hash(args.password, 10);
@@ -148,7 +148,7 @@ const Mutations = {
          { memberId: updatedMember.id },
          process.env.APP_SECRET
       );
-      ctx.response.cookie('token', token, {
+      ctx.response.cookie("token", token, {
          httpOnly: true,
          maxAge: 1000 * 60 * 60 * 24 * 365 * 4
       });
@@ -157,16 +157,16 @@ const Mutations = {
    },
    async addNarrativeToThing(parent, { title, thingID }, ctx, info) {
       if (!ctx.request.memberId) {
-         throw new Error('You must be logged in to do that');
+         throw new Error("You must be logged in to do that");
       }
       const narrative = await ctx.db.query.narrative({
          where: { title }
       });
       let narrativeConnectionMethod;
       if (!narrative) {
-         narrativeConnectionMethod = "create";
+         narrativeConnectionMethod = 'create';
       } else {
-         narrativeConnectionMethod = "connect";
+         narrativeConnectionMethod = 'connect';
       }
       const updatedThing = await ctx.db.mutation.updateThing({
          where: { id: thingID },
@@ -182,25 +182,25 @@ const Mutations = {
    },
    async addLinkToThing(parent, { title, url, thingID }, ctx, info) {
       if (!ctx.request.memberId) {
-         throw new Error('You must be logged in to do that');
+         throw new Error("You must be logged in to do that");
       }
       const thingUrlStructure = `${process.env.FRONTEND_URL}/thing?id=`;
       const thingUrlStructureNoHTTP = thingUrlStructure.substring(
-         thingUrlStructure.indexOf('://') + 3
+         thingUrlStructure.indexOf("://") + 3
       );
+
+      console.log(thingUrlStructureNoHTTP);
 
       if (
          url.includes(thingUrlStructure) ||
          url.includes(thingUrlStructureNoHTTP)
       ) {
          let thingToLinkID;
-         if (url.includes('&')) {
-            thingToLinkID = url.substring(
-               thingUrlStructure.length,
-               url.indexOf("&")
-            );
+         const startPos = url.indexOf("/thing?id=") + 10;
+         if (url.includes("&")) {
+            thingToLinkID = url.substring(startPos, url.indexOf('&'));
          } else {
-            thingToLinkID = url.substring(thingUrlStructure.length);
+            thingToLinkID = url.substring(startPos);
          }
 
          const updatedThing = await ctx.db.mutation.updateThing({
@@ -230,11 +230,11 @@ const Mutations = {
    },
    async addSummaryLineToThing(parent, { summaryLine, thingID }, ctx, info) {
       if (!ctx.request.memberId) {
-         throw new Error('You must be logged in to do that');
+         throw new Error("You must be logged in to do that");
       }
       if (
          !ctx.request.member.roles.some(role =>
-            ["Admin", "Editor", "Moderator"].includes(role)
+            ['Admin', 'Editor', 'Moderator'].includes(role)
          )
       ) {
          throw new Error("You don't have permission to do that");
@@ -270,11 +270,11 @@ const Mutations = {
       info
    ) {
       if (!ctx.request.memberId) {
-         throw new Error('You must be logged in to do that');
+         throw new Error("You must be logged in to do that");
       }
       if (
          !ctx.request.member.roles.some(role =>
-            ["Admin", "Editor", "Moderator"].includes(role)
+            ['Admin', 'Editor', 'Moderator'].includes(role)
          )
       ) {
          throw new Error("You don't have permission to do that");
@@ -308,11 +308,11 @@ const Mutations = {
    },
    async setFeaturedImage(parent, { imageUrl, thingID }, ctx, info) {
       if (!ctx.request.memberId) {
-         throw new Error('You must be logged in to do that');
+         throw new Error("You must be logged in to do that");
       }
       if (
          !ctx.request.member.roles.some(role =>
-            ["Admin", "Editor", "Moderator"].includes(role)
+            ['Admin', 'Editor', 'Moderator'].includes(role)
          )
       ) {
          throw new Error("You don't have permission to do that");
@@ -333,7 +333,7 @@ const Mutations = {
    },
    async addCommentToThing(parent, { comment, thingID }, ctx, info) {
       if (!ctx.request.memberId) {
-         throw new Error('You must be logged in to do that');
+         throw new Error("You must be logged in to do that");
       }
 
       const addedComment = await ctx.db.mutation.createComment({
@@ -356,7 +356,7 @@ const Mutations = {
    },
    async deleteComment(parent, { id }, ctx, info) {
       if (!ctx.request.memberId) {
-         throw new Error('You must be logged in to do that');
+         throw new Error("You must be logged in to do that");
       }
       const comment = await ctx.db.query.comment(
          { where: { id } },
@@ -365,7 +365,7 @@ const Mutations = {
 
       if (
          !ctx.request.member.roles.some(role =>
-            ["Admin", "Editor", "Moderator"].includes(role)
+            ['Admin', 'Editor', 'Moderator'].includes(role)
          ) &&
          comment.author.id !== ctx.request.memberId
       ) {
@@ -377,6 +377,68 @@ const Mutations = {
          }
       });
       return deletedComment;
+   },
+   async voteOnThing(parent, { thingID }, ctx, info) {
+      if (!ctx.request.memberId) {
+         throw new Error('You must be logged in to do that');
+      }
+      const oldVote = await ctx.db.query.votes(
+         {
+            where: {
+               AND: {
+                  onThing: {
+                     id: thingID
+                  },
+                  voter: {
+                     id: ctx.request.memberID
+                  }
+               }
+            }
+         },
+         `{id}`
+      );
+      if (oldVote.length > 0) {
+         const deletedVote = await ctx.db.mutation.deleteVote(
+            {
+               where: {
+                  id: oldVote[0].id
+               }
+            },
+            `{voter {
+            id
+            displayName
+            avatar
+            roles
+         }
+         value}`
+         );
+         return deletedVote;
+      }
+      const newVote = await ctx.db.mutation.createVote(
+         {
+            data: {
+               value: ctx.request.member.rep,
+               voter: {
+                  connect: {
+                     id: ctx.request.memberId
+                  }
+               },
+               onThing: {
+                  connect: {
+                     id: thingID
+                  }
+               }
+            }
+         },
+         `{voter {
+            id
+            displayName
+            avatar
+            roles
+         }
+         value}`
+      );
+      return newVote;
    }
 };
 

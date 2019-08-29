@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
+import { Query, Subscription } from 'react-apollo';
 import Head from 'next/head';
 import FullThing from '../components/FullThing';
 import FullThingEmbed from '../components/FullThingEmbed';
 import Error from '../components/ErrorMessage';
+import Member from '../components/Member';
 
 const SINGLE_THING_QUERY = gql`
    query SINGLE_THING_QUERY($id: ID!) {
@@ -54,6 +55,19 @@ const SINGLE_THING_QUERY = gql`
             }
          }
       }
+      votesConnection(where: { onThing: { id: $id } }) {
+         edges {
+            node {
+               voter {
+                  id
+                  displayName
+                  avatar
+                  roles
+               }
+               value
+            }
+         }
+      }
    }
 `;
 
@@ -65,48 +79,64 @@ const SingleThingContainer = styled.div`
    }
 `;
 
+// pollInterval = {
+//    memberData.me != null && memberData.me.roles.includes("ADMIN")
+//       ? 99999999993000
+//       : 999999999910000
+// }
+
 const SingleThing = props => (
-   <Query
-      query={SINGLE_THING_QUERY}
-      variables={{
-         id: props.query.id
-      }}
-   >
-      {({ error, loading, data }) => {
-         if (error) return <Error error={error} />;
-         if (loading) return <p>Loading...</p>;
-         let title;
-         if (!data.thing) {
-            return <p>No thing found</p>;
-         }
-         data.thing.comments = data.commentsConnection.edges;
+   <Member>
+      {({ data: memberData }) => (
+         <Query
+            query={SINGLE_THING_QUERY}
+            variables={{
+               id: props.query.id
+            }}
+         >
+            {({ error, loading, data }) => {
+               if (error) return <Error error={error} />;
+               if (loading) return <p>Loading...</p>;
+               let title;
+               if (!data.thing) {
+                  return <p>No thing found</p>;
+               }
+               data.thing.comments = data.commentsConnection.edges;
+               data.thing.votes = data.votesConnection.edges;
 
-         let thingComponent = <FullThingEmbed thing={data.thing} />;
-         data.thing.includedLinks.forEach(link => {
-            if (
-               link.url.includes("jpg") ||
-               link.url.includes("png") ||
-               link.url.includes("gif")
-            ) {
-               thingComponent = <FullThing thing={data.thing} />;
-            }
-         });
+               let thingComponent = (
+                  <FullThingEmbed thing={data.thing} member={memberData} />
+               );
+               data.thing.includedLinks.forEach(link => {
+                  if (
+                     link.url.includes("jpg") ||
+                     link.url.includes("png") ||
+                     link.url.includes("gif")
+                  ) {
+                     thingComponent = (
+                        <FullThing thing={data.thing} member={memberData} />
+                     );
+                  }
+               });
 
-         if (data.thing.featuredImage) {
-            thingComponent = <FullThing thing={data.thing} />;
-         }
+               if (data.thing.featuredImage) {
+                  thingComponent = (
+                     <FullThing thing={data.thing} member={memberData} />
+                  );
+               }
 
-         return (
-            <SingleThingContainer>
-               <Head>
-                  <title>{data.thing.title} - Our Dailies</title>
-               </Head>
-               {thingComponent}
-            </SingleThingContainer>
-         );
-      }}
-   </Query>
+               return (
+                  <SingleThingContainer>
+                     <Head>
+                        <title>{data.thing.title} - Our Dailies</title>
+                     </Head>
+                     {thingComponent}
+                  </SingleThingContainer>
+               );
+            }}
+         </Query>
+      )}
+   </Member>
 );
-
 export default SingleThing;
 export { SINGLE_THING_QUERY };

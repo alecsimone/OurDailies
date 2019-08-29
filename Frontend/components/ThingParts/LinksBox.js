@@ -19,21 +19,29 @@ const ADD_LINK_TO_THING_MUTATION = gql`
 `;
 
 const StyledLinksBox = styled.div`
-   margin: 3rem 0;
    .thingsAndLinks {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
+      @media screen and (min-width: 800px) {
+         flex-wrap: nowrap;
+      }
    }
    .things {
+      margin: 3rem 0;
       flex-grow: 3;
-      max-width: 66%;
+      @media screen and (min-width: 800px) {
+         max-width: 66%;
+      }
       article {
          margin-bottom: 1rem;
       }
    }
    .links {
+      margin: 3rem 0;
       flex-grow: 1;
-      max-width: 50%;
+      @media screen and (min-width: 800px) {
+         max-width: 50%;
+      }
       ul {
          margin: 0;
          list-style-type: none;
@@ -69,11 +77,12 @@ const StyledLinksBox = styled.div`
       fieldset {
          .inputWrapper {
             display: flex;
+            flex-wrap: wrap;
          }
       }
       input {
          font-size: ${props => props.theme.smallText};
-         margin: 0 1rem 0 0;
+         margin: 1rem;
          flex-grow: 1;
          max-width: 400px;
       }

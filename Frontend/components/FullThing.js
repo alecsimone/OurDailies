@@ -6,7 +6,6 @@ import { Mutation, Subscription } from 'react-apollo';
 import gql from 'graphql-tag';
 import { convertISOtoAgo } from "../lib/utils";
 import Error from './ErrorMessage';
-import Member from './Member';
 import VoteBar from './ThingParts/VoteBar';
 import NarrativesBoxEditable from './ThingParts/NarrativesBoxEditable';
 import LinksBox from './ThingParts/LinksBox';
@@ -14,48 +13,22 @@ import Summary from './ThingParts/Summary';
 import Comments from './ThingParts/Comments';
 import FeaturedImageCarousel from './ThingParts/FeaturedImageCarousel';
 
-const THING_SUBSCRIPTION = gql`
-   subscription THING_SUBSCRIPTION($id: ID!) {
-      thing(where: { node: { id: $id } }) {
-         node {
-            title
-            featuredImage
-            originalSource
-            summary
-            includedLinks {
-               title
-               url
-               id
-            }
-            includedThings {
-               id
-               title
-               originalSource
-               author {
-                  displayName
-               }
-               createdAt
-            }
-            partOfNarratives {
-               id
-               title
-            }
-         }
-      }
-   }
-`;
-
 const StyledFullThing = styled.article`
    position: relative;
    margin: 0.5rem;
-   margin-bottom: 60vh;
-   padding: 2rem;
+   padding: 1rem;
+   margin-bottom: 6rem;
+   @media screen and (min-width: 800px) {
+      margin-bottom: 60vh;
+      padding: 2rem;
+      background: ${props => props.theme.veryLowContrastCoolGrey};
+      box-shadow: 0 0.1rem 0.4rem
+         ${props => props.theme.highContrastSecondaryAccent};
+   }
    border-radius: 2px 2px;
    width: 100%;
    max-width: 1280px;
-   background: ${props => props.theme.veryLowContrastCoolGrey};
-   box-shadow: 0 0.1rem 0.4rem
-      ${props => props.theme.highContrastSecondaryAccent};
+   background: none;
    :before {
       content: "";
       background: ${props => props.theme.majorColor};
@@ -71,43 +44,22 @@ const StyledFullThing = styled.article`
    }
    .lede {
       position: relative;
-      h3.headline {
-         font-size: ${props => props.theme.bigHead};
-         margin: 0rem;
-         line-height: 1;
-         position: absolute;
-         bottom: 0;
-         left: 0;
-         width: 100%;
-         padding: 12rem 2rem 1.25rem;
-         text-shadow: 0px 0px 2px black;
-         background: black;
-         background: -moz-linear-gradient(
-            top,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 0.85) 75%
-         ); /* FF3.6-15 */
-         background: -webkit-linear-gradient(
-            top,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 0.85) 75%
-         ); /* Chrome10-25,Safari5.1-6 */
-         background: linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 0.85) 75%
-         ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
-      }
    }
-   .meta {
-      color: ${props => props.theme.lightGrey};
-      font-size: ${props => props.theme.tinyText};
+   div.meta {
+      color: ${props => props.theme.highContrastGrey};
+      font-size: ${props => props.theme.smallText};
       line-height: 1;
-      opacity: 0.6;
+      opacity: 1;
       display: flex;
       justify-content: space-between;
-      margin-top: 0.4rem;
+      margin-top: 0.8rem;
+      padding: 2rem 1rem;
+      @media screen and (min-width: 800px) {
+         font-size: ${props => props.theme.tinyText};
+         margin-top: 0.4rem;
+         padding: 0;
+         opacity: 0.6;
+      }
    }
    h5 {
       font-size: ${props => props.theme.smallText};
@@ -118,71 +70,63 @@ const StyledFullThing = styled.article`
 
 class FullThing extends Component {
    render() {
-      const { thing } = this.props;
+      const { thing, member } = this.props;
 
       return (
-         <Member>
-            {({ data: memberData }) => (
-               <Subscription
-                  subscription={THING_SUBSCRIPTION}
-                  variables={{ id: 'gibberish' }}
-               >
-                  {({ data: thingUpdates, loading }) =>
-                     console.log(thingUpdates) || (
-                        <StyledFullThing>
-                           <div className="lede">
-                              <FeaturedImageCarousel
-                                 featuredImage={thing.featuredImage}
-                                 includedLinks={thing.includedLinks}
-                                 headline={thing.title}
-                                 thingID={thing.id}
-                                 member={memberData.me}
-                                 key={'FeaturedImageCarousel-' + thing.id}
-                              />
-                           </div>
-                           <div className="meta">
-                              {convertISOtoAgo(thing.createdAt)}
-                              {' AGO '}
-                              {thing.author ? (
-                                 <div>
-                                    Submitted by {thing.author.displayName}
-                                 </div>
-                              ) : (
-                                 ''
-                              )}
-                           </div>
-                           <Summary
-                              summary={thing.summary}
-                              thingID={thing.id}
-                              member={memberData.me}
-                              key={'Summary-' + thing.id}
-                           />
-                           <NarrativesBoxEditable
-                              partOfNarratives={thing.partOfNarratives}
-                              thingID={thing.id}
-                              member={memberData.me}
-                              key={'NarrativesBoxEditable-' + thing.id}
-                           />
-                           <VoteBar key={thing.id} />
-                           <LinksBox
-                              things={thing.includedThings}
-                              links={thing.includedLinks}
-                              thingID={thing.id}
-                              member={memberData.me}
-                              key={'LinksBox-' + thing.id}
-                           />
-                           <Comments
-                              comments={thing.comments}
-                              thingID={thing.id}
-                              member={memberData.me}
-                              key={'Comments-' + thing.id}
-                           />
-                        </StyledFullThing>
-                     )
-                  }
-               </Subscription>
-            )}
-         </Member>
+         <StyledFullThing>
+            <div className="lede">
+               <FeaturedImageCarousel
+                  thing={thing}
+                  featuredImage={thing.featuredImage}
+                  includedLinks={thing.includedLinks}
+                  originalSource={thing.originalSource}
+                  headline={thing.title}
+                  thingID={thing.id}
+                  member={member.me}
+                  key={'FeaturedImageCarousel-' + thing.id}
+               />
+            </div>
+            <div className="meta">
+               {convertISOtoAgo(thing.createdAt)}
+               {' AGO '}
+               {thing.author ? (
+                  <div>Submitted by {thing.author.displayName}</div>
+               ) : (
+                  ''
+               )}
+            </div>
+            <Summary
+               summary={thing.summary}
+               thingID={thing.id}
+               member={member.me}
+               key={'Summary-' + thing.id}
+            />
+            <NarrativesBoxEditable
+               partOfNarratives={thing.partOfNarratives}
+               thingID={thing.id}
+               member={member.me}
+               key={'NarrativesBoxEditable-' + thing.id}
+            />
+            <VoteBar
+               key={thing.id}
+               voteData={thing.votes}
+               thingID={thing.id}
+               member={member.me}
+            />
+            <LinksBox
+               things={thing.includedThings}
+               links={thing.includedLinks}
+               thingID={thing.id}
+               member={member.me}
+               key={'LinksBox-' + thing.id}
+            />
+            <Comments
+               comments={thing.comments}
+               thingID={thing.id}
+               member={member.me}
+               key={'Comments-' + thing.id}
+            />
+         </StyledFullThing>
       );
    }
 }

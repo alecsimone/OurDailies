@@ -2,25 +2,18 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import { Mutation } from "react-apollo";
-// import { TOGGLE_MODAL_MUTATION } from "./Modal";
+import { TOGGLE_MODAL_MUTATION } from "./Modal";
 
-const StyledStageBox = styled.div`
-   display: inline-block;
-   a,
-   a:visited {
-      color: ${props => props.theme.mainText};
-      font-size: ${props => props.theme.bigText};
-      margin-right: 8rem;
-      position: relative;
-      cursor: pointer;
-   }
-`;
+const StyledStageBox = styled.div``;
 
 const StageBox = () => (
-   <StyledStageBox>
-      <Link href="/submit">
-         <a>Submit</a>
-      </Link>
+   <StyledStageBox className="stageBox">
+      <Mutation
+         mutation={TOGGLE_MODAL_MUTATION}
+         variables={{ modalContent: "Submit" }}
+      >
+         {toggleModal => <a onClick={toggleModal}>Submit</a>}
+      </Mutation>
       <Link href="/new">
          <a>New</a>
       </Link>

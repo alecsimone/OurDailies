@@ -1,23 +1,14 @@
-const { forwardTo } = require("prisma-binding");
+const { forwardTo } = require('prisma-binding');
 
 const Query = {
-   // async things(parent, args, ctx, info) {
-   //     const things = ctx.db.query.things();
-   //     return things;
-   // }
-   submissions: forwardTo("db"),
-   submission: forwardTo("db"),
-   stories: forwardTo("db"),
-   story: forwardTo("db"),
-   thing: forwardTo("db"),
-   things: forwardTo("db"),
-   narratives: forwardTo("db"),
-   narrative: forwardTo("db"),
-   members: forwardTo("db"),
-   member: forwardTo("db"),
-   commentsConnection: forwardTo("db"),
-   storiesConnection: forwardTo("db"),
-   submissionsConnection: forwardTo("db"),
+   thing: forwardTo('db'),
+   things: forwardTo('db'),
+   narratives: forwardTo('db'),
+   narrative: forwardTo('db'),
+   members: forwardTo('db'),
+   member: forwardTo('db'),
+   commentsConnection: forwardTo('db'),
+   votesConnection: forwardTo('db'),
    me(parent, args, ctx, info) {
       if (!ctx.request.memberId) {
          return null;
@@ -32,12 +23,12 @@ const Query = {
    async thingsForMostRecentDay(parent, args, ctx, info) {
       const [mostRecentFinalist] = await ctx.db.query.things(
          {
-            orderBy: 'finalistDate_DESC',
+            orderBy: "finalistDate_DESC",
             first: 1
          },
          `{finalistDate}`
       );
-      const tPos = mostRecentFinalist.finalistDate.indexOf("T");
+      const tPos = mostRecentFinalist.finalistDate.indexOf('T');
       const mostRecentFinalistDate = new Date(
          mostRecentFinalist.finalistDate.substring(0, tPos)
       );
@@ -58,7 +49,7 @@ const Query = {
    async thingsForGivenDay(parent, { day }, ctx, info) {
       let thingsForDay = [];
       let i = -1;
-      const tPos = day.indexOf('T');
+      const tPos = day.indexOf("T");
       const initialDate = new Date(day.substring(0, tPos));
       while (thingsForDay.length === 0 && i < 30) {
          const startDate = new Date(

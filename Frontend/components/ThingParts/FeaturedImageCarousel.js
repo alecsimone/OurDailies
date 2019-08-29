@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import { getYoutubeVideoIdFromLink } from '../../lib/utils';
-import { SINGLE_THING_QUERY } from "../../pages/thing";
+import React, { Component } from "react";
+import styled from "styled-components";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import { getYoutubeVideoIdFromLink } from "../../lib/utils";
+import { SINGLE_THING_QUERY } from '../../pages/thing';
 
 const SET_FEATURED_IMAGE_MUTATION = gql`
    mutation SET_FEATURED_IMAGE_MUTATION($imageUrl: String!, $thingID: ID!) {
@@ -16,30 +16,35 @@ const SET_FEATURED_IMAGE_MUTATION = gql`
 
 const FeaturedImageContainer = styled.div`
    position: relative;
-   max-width: calc(1440px - 4rem);
-   padding-bottom: 56.25%;
-   height: 0;
-   overflow: hidden;
-   background: ${props => props.theme.background};
+   @media screen and (min-width: 800px) {
+      overflow: hidden;
+      max-width: calc(1440px - 4rem);
+      padding-bottom: 56.25%;
+      height: 0;
+   }
    .featuredImageWrapper {
+      background: ${props => props.theme.background};
+      position: relative;
       input {
          position: absolute;
          right: 0;
          z-index: 1;
       }
-      &:after {
-         /* Puts a tint over the image */
-         content: " ";
-         z-index: 0;
-         display: block;
-         position: absolute;
-         top: -20;
-         bottom: 0;
-         left: 0;
-         right: 0;
-         width: 100%;
-         height: 100%;
-         background: hsla(0, 0%, 0%, 0.4);
+      @media screen and (min-width: 800px) {
+         &:after {
+            /* Puts a tint over the image */
+            content: " ";
+            z-index: 0;
+            display: block;
+            position: absolute;
+            top: -20;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: hsla(0, 0%, 0%, 0.4);
+         }
       }
    }
    img.featured {
@@ -52,8 +57,10 @@ const FeaturedImageContainer = styled.div`
       top: calc(50% - 1rem);
       border: none;
       color: transparent;
-      opacity: 0.6;
       transition: transform 0.4s ease-out;
+      @media screen and (min-width: 800px) {
+         opacity: 0.6;
+      }
       img {
          height: 2rem;
       }
@@ -72,7 +79,7 @@ const FeaturedImageContainer = styled.div`
          }
       }
       &.next {
-         right: 0;
+         right: 0rem;
          img {
             transform: rotate(90deg);
          }
@@ -93,6 +100,42 @@ const FeaturedImageContainer = styled.div`
          left: 0;
          width: 100%;
          height: 100%;
+      }
+   }
+   h3.headline {
+      font-size: ${props => props.theme.bigHead};
+      margin: 0rem;
+      line-height: 1;
+      a:hover {
+         text-decoration: underline;
+      }
+      @media screen and (min-width: 800px) {
+         position: absolute;
+         bottom: 0;
+         left: 0;
+         width: 100%;
+         padding: 12rem 2rem 1.25rem;
+         text-shadow: 0px 0px 2px black;
+         background: black;
+         background: -moz-linear-gradient(
+            top,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.85) 75%
+         ); /* FF3.6-15 */
+         background: -webkit-linear-gradient(
+            top,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.85) 75%
+         ); /* Chrome10-25,Safari5.1-6 */
+         background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.85) 75%
+         ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
+         &.video {
+            display: none;
+         }
       }
    }
 `;
@@ -129,19 +172,20 @@ class FeaturedImageCarousel extends Component {
    };
 
    render() {
-      const featuredImageButItsAnArrayNow = [this.props.featuredImage];
+      const { thing } = this.props;
+      const featuredImageButItsAnArrayNow = [thing.featuredImage];
 
-      const justTheLinks = this.props.includedLinks.map(
+      const justTheLinks = thing.includedLinks.map(
          linkObject => linkObject.url
       );
 
       const mediaLinksArray = justTheLinks.filter(
          link =>
-            (link !== this.props.featuredImage && link.includes("jpg")) ||
-            link.includes('png') ||
-            link.includes('gif') ||
-            link.includes('youtube.com/watch?v=') ||
-            link.includes('youtu.be/')
+            (link !== thing.featuredImage && link.includes('jpg')) ||
+            link.includes("png") ||
+            link.includes("gif") ||
+            link.includes("youtube.com/watch?v=") ||
+            link.includes("youtu.be/")
       );
       const allMedia = featuredImageButItsAnArrayNow.concat(mediaLinksArray);
 
@@ -151,7 +195,7 @@ class FeaturedImageCarousel extends Component {
       let rightButton;
       if (
          mediaLinksArray.length > 1 ||
-         (mediaLinksArray.length > 0 && this.props.featuredImage != null)
+         (mediaLinksArray.length > 0 && thing.featuredImage != null)
       ) {
          leftButton = (
             <button
@@ -181,22 +225,33 @@ class FeaturedImageCarousel extends Component {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
+                  {leftButton}
                   <img src="/static/defaultPic.jpg" className="featured" />
+                  {rightButton}
                </div>
-               <h3 className="headline">{this.props.headline}</h3>
+               <h3 className="headline">
+                  <a
+                     href={thing.originalSource}
+                     target="_blank"
+                     className="headlineLink"
+                  >
+                     {thing.title}
+                  </a>
+               </h3>
             </>
          );
       } else if (
-         currentLink.includes("jpg") ||
-         currentLink.includes("png") ||
-         currentLink.includes("gif")
+         currentLink.includes('jpg') ||
+         currentLink.includes('png') ||
+         currentLink.includes('gif')
       ) {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
+                  {leftButton}
                   {this.props.member != null &&
                      this.props.member.roles.some(role =>
-                        ["Admin", "Editor", "Moderator"].includes(role)
+                        ['Admin', 'Editor', 'Moderator'].includes(role)
                      ) && (
                         <Mutation
                            mutation={SET_FEATURED_IMAGE_MUTATION}
@@ -217,9 +272,7 @@ class FeaturedImageCarousel extends Component {
                            ) => (
                               <input
                                  type="checkbox"
-                                 checked={
-                                    currentLink === this.props.featuredImage
-                                 }
+                                 checked={currentLink === thing.featuredImage}
                                  onChange={e => {
                                     e.preventDefault();
                                     this.setFeaturedImageHandler(
@@ -234,34 +287,50 @@ class FeaturedImageCarousel extends Component {
                         </Mutation>
                      )}
                   <img src={currentLink} className="featured" />
+                  {rightButton}
                </div>
-               <h3 className="headline">{this.props.headline}</h3>
+               <h3 className="headline">
+                  <a
+                     href={thing.originalSource}
+                     target="_blank"
+                     className="headlineLink"
+                  >
+                     {thing.title}
+                  </a>
+               </h3>
             </>
          );
       } else if (
-         currentLink.includes('youtube.com/watch?v=') ||
-         currentLink.includes('youtu.be/')
+         currentLink.includes("youtube.com/watch?v=") ||
+         currentLink.includes("youtu.be/")
       ) {
          const videoID = getYoutubeVideoIdFromLink(currentLink);
          featuredImage = (
-            <div className="embed-container">
-               <iframe
-                  src={`https://www.youtube.com/embed/${videoID}?autoplay=0&loop=1&playlist=${videoID}`}
-                  frameBorder="0"
-                  scrolling="no"
-                  allowFullScreen
-               />
-            </div>
+            <>
+               <div className="embed-container">
+                  {leftButton}
+                  <iframe
+                     src={`https://www.youtube.com/embed/${videoID}?autoplay=0&loop=1&playlist=${videoID}`}
+                     frameBorder="0"
+                     scrolling="no"
+                     allowFullScreen
+                  />
+                  {rightButton}
+               </div>
+               <h3 className="headline video">
+                  <a
+                     href={thing.originalSource}
+                     target="_blank"
+                     className="headlineLink"
+                  >
+                     {thing.title}
+                  </a>
+               </h3>
+            </>
          );
       }
 
-      return (
-         <FeaturedImageContainer>
-            {leftButton}
-            {featuredImage}
-            {rightButton}
-         </FeaturedImageContainer>
-      );
+      return <FeaturedImageContainer>{featuredImage}</FeaturedImageContainer>;
    }
 }
 

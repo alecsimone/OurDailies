@@ -56,6 +56,10 @@ const StyledComment = styled.div`
          }
       }
       img.deleteCommentButton {
+         display: none;
+         @media screen and (min-width: 800px) {
+            display: block;
+         }
          width: 2rem;
          height: 2rem;
          opacity: 0.25;

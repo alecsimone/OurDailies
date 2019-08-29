@@ -1,4 +1,4 @@
-const { forwardTo } = require('prisma-binding');
+const { forwardTo } = require("prisma-binding");
 
 const Subscription = {
    thing: { subscribe: forwardTo("db") }

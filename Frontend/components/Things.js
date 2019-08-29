@@ -29,7 +29,10 @@ const THINGS_FOR_GIVEN_DAY_QUERY = gql`
 `;
 
 const ThingContainer = styled.div`
-   width: 96%;
+   width: 100%;
+   @media screen and (min-width: 800px) {
+      width: 96%;
+   }
    margin: auto;
    .littleThings {
       margin-top: 4rem;
@@ -129,7 +132,6 @@ class Things extends Component {
          variables: { day: nextDateToQuery.toISOString() }
       });
       if (thingsForDay.data.thingsForGivenDay.length === 0) {
-         console.log("We got back an empty array");
          this.setState({
             pullingMore: false,
             noMorePosts: true
@@ -137,7 +139,6 @@ class Things extends Component {
          window.removeEventListener("scroll", this.handleScroll);
          return;
       }
-      console.log(thingsForDay.data.thingsForGivenDay.length);
       const { thingDays } = this.state;
       thingDays.push(thingsForDay.data.thingsForGivenDay);
       this.setState({

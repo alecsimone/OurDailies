@@ -4,8 +4,6 @@ import gql from "graphql-tag";
 import styled from 'styled-components';
 import Things from '../components/Things';
 import NarrativesBar from '../components/NarrativesBar';
-import Logout from '../components/Logout';
-import Member from '../components/Member';
 
 const THINGS_FOR_MOST_RECENT_DAY_QUERY = gql`
    query THINGS_FOR_MOST_RECENT_DAY_QUERY {
@@ -69,7 +67,6 @@ class Home extends Component {
                   );
                }}
             </Query>
-            <Member>{({ data: { me } }) => me && <Logout />}</Member>
          </div>
       );
    }

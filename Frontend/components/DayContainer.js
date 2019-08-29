@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import Thing from "./Thing";
-import LittleThing from "./LittleThing";
+import styled from "styled-components";
+import Thing from './Thing';
+import LittleThing from './LittleThing';
 
 const StyledDayContainer = styled.div`
    .dateBar {
@@ -35,36 +35,39 @@ const DayContainer = props => {
    const date = new Date(props.things[0].finalistDate);
    const month = date.getMonth();
    const monthsArray = [
-      'JANUARY',
-      'FEBRUARY',
-      'MARCH',
-      'APRIL',
-      'MAY',
-      'JUNE',
-      'JULY',
-      'AUGUST',
-      'SEPTEMBER',
-      'OCTOBER',
-      'NOVEMBER',
-      'DECEMBER'
+      "JANUARY",
+      "FEBRUARY",
+      "MARCH",
+      "APRIL",
+      "MAY",
+      "JUNE",
+      "JULY",
+      "AUGUST",
+      "SEPTEMBER",
+      "OCTOBER",
+      "NOVEMBER",
+      "DECEMBER"
    ];
    const monthString = monthsArray[month];
    const day = date.getUTCDate();
    let dayString;
-   if (day == '1' || day == '01' || day == '21' || day == '31') {
+   if (day == "1" || day == "01" || day == "21" || day == "31") {
       dayString = `${day}ST`;
-   } else if (day == '2' || day == '02' || day == '22') {
+   } else if (day == "2" || day == "02" || day == "22") {
       dayString = `${day}ND`;
-   } else if (day == '3' || day == '03' || day == '23') {
+   } else if (day == "3" || day == "03" || day == "23") {
       dayString = `${day}RD`;
    } else {
       dayString = `${day}TH`;
    }
    const year = date.getFullYear();
 
+   const windowWidth = window.innerWidth;
+   console.log(windowWidth);
+
    const littleThingsArray = [];
    props.things.forEach((thing, index) => {
-      if (index !== 0) {
+      if (index !== 0 || windowWidth < 800) {
          littleThingsArray.push(<LittleThing thing={thing} key={thing.id} />);
       }
    });
@@ -76,7 +79,13 @@ const DayContainer = props => {
                {monthString} {dayString}, {year}
             </h2>
          </div>
-         <Thing thing={props.things[0]} key={props.things[0].id} />
+         {windowWidth >= 800 && (
+            <Thing
+               thing={props.things[0]}
+               key={props.things[0].id}
+               client={props.client}
+            />
+         )}
          <div className="littleThings">{littleThingsArray}</div>
       </StyledDayContainer>
    );

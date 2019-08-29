@@ -1,8 +1,12 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import Link from "next/link";
-import VoteBar from "./ThingParts/VoteBar";
-import { convertISOtoAgo } from "../lib/utils";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+import VoteBar from './ThingParts/VoteBar';
+import Member from './Member';
+import { convertISOtoAgo } from '../lib/utils';
+import { GET_VOTES } from './Thing';
 
 const StyledLittleThing = styled.article`
    display: flex;
@@ -34,7 +38,7 @@ const StyledLittleThing = styled.article`
    }
    div.lede {
       width: calc(100% - 2rem;);
-      height: 400px;
+      height: 40rem;
       position: relative;
       h3 {
          position: absolute;
@@ -91,7 +95,7 @@ const StyledLittleThing = styled.article`
          margin-right: 0.5rem;
       }
       a {
-         color: ${props => props.theme.lightGrey};
+         color: ${props => props.theme.highContrastGrey};
          font-size: ${props => props.theme.smallText};
          font-weight: 300;
       }
@@ -112,7 +116,7 @@ class LittleThing extends Component {
                <span key={narrative.title}>
                   <Link
                      href={{
-                        pathname: '/narrative',
+                        pathname: "/narrative",
                         query: {
                            id: narrative.id
                         }
@@ -128,7 +132,7 @@ class LittleThing extends Component {
             <span key={narrative.title}>
                <Link
                   href={{
-                     pathname: '/narrative',
+                     pathname: "/narrative",
                      query: {
                         id: narrative.id
                      }
@@ -152,7 +156,7 @@ class LittleThing extends Component {
                <h3>
                   <Link
                      href={{
-                        pathname: "/thing",
+                        pathname: '/thing',
                         query: {
                            id: data.id
                         }
@@ -165,17 +169,34 @@ class LittleThing extends Component {
                   src={
                      data.featuredImage
                         ? data.featuredImage
-                        : "/static/defaultPic.jpg"
+                        : '/static/defaultPic.jpg'
                   }
                />
                <p className="meta">
                   {convertISOtoAgo(data.createdAt)}
-                  {" AGO"}
+                  {' AGO'}
                </p>
             </div>
             {narratives}
             <div className="VoteBarWrapper">
-               <VoteBar />
+               <Member>
+                  {({ data: memberData }) => (
+                     <Query query={GET_VOTES} variables={{ id: data.id }}>
+                        {({ loading, error, data: voteData }) => (
+                           <VoteBar
+                              key={data.id}
+                              voteData={
+                                 voteData.votesConnection
+                                    ? voteData.votesConnection.edges
+                                    : []
+                              }
+                              thingID={data.id}
+                              member={memberData.me}
+                           />
+                        )}
+                     </Query>
+                  )}
+               </Member>
             </div>
          </StyledLittleThing>
       );

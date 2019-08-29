@@ -8,9 +8,14 @@ const StyledLogoBox = styled.div`
    img {
       width: 7rem;
       margin-top: -4px;
+      cursor: pointer;
    }
    a,
    a:visited {
+      display: none;
+      @media screen and (min-width: 800px) {
+         display: block;
+      }
       font-size: ${props => props.theme.smallHead};
       font-weight: 300;
       opacity: 0.9;
@@ -23,8 +28,10 @@ const StyledLogoBox = styled.div`
 `;
 
 const LogoBox = () => (
-   <StyledLogoBox>
-      <img src="/static/logo.png" />
+   <StyledLogoBox className="logoBox">
+      <Link href="/">
+         <img src="/static/logo.png" />
+      </Link>
       <Link href="/">
          <a>Our Dailies</a>
       </Link>

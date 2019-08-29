@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Link from 'next/link';
-import { Mutation, ApolloConsumer } from "react-apollo";
-import gql from 'graphql-tag';
-import Downshift, { resetIdCounter } from "downshift";
-import debounce from "lodash.debounce";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
+import React, { Component } from "react";
+import styled from "styled-components";
+import Link from "next/link";
+import { Mutation, ApolloConsumer } from 'react-apollo';
+import gql from "graphql-tag";
+import Downshift, { resetIdCounter } from 'downshift';
+import debounce from 'lodash.debounce';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
 
 const ADD_NARRATIVE_TO_THING_MUTATION = gql`
    mutation ADD_NARRATIVE_TO_THING_MUTATION($title: String!, $thingID: ID!) {
@@ -92,7 +92,7 @@ const StyledNarratives = styled.div`
 
 class NarrativesBox extends Component {
    state = {
-      addNarrative: '',
+      addNarrative: "",
       narratives: [],
       loading: false
    };
@@ -103,11 +103,10 @@ class NarrativesBox extends Component {
    };
 
    submitNarrative = async addNarrativeToThing => {
-      console.log(addNarrativeToThing);
       const res = await addNarrativeToThing().catch(err => {
          alert(err.message);
       });
-      this.setState({ addNarrative: '' });
+      this.setState({ addNarrative: "" });
    };
 
    generateAutocomplete = debounce(async (e, client) => {
@@ -122,7 +121,7 @@ class NarrativesBox extends Component {
          narrativeObject => !usedNarratives.includes(narrativeObject.title)
       );
       this.setState({
-         narratives: e.target.value === "" ? [] : unusedNarratives
+         narratives: e.target.value === '' ? [] : unusedNarratives
       });
    }, 350);
 
@@ -137,7 +136,7 @@ class NarrativesBox extends Component {
                      <span key={narrative.id}>
                         <Link
                            href={{
-                              pathname: '/narrative',
+                              pathname: "/narrative",
                               query: {
                                  id: narrative.id
                               }
@@ -153,7 +152,7 @@ class NarrativesBox extends Component {
                   <span key={narrative.id}>
                      <Link
                         href={{
-                           pathname: '/narrative',
+                           pathname: "/narrative",
                            query: {
                               id: narrative.id
                            }
@@ -182,14 +181,14 @@ class NarrativesBox extends Component {
          >
             {(addNarrativeToThing, { loading, error, called, data }) => (
                <StyledNarratives>
-                  <h5 className="narratives">PART OF:</h5> {narrativeLinks}{' '}
+                  <h5 className="narratives">PART OF:</h5> {narrativeLinks}{" "}
                   {this.props.member != null && (
                      <ApolloConsumer>
                         {client => (
                            <Downshift
                               onChange={async item => {
                                  this.setState({
-                                    addNarrative: "",
+                                    addNarrative: '',
                                     loading: true
                                  });
                                  const res = await client
@@ -214,7 +213,7 @@ class NarrativesBox extends Component {
                                  this.setState({ loading: false });
                               }}
                               itemToString={item =>
-                                 item === null ? '' : item.title
+                                 item === null ? "" : item.title
                               }
                            >
                               {({
@@ -232,17 +231,17 @@ class NarrativesBox extends Component {
                                              alert(err.message);
                                           }
                                        );
-                                       this.setState({ addNarrative: '' });
+                                       this.setState({ addNarrative: "" });
                                     }}
                                  >
                                     <input
                                        {...getInputProps({
-                                          type: 'text',
-                                          id: "addNarrative",
-                                          name: "addNarrative",
+                                          type: "text",
+                                          id: 'addNarrative',
+                                          name: 'addNarrative',
                                           placeholder: this.state.loading
-                                             ? 'Adding...'
-                                             : "+ Add a Narrative",
+                                             ? "Adding..."
+                                             : '+ Add a Narrative',
                                           value: this.state.addNarrative,
                                           disabled: this.state.loading,
                                           onChange: e => {
@@ -260,8 +259,8 @@ class NarrativesBox extends Component {
                                                       className={
                                                          index ===
                                                          highlightedIndex
-                                                            ? 'autocompleteSuggestionItem highlighted'
-                                                            : 'autoCompleteSuggestionItem'
+                                                            ? "autocompleteSuggestionItem highlighted"
+                                                            : "autoCompleteSuggestionItem"
                                                       }
                                                       {...getItemProps({
                                                          item

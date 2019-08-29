@@ -1,8 +1,29 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import Link from "next/link";
-import VoteBar from "./ThingParts/VoteBar";
-import { convertISOtoAgo } from "../lib/utils";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import VoteBar from './ThingParts/VoteBar';
+import Member from "./Member";
+import { convertISOtoAgo } from '../lib/utils';
+
+const GET_VOTES = gql`
+   query GET_VOTES($id: ID!) {
+      votesConnection(where: { onThing: { id: $id } }) {
+         edges {
+            node {
+               voter {
+                  id
+                  displayName
+                  avatar
+                  roles
+               }
+               value
+            }
+         }
+      }
+   }
+`;
 
 const StyledThing = styled.article`
     position: relative;
@@ -108,7 +129,7 @@ class Thing extends Component {
                <span key={narrative.title}>
                   <Link
                      href={{
-                        pathname: '/narrative',
+                        pathname: "/narrative",
                         query: {
                            id: narrative.id
                         }
@@ -124,7 +145,7 @@ class Thing extends Component {
             <span key={narrative.title}>
                <Link
                   href={{
-                     pathname: '/narrative',
+                     pathname: "/narrative",
                      query: {
                         id: narrative.id
                      }
@@ -149,7 +170,7 @@ class Thing extends Component {
                   <h3>
                      <Link
                         href={{
-                           pathname: "/thing",
+                           pathname: '/thing',
                            query: {
                               id: data.id
                            }
@@ -160,7 +181,7 @@ class Thing extends Component {
                   </h3>
                   <p className="meta">
                      {convertISOtoAgo(data.createdAt)}
-                     {' AGO'}
+                     {" AGO"}
                   </p>
                </div>
                <div className="BottomInfo">{narratives}</div>
@@ -170,13 +191,30 @@ class Thing extends Component {
                      src={
                         data.featuredImage
                            ? data.featuredImage
-                           : '/static/defaultPic.jpg'
+                           : "/static/defaultPic.jpg"
                      }
                   />
                </div>
             </div>
             <div className="VoteBarWrapper">
-               <VoteBar />
+               <Member>
+                  {({ data: memberData }) => (
+                     <Query query={GET_VOTES} variables={{ id: data.id }}>
+                        {({ loading, error, data: voteData }) => (
+                           <VoteBar
+                              key={data.id}
+                              voteData={
+                                 voteData.votesConnection
+                                    ? voteData.votesConnection.edges
+                                    : []
+                              }
+                              thingID={data.id}
+                              member={memberData.me}
+                           />
+                        )}
+                     </Query>
+                  )}
+               </Member>
             </div>
          </StyledThing>
       );
@@ -184,3 +222,4 @@ class Thing extends Component {
 }
 
 export default Thing;
+export { GET_VOTES };

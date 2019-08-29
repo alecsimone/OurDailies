@@ -1,11 +1,11 @@
-import styled from "styled-components";
-import gql from "graphql-tag";
-import { Query } from "react-apollo";
-import Head from "next/head";
-import Error from "../components/ErrorMessage";
-import Thing from "../components/Thing";
-import LittleThing from "../components/LittleThing";
-import TinyThing from "../components/TinyThing";
+import styled from 'styled-components';
+import gql from 'graphql-tag';
+import { Query } from 'react-apollo';
+import Head from 'next/head';
+import Error from '../components/ErrorMessage';
+import Thing from '../components/Thing';
+import LittleThing from '../components/LittleThing';
+import TinyThing from '../components/TinyThing';
 
 const NARRATIVE_THINGS_QUERY = gql`
    query NARRATIVE_THINGS_QUERY($id: ID!) {
@@ -73,46 +73,65 @@ const NarrativeContainer = styled.div`
 `;
 
 const NarrativeFeed = props => (
-        <Query query={NARRATIVE_THINGS_QUERY} variables={{
-            id: props.query.id,
-        }}>
-            {
-                ({error, loading, data}) => {
-                    if (error) return <Error error={error} />
-                    if (loading) return <p>Loading...</p>
-                    console.log(data.storiesConnection.edges);
-                    if (data.storiesConnection.edges.length === 0 && data.submissionsConnection.edges.length === 0) {
-                        return (
-                            <NarrativeContainer>
-                                <Head>
-                                    <title>{data.narrative.title} - Our Dailies</title>
-                                </Head>
-                                <h2><span>NARRATIVE:</span> {data.narrative.title}</h2>
-                                <div className="thingGrid">
-                                    <p className="nothing">No things found for that Narrative</p>
-                                </div>
-                            </NarrativeContainer>
-                        )
-                    }
+   <Query
+      query={NARRATIVE_THINGS_QUERY}
+      variables={{
+         id: props.query.id
+      }}
+   >
+      {({ error, loading, data }) => {
+         if (error) return <Error error={error} />;
+         if (loading) return <p>Loading...</p>;
+         if (
+            data.storiesConnection.edges.length === 0 &&
+            data.submissionsConnection.edges.length === 0
+         ) {
+            return (
+               <NarrativeContainer>
+                  <Head>
+                     <title>{data.narrative.title} - Our Dailies</title>
+                  </Head>
+                  <h2>
+                     <span>NARRATIVE:</span> {data.narrative.title}
+                  </h2>
+                  <div className="thingGrid">
+                     <p className="nothing">
+                        No things found for that Narrative
+                     </p>
+                  </div>
+               </NarrativeContainer>
+            );
+         }
 
-                    const stories = data.storiesConnection.edges.map((story, index) => index === 0 ? <Thing thing={story.node} key={story.node.id} /> : <LittleThing thing={story.node} key={story.node.id} />);
-                    const submissions = data.submissionsConnection.edges.map(submission => <TinyThing thing={submission.node} key={submission.node.id} />);
+         const stories = data.storiesConnection.edges.map((story, index) =>
+            index === 0 ? (
+               <Thing thing={story.node} key={story.node.id} />
+            ) : (
+               <LittleThing thing={story.node} key={story.node.id} />
+            )
+         );
+         const submissions = data.submissionsConnection.edges.map(
+            submission => (
+               <TinyThing thing={submission.node} key={submission.node.id} />
+            )
+         );
 
-                    return (
-                        <NarrativeContainer>
-                            <Head>
-                                <title>{data.narrative.title} - Our Dailies</title>
-                            </Head>
-                            <h2><span>NARRATIVE:</span> {data.narrative.title}</h2>
-                            <div className="thingGrid">
-                                {stories}
-                                {submissions}
-                            </div>
-                        </NarrativeContainer>
-                    )
-                }
-            }
-        </Query>
-    );
+         return (
+            <NarrativeContainer>
+               <Head>
+                  <title>{data.narrative.title} - Our Dailies</title>
+               </Head>
+               <h2>
+                  <span>NARRATIVE:</span> {data.narrative.title}
+               </h2>
+               <div className="thingGrid">
+                  {stories}
+                  {submissions}
+               </div>
+            </NarrativeContainer>
+         );
+      }}
+   </Query>
+);
 
 export default NarrativeFeed;
