@@ -83,7 +83,11 @@ class FullThingEmbed extends Component {
             </div>
             <div className="thingInfo">
                <div className="lede" />
-               <h3 className="headline">{thing.title}</h3>
+               <h3 className="headline">
+                  <a href={thing.originalSource} target="_blank">
+                     {thing.title}
+                  </a>
+               </h3>
                <div className="meta">
                   {convertISOtoAgo(thing.createdAt)}
                   {" AGO "}
@@ -109,6 +113,7 @@ class FullThingEmbed extends Component {
                   key={thing.id}
                   voteData={thing.votes}
                   passData={thing.passes}
+                  finalistDate={thing.finalistDate}
                   thingID={thing.id}
                   member={member.me}
                />

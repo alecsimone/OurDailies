@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Link from 'next/link';
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
-import VoteBar from './ThingParts/VoteBar';
-import Member from "./Member";
-import { convertISOtoAgo } from '../lib/utils';
+import React, { Component } from "react";
+import styled from "styled-components";
+import Link from "next/link";
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+import VoteBar from "./ThingParts/VoteBar";
+import Member from './Member';
+import { convertISOtoAgo } from "../lib/utils";
 
 const GET_VOTES = gql`
    query GET_VOTES($id: ID!) {
@@ -60,7 +60,7 @@ const StyledThing = styled.article`
                 width: 100%;
                 height: 100%;
             }
-            :after {
+            /* :after {
                 content: ' ';
                 z-index: 0;
                 display: block;
@@ -72,7 +72,7 @@ const StyledThing = styled.article`
                 width: 1280px;
                 height: 720px;
                 background: hsla(0, 0%, 0%, .4);
-            }
+            } */
         }
         .TopInfo {
             padding: 6rem 3rem;
@@ -129,7 +129,7 @@ class Thing extends Component {
                <span key={narrative.title}>
                   <Link
                      href={{
-                        pathname: "/narrative",
+                        pathname: '/narrative',
                         query: {
                            id: narrative.id
                         }
@@ -145,7 +145,7 @@ class Thing extends Component {
             <span key={narrative.title}>
                <Link
                   href={{
-                     pathname: "/narrative",
+                     pathname: '/narrative',
                      query: {
                         id: narrative.id
                      }
@@ -170,7 +170,7 @@ class Thing extends Component {
                   <h3>
                      <Link
                         href={{
-                           pathname: '/thing',
+                           pathname: "/thing",
                            query: {
                               id: data.id
                            }
@@ -181,7 +181,7 @@ class Thing extends Component {
                   </h3>
                   <p className="meta">
                      {convertISOtoAgo(data.createdAt)}
-                     {" AGO"}
+                     {' AGO'}
                   </p>
                </div>
                <div className="BottomInfo">{narratives}</div>
@@ -191,7 +191,7 @@ class Thing extends Component {
                      src={
                         data.featuredImage
                            ? data.featuredImage
-                           : "/static/defaultPic.jpg"
+                           : '/static/defaultPic.jpg'
                      }
                   />
                </div>
@@ -199,17 +199,14 @@ class Thing extends Component {
             <div className="VoteBarWrapper">
                <Member>
                   {({ data: memberData }) => (
-                     <Query query={GET_VOTES} variables={{ id: data.id }}>
-                        {({ loading, error, data: voteData }) => (
-                           <VoteBar
-                              key={data.id}
-                              voteData={data.votes}
-                              passData={data.passes}
-                              thingID={data.id}
-                              member={memberData.me}
-                           />
-                        )}
-                     </Query>
+                     <VoteBar
+                        key={data.id}
+                        voteData={data.votes}
+                        passData={data.passes}
+                        finalistDate={data.finalistDate}
+                        thingID={data.id}
+                        member={memberData.me}
+                     />
                   )}
                </Member>
             </div>

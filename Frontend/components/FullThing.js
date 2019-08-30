@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import Link from 'next/link';
-import { Mutation, Subscription } from 'react-apollo';
-import gql from 'graphql-tag';
-import { convertISOtoAgo } from "../lib/utils";
-import Error from './ErrorMessage';
-import VoteBar from './ThingParts/VoteBar';
-import NarrativesBoxEditable from './ThingParts/NarrativesBoxEditable';
-import LinksBox from './ThingParts/LinksBox';
-import Summary from './ThingParts/Summary';
-import Comments from './ThingParts/Comments';
-import FeaturedImageCarousel from './ThingParts/FeaturedImageCarousel';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import Link from "next/link";
+import { Mutation, Subscription } from "react-apollo";
+import gql from "graphql-tag";
+import { convertISOtoAgo } from '../lib/utils';
+import Error from "./ErrorMessage";
+import VoteBar from "./ThingParts/VoteBar";
+import NarrativesBoxEditable from "./ThingParts/NarrativesBoxEditable";
+import LinksBox from "./ThingParts/LinksBox";
+import Summary from "./ThingParts/Summary";
+import Comments from "./ThingParts/Comments";
+import FeaturedImageCarousel from "./ThingParts/FeaturedImageCarousel";
 
 const StyledFullThing = styled.article`
    position: relative;
@@ -99,34 +99,35 @@ class FullThing extends Component {
                   headline={thing.title}
                   thingID={thing.id}
                   member={member.me}
-                  key={'FeaturedImageCarousel-' + thing.id}
+                  key={"FeaturedImageCarousel-" + thing.id}
                />
             </div>
             <div className="meta">
                {convertISOtoAgo(thing.createdAt)}
-               {' AGO '}
+               {" AGO "}
                {thing.author ? (
                   <div>Submitted by {thing.author.displayName}</div>
                ) : (
-                  ''
+                  ""
                )}
             </div>
             <Summary
                summary={thing.summary}
                thingID={thing.id}
                member={member.me}
-               key={'Summary-' + thing.id}
+               key={"Summary-" + thing.id}
             />
             <NarrativesBoxEditable
                partOfNarratives={thing.partOfNarratives}
                thingID={thing.id}
                member={member.me}
-               key={'NarrativesBoxEditable-' + thing.id}
+               key={"NarrativesBoxEditable-" + thing.id}
             />
             <VoteBar
                key={thing.id}
                voteData={thing.votes}
                passData={thing.passes}
+               finalistDate={thing.finalistDate}
                thingID={thing.id}
                member={member.me}
             />
@@ -135,13 +136,13 @@ class FullThing extends Component {
                links={thing.includedLinks}
                thingID={thing.id}
                member={member.me}
-               key={'LinksBox-' + thing.id}
+               key={"LinksBox-" + thing.id}
             />
             <Comments
                comments={thing.comments}
                thingID={thing.id}
                member={member.me}
-               key={'Comments-' + thing.id}
+               key={"Comments-" + thing.id}
             />
          </StyledFullThing>
       );

@@ -1,15 +1,24 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import { getYoutubeVideoIdFromLink } from "../../lib/utils";
-import { SINGLE_THING_QUERY } from '../../pages/thing';
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import { getYoutubeVideoIdFromLink } from '../../lib/utils';
+import { SINGLE_THING_QUERY } from "../../pages/thing";
 
 const SET_FEATURED_IMAGE_MUTATION = gql`
    mutation SET_FEATURED_IMAGE_MUTATION($imageUrl: String!, $thingID: ID!) {
       setFeaturedImage(imageUrl: $imageUrl, thingID: $thingID) {
          id
          featuredImage
+      }
+   }
+`;
+
+const CHANGE_TITLE_MUTATION = gql`
+   mutation CHANGE_TITLE_MUTATION($title: String!, $thingID: ID!) {
+      changeThingTitle(title: $title, thingID: $thingID) {
+         id
+         title
       }
    }
 `;
@@ -28,8 +37,7 @@ const FeaturedImageContainer = styled.div`
          z-index: 1;
       }
       @media screen and (min-width: 800px) {
-         &:after {
-            /* Puts a tint over the image */
+         /* &:after {
             content: " ";
             z-index: 0;
             display: block;
@@ -41,7 +49,7 @@ const FeaturedImageContainer = styled.div`
             width: 100%;
             height: 100%;
             background: hsla(0, 0%, 0%, 0.4);
-         }
+         } */
       }
    }
    img.featured {
@@ -106,6 +114,29 @@ const FeaturedImageContainer = styled.div`
       font-size: ${props => props.theme.bigHead};
       margin: 0rem;
       line-height: 1;
+      display: flex;
+      align-items: center;
+      .title {
+         flex-grow: 1;
+      }
+      input {
+         background: none;
+         font-size: ${props => props.theme.bigHead};
+         font-weight: bold;
+         padding: 0;
+         line-height: 1;
+         margin-bottom: -1px;
+      }
+      img.editThis {
+         height: 2.5rem;
+         width: 2.5rem;
+         align-self: flex-end;
+         cursor: pointer;
+         opacity: 0.6;
+         &:hover {
+            opacity: 1;
+         }
+      }
       a:hover {
          text-decoration: underline;
       }
@@ -142,7 +173,9 @@ const FeaturedImageContainer = styled.div`
 
 class FeaturedImageCarousel extends Component {
    state = {
-      currentSliderPosition: 0
+      currentSliderPosition: 0,
+      editingTitle: false,
+      title: this.props.thing.title
    };
 
    sliderPositionDown = mediaLinksArray => {
@@ -171,6 +204,22 @@ class FeaturedImageCarousel extends Component {
       }
    };
 
+   makeTitleEditable = () => {
+      this.setState({ editingTitle: !this.state.editingTitle });
+   };
+
+   handleTitleChange = e => {
+      this.setState({ title: e.target.value });
+   };
+
+   watchForEnter = async (e, changeThingTitle) => {
+      if (e.key === "Enter") {
+         console.log("Submitting!");
+         await changeThingTitle();
+         this.setState({ editingTitle: false });
+      }
+   };
+
    render() {
       const { thing } = this.props;
       const featuredImageButItsAnArrayNow = [thing.featuredImage];
@@ -181,18 +230,65 @@ class FeaturedImageCarousel extends Component {
 
       const mediaLinksArray = justTheLinks.filter(
          link =>
-            (link !== thing.featuredImage && link.includes('jpg')) ||
-            link.includes("png") ||
-            link.includes("gif") ||
-            link.includes("youtube.com/watch?v=") ||
-            link.includes("youtu.be/")
+            (link !== thing.featuredImage && link.includes("jpg")) ||
+            link.includes('png') ||
+            link.includes('gif') ||
+            link.includes('youtube.com/watch?v=') ||
+            link.includes('youtu.be/')
       );
-      const allMedia = featuredImageButItsAnArrayNow.concat(mediaLinksArray);
+      const allMedia =
+         thing.featuredImage != null
+            ? featuredImageButItsAnArrayNow.concat(mediaLinksArray)
+            : mediaLinksArray;
 
       const currentLink = allMedia[this.state.currentSliderPosition];
 
       let leftButton;
       let rightButton;
+
+      const headline = (
+         <h3 className="headline">
+            {this.state.editingTitle ? (
+               <Mutation
+                  mutation={CHANGE_TITLE_MUTATION}
+                  variables={{ title: this.state.title, thingID: thing.id }}
+                  refetchQueries={[
+                     {
+                        query: SINGLE_THING_QUERY,
+                        variables: { id: this.props.thingID }
+                     }
+                  ]}
+               >
+                  {(changeThingTitle, { loading, error, called, data }) => (
+                     <input
+                        type="text"
+                        className="title"
+                        value={this.state.title}
+                        onChange={this.handleTitleChange}
+                        onKeyDown={e => {
+                           e.persist();
+                           this.watchForEnter(e, changeThingTitle);
+                        }}
+                     />
+                  )}
+               </Mutation>
+            ) : (
+               <a
+                  href={thing.originalSource}
+                  target="_blank"
+                  className="headlineLink title"
+               >
+                  {thing.title}
+               </a>
+            )}
+            <img
+               src="/static/edit-this.png"
+               className="editThis"
+               onClick={this.makeTitleEditable}
+            />
+         </h3>
+      );
+
       if (
          mediaLinksArray.length > 1 ||
          (mediaLinksArray.length > 0 && thing.featuredImage != null)
@@ -227,28 +323,20 @@ class FeaturedImageCarousel extends Component {
                <div className="featuredImageWrapper">
                   <img src="/static/defaultPic.jpg" className="featured" />
                </div>
-               <h3 className="headline">
-                  <a
-                     href={thing.originalSource}
-                     target="_blank"
-                     className="headlineLink"
-                  >
-                     {thing.title}
-                  </a>
-               </h3>
+               {headline}
             </>
          );
       } else if (
-         currentLink.includes('jpg') ||
-         currentLink.includes('png') ||
-         currentLink.includes('gif')
+         currentLink.includes("jpg") ||
+         currentLink.includes("png") ||
+         currentLink.includes("gif")
       ) {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
                   {this.props.member != null &&
                      this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator'].includes(role)
+                        ["Admin", "Editor", "Moderator"].includes(role)
                      ) && (
                         <Mutation
                            mutation={SET_FEATURED_IMAGE_MUTATION}
@@ -285,20 +373,12 @@ class FeaturedImageCarousel extends Component {
                      )}
                   <img src={currentLink} className="featured" />
                </div>
-               <h3 className="headline">
-                  <a
-                     href={thing.originalSource}
-                     target="_blank"
-                     className="headlineLink"
-                  >
-                     {thing.title}
-                  </a>
-               </h3>
+               {headline}
             </>
          );
       } else if (
-         currentLink.includes("youtube.com/watch?v=") ||
-         currentLink.includes("youtu.be/")
+         currentLink.includes('youtube.com/watch?v=') ||
+         currentLink.includes('youtu.be/')
       ) {
          const videoID = getYoutubeVideoIdFromLink(currentLink);
          featuredImage = (
@@ -311,15 +391,7 @@ class FeaturedImageCarousel extends Component {
                      allowFullScreen
                   />
                </div>
-               <h3 className="headline video">
-                  <a
-                     href={thing.originalSource}
-                     target="_blank"
-                     className="headlineLink"
-                  >
-                     {thing.title}
-                  </a>
-               </h3>
+               {headline}
             </>
          );
       }

@@ -1,15 +1,15 @@
-const { forwardTo } = require('prisma-binding');
+const { forwardTo } = require("prisma-binding");
 
 const Query = {
-   thing: forwardTo('db'),
-   things: forwardTo('db'),
-   narratives: forwardTo('db'),
-   narrative: forwardTo('db'),
-   members: forwardTo('db'),
-   member: forwardTo('db'),
-   commentsConnection: forwardTo('db'),
-   votesConnection: forwardTo('db'),
-   thingsConnection: forwardTo('db'),
+   thing: forwardTo("db"),
+   things: forwardTo("db"),
+   narratives: forwardTo("db"),
+   narrative: forwardTo("db"),
+   members: forwardTo("db"),
+   member: forwardTo("db"),
+   commentsConnection: forwardTo("db"),
+   votesConnection: forwardTo("db"),
+   thingsConnection: forwardTo("db"),
    me(parent, args, ctx, info) {
       if (!ctx.request.memberId) {
          return null;
@@ -24,16 +24,18 @@ const Query = {
    async thingsForMostRecentDay(parent, args, ctx, info) {
       const [mostRecentFinalist] = await ctx.db.query.things(
          {
-            orderBy: "finalistDate_DESC",
+            orderBy: 'finalistDate_DESC',
             first: 1
          },
          `{finalistDate}`
       );
-      const tPos = mostRecentFinalist.finalistDate.indexOf('T');
+      const tPos = mostRecentFinalist.finalistDate.indexOf("T");
       const mostRecentFinalistDate = new Date(
          mostRecentFinalist.finalistDate.substring(0, tPos)
       );
-      const startingUnixTime = mostRecentFinalistDate.getTime();
+      console.log(mostRecentFinalistDate);
+      const startingUnixTime =
+         mostRecentFinalistDate.getTime() + 1000 * 60 * 60 * 4;
       const endingUnixTime = startingUnixTime + 1000 * 60 * 60 * 24;
       const endingDate = new Date(endingUnixTime);
       const mostRecentDayThings = await ctx.db.query.things(
@@ -50,7 +52,7 @@ const Query = {
    async thingsForGivenDay(parent, { day }, ctx, info) {
       let thingsForDay = [];
       let i = -1;
-      const tPos = day.indexOf("T");
+      const tPos = day.indexOf('T');
       const initialDate = new Date(day.substring(0, tPos));
       while (thingsForDay.length === 0 && i < 30) {
          const startDate = new Date(
@@ -87,15 +89,50 @@ const Query = {
                         id: ctx.request.memberId
                      }
                   },
-                  finalistDate: null
+                  finalistDate: null,
+                  eliminated: false
                }
             },
-            orderBy: 'createdAt_DESC',
+            orderBy: "createdAt_DESC",
             first: 3
          },
          info
       );
       return thingsForNew;
+   },
+   async thingsForCurate(parent, args, ctx, info) {
+      const now = new Date();
+      const twoDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 2);
+      const thingsForCurate = await ctx.db.query.things(
+         {
+            where: {
+               AND: {
+                  createdAt_gte: twoDaysAgo,
+                  eliminated: false,
+                  finalistDate: null
+               }
+            }
+         },
+         info
+      );
+      return thingsForCurate;
+   },
+   async thingsForFinalists(parent, args, ctx, info) {
+      const now = new Date();
+      const yesterday = new Date(now.getTime() - 1000 * 60 * 60 * 24);
+      const thingsForFinalists = await ctx.db.query.things(
+         {
+            where: {
+               AND: {
+                  finalistDate_gte: yesterday.toISOString(),
+                  eliminated: false
+               }
+            }
+         },
+         info
+      );
+
+      return thingsForFinalists;
    }
 };
 

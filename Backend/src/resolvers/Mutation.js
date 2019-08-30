@@ -320,6 +320,31 @@ const Mutations = {
       );
       return newThing;
    },
+   async changeThingTitle(parent, { title, thingID }, ctx, info) {
+      if (!ctx.request.memberId) {
+         throw new Error('You must be logged in to do that');
+      }
+      if (
+         !ctx.request.member.roles.some(role =>
+            ["Admin", "Editor", "Moderator"].includes(role)
+         )
+      ) {
+         throw new Error("You don't have permission to do that");
+      }
+
+      const newThing = await ctx.db.mutation.updateThing(
+         {
+            where: {
+               id: thingID
+            },
+            data: {
+               title
+            }
+         },
+         info
+      );
+      return newThing;
+   },
    async addCommentToThing(parent, { comment, thingID }, ctx, info) {
       if (!ctx.request.memberId) {
          throw new Error('You must be logged in to do that');
@@ -491,6 +516,59 @@ const Mutations = {
          }}`
       );
       return newPass;
+   },
+   eliminateThing(parent, { thingID }, ctx, info) {
+      if (!ctx.request.memberId) {
+         throw new Error('You must be logged in to do that');
+      }
+      if (
+         !ctx.request.member.roles.some(role =>
+            ["Admin", "Editor", "Moderator"].includes(role)
+         )
+      ) {
+         throw new Error("You don't have permission to do that");
+      }
+
+      const updatedThing = ctx.db.mutation.updateThing(
+         {
+            where: {
+               id: thingID
+            },
+            data: {
+               eliminated: true
+            }
+         },
+         info
+      );
+
+      return updatedThing;
+   },
+   promoteThing(parent, { thingID }, ctx, info) {
+      if (!ctx.request.memberId) {
+         throw new Error('You must be logged in to do that');
+      }
+      if (
+         !ctx.request.member.roles.some(role =>
+            ["Admin", "Editor", "Moderator"].includes(role)
+         )
+      ) {
+         throw new Error("You don't have permission to do that");
+      }
+
+      // Set now back in time 4 hours so that the finalistDate will have the day it was on east coast time, not zulu time
+      const now = new Date(Date.now() - 1000 * 60 * 60 * 4);
+      const promotedThing = ctx.db.mutation.updateThing(
+         {
+            where: {
+               id: thingID
+            },
+            data: {
+               finalistDate: now
+            }
+         },
+         info
+      );
+      return promotedThing;
    }
 };
 

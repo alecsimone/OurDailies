@@ -26,6 +26,7 @@ type Mutation {
     confirmPassword: String!
   ): Member!
   setFeaturedImage(imageUrl: String!, thingID: ID!): Thing!
+  changeThingTitle(title: String!, thingID: ID!): Thing!
   addNarrativeToThing(title: String!, thingID: ID!): Thing!
   addLinkToThing(title: String!, url: String!, thingID: ID!): Thing!
   addSummaryLineToThing(summaryLine: String!, thingID: ID!): Thing!
@@ -34,6 +35,8 @@ type Mutation {
   deleteComment(id: ID!): Comment!
   voteOnThing(thingID: ID!): Vote
   passOnThing(thingID: ID!): Pass
+  eliminateThing(thingID: ID!): Thing
+  promoteThing(thingID: ID!): Thing
 }
 
 type Query {
@@ -50,6 +53,8 @@ type Query {
   thingsForMostRecentDay: [Thing]!
   thingsForGivenDay(day: String!): [Thing]!
   thingsForNew: [Thing]!
+  thingsForCurate: [Thing]!
+  thingsForFinalists: [Thing]!
 }
 
 type Subscription {

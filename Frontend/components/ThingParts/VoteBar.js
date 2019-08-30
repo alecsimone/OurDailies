@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import { SINGLE_THING_QUERY } from '../../pages/thing';
-import { TOGGLE_MODAL_MUTATION } from '../Modal';
-import { NEW_THINGS_QUERY } from '../../pages/new';
+import React, { Component } from "react";
+import styled from "styled-components";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import { SINGLE_THING_QUERY } from "../../pages/thing";
+import { TOGGLE_MODAL_MUTATION } from "../Modal";
+import { NEW_THINGS_QUERY } from "../../pages/new";
+import { CURATE_THINGS_QUERY } from "../../pages/curate";
 
 const VOTE_ON_THING_MUTATION = gql`
    mutation VOTE_ON_THING_MUTATION($thingID: ID!) {
@@ -29,6 +30,22 @@ const PASS_ON_THING_MUTATION = gql`
             avatar
             roles
          }
+      }
+   }
+`;
+
+const ELIMINATE_THING_MUTATION = gql`
+   mutation ELIMINATE_THING_MUTATION($thingID: ID!) {
+      eliminateThing(thingID: $thingID) {
+         id
+      }
+   }
+`;
+
+const PROMOTE_THING_MUTATION = gql`
+   mutation PROMOTE_THING_MUTATION($thingID: ID!) {
+      promoteThing(thingID: $thingID) {
+         id
       }
    }
 `;
@@ -148,11 +165,49 @@ const StyledVoteBar = styled.div`
       padding: 0 1rem;
       margin: 1rem 0 0;
       text-align: right;
-      button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      button.pass {
          padding: 0.4rem;
          &[aria-disabled="true"] {
             background: ${props => props.theme.lowContrastGrey};
          }
+      }
+      button.eliminate,
+      button.promote {
+         border: none;
+         height: 2rem;
+         padding: 1px 0 0 0;
+         margin-right: 1.6rem;
+         opacity: 0.6;
+         &[aria-disabled="true"],
+         img.loading {
+            animation-name: spin;
+            animation-duration: 750ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            @keyframes spin {
+               from {
+                  transform: rotate(0deg);
+               }
+               to {
+                  transform: rotate(360deg);
+               }
+            }
+         }
+         &:hover {
+            opacity: 1;
+            background: none;
+         }
+         img {
+            height: 2rem;
+         }
+      }
+      .promoteContainer {
+         flex-grow: 1;
+         text-align: left;
+         margin: 0 0 0 1rem;
       }
    }
 `;
@@ -213,11 +268,11 @@ class VoteBar extends Component {
             optimisticResponse={
                this.props.member != null
                   ? {
-                       __typename: "Mutation",
+                       __typename: 'Mutation',
                        voteOnThing: {
-                          __typename: "Vote",
+                          __typename: 'Vote',
                           voter: {
-                             __typename: 'Member',
+                             __typename: "Member",
                              id: this.props.member.id,
                              displayName: this.props.member.displayName,
                              avatar: this.props.member.avatar,
@@ -226,7 +281,7 @@ class VoteBar extends Component {
                           value: this.props.member.rep
                        }
                     }
-                  : { fuck: "you" }
+                  : { fuck: 'you' }
             }
             update={(proxy, { data: { voteOnThing } }) => {
                const data = proxy.readQuery({
@@ -260,7 +315,7 @@ class VoteBar extends Component {
                <button onClick={voteOnThing}>
                   <img
                      src="/static/logo-small.png"
-                     className={hasVoted ? "hasVoted" : "notVoted"}
+                     className={hasVoted ? 'hasVoted' : 'notVoted'}
                      aria-disabled={loading}
                   />
                </button>
@@ -271,7 +326,7 @@ class VoteBar extends Component {
       const nonVotingButton = (
          <Mutation
             mutation={TOGGLE_MODAL_MUTATION}
-            variables={{ modalContent: 'Login' }}
+            variables={{ modalContent: "Login" }}
          >
             {toggleModal => (
                <button onClick={toggleModal}>
@@ -297,11 +352,11 @@ class VoteBar extends Component {
             optimisticResponse={
                this.props.member != null
                   ? {
-                       __typename: "Mutation",
+                       __typename: 'Mutation',
                        passOnThing: {
-                          __typename: "Pass",
+                          __typename: 'Pass',
                           passer: {
-                             __typename: 'Member',
+                             __typename: "Member",
                              id: this.props.member.id,
                              displayName: this.props.member.displayName,
                              avatar: this.props.member.avatar,
@@ -309,7 +364,7 @@ class VoteBar extends Component {
                           }
                        }
                     }
-                  : { fuck: "you" }
+                  : { fuck: 'you' }
             }
             update={(proxy, { data: { passOnThing } }) => {
                const data = proxy.readQuery({
@@ -340,7 +395,11 @@ class VoteBar extends Component {
             }}
          >
             {(passOnThing, { loading, error }) => (
-               <button onClick={passOnThing} aria-disabled={loading}>
+               <button
+                  onClick={passOnThing}
+                  aria-disabled={loading}
+                  className="pass"
+               >
                   Pass
                </button>
             )}
@@ -350,14 +409,77 @@ class VoteBar extends Component {
       const nonPassingButton = (
          <Mutation
             mutation={TOGGLE_MODAL_MUTATION}
-            variables={{ modalContent: 'Login' }}
+            variables={{ modalContent: "Login" }}
          >
-            {toggleModal => <button onClick={toggleModal}>Pass</button>}
+            {toggleModal => (
+               <button onClick={toggleModal} className="pass">
+                  Pass
+               </button>
+            )}
+         </Mutation>
+      );
+
+      const eliminateButton = (
+         <Mutation
+            mutation={ELIMINATE_THING_MUTATION}
+            variables={{ thingID: this.props.thingID }}
+            refetchQueries={[
+               {
+                  query: SINGLE_THING_QUERY,
+                  variables: { id: this.props.thingID }
+               },
+               {
+                  query: NEW_THINGS_QUERY
+               },
+               {
+                  query: CURATE_THINGS_QUERY
+               }
+            ]}
+         >
+            {(eliminateThing, { loading, error }) => (
+               <button
+                  className="eliminate"
+                  onClick={eliminateThing}
+                  aria-disabled={loading}
+               >
+                  <img src="/static/red-x.png" />
+               </button>
+            )}
+         </Mutation>
+      );
+
+      const promoteButton = (
+         <Mutation
+            mutation={PROMOTE_THING_MUTATION}
+            variables={{ thingID: this.props.thingID }}
+            refetchQueries={[
+               {
+                  query: SINGLE_THING_QUERY,
+                  variables: { id: this.props.thingID }
+               },
+               {
+                  query: NEW_THINGS_QUERY
+               },
+               {
+                  query: CURATE_THINGS_QUERY
+               }
+            ]}
+         >
+            {(promoteThing, { loading, error }) => (
+               <div className="promoteContainer">
+                  <button onClick={promoteThing} className="promote">
+                     <img
+                        src="/static/green-plus.png"
+                        className={loading ? 'loading' : 'promoteimg'}
+                     />
+                  </button>
+               </div>
+            )}
          </Mutation>
       );
 
       return (
-         <StyledVoteBar>
+         <StyledVoteBar className="voteAndPassBars">
             <div className="votebar">
                {this.props.member ? votingButton : nonVotingButton}
                <div className="voters">{voters}</div>
@@ -365,6 +487,13 @@ class VoteBar extends Component {
                <div className="scoreBox">{totalScore}</div>
             </div>
             <div className="passBar">
+               {this.props.member &&
+                  this.props.member.roles.includes('Admin') &&
+                  !this.props.finalistDate &&
+                  promoteButton}
+               {this.props.member &&
+                  this.props.member.roles.includes('Admin') &&
+                  eliminateButton}
                {this.props.member ? passingButton : nonPassingButton}
             </div>
          </StyledVoteBar>

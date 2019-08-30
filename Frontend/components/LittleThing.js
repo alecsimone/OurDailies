@@ -103,6 +103,13 @@ const StyledLittleThing = styled.article`
    .VoteBarWrapper {
       width: calc(100% + 2rem);
       margin-left: -1rem;
+      .voteAndPassBars {
+         display: flex;
+         flex-direction: column-reverse;
+         .votebar {
+            margin: 1.6rem 0 0;
+         }
+      }
    }
 `;
 
@@ -181,17 +188,14 @@ class LittleThing extends Component {
             <div className="VoteBarWrapper">
                <Member>
                   {({ data: memberData }) => (
-                     <Query query={GET_VOTES} variables={{ id: data.id }}>
-                        {({ loading, error, data: voteData }) => (
-                           <VoteBar
-                              key={data.id}
-                              voteData={data.votes}
-                              passData={data.passes}
-                              thingID={data.id}
-                              member={memberData.me}
-                           />
-                        )}
-                     </Query>
+                     <VoteBar
+                        key={data.id}
+                        voteData={data.votes}
+                        passData={data.passes}
+                        finalistDate={data.finalistDate}
+                        thingID={data.id}
+                        member={memberData.me}
+                     />
                   )}
                </Member>
             </div>
