@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import Thing from './Thing';
-import LittleThing from './LittleThing';
+import styled from 'styled-components';
+import Thing from "./Thing";
+import LittleThing from "./LittleThing";
 
 const StyledDayContainer = styled.div`
    .dateBar {
@@ -42,27 +42,27 @@ const DayContainer = props => {
    const date = new Date(props.things[0].finalistDate);
    const month = date.getMonth();
    const monthsArray = [
-      "JANUARY",
-      "FEBRUARY",
-      "MARCH",
-      "APRIL",
-      "MAY",
-      "JUNE",
-      "JULY",
-      "AUGUST",
-      "SEPTEMBER",
-      "OCTOBER",
-      "NOVEMBER",
-      "DECEMBER"
+      'JANUARY',
+      'FEBRUARY',
+      'MARCH',
+      'APRIL',
+      'MAY',
+      'JUNE',
+      'JULY',
+      'AUGUST',
+      'SEPTEMBER',
+      'OCTOBER',
+      'NOVEMBER',
+      'DECEMBER'
    ];
    const monthString = monthsArray[month];
    const day = date.getUTCDate();
    let dayString;
-   if (day == "1" || day == "01" || day == "21" || day == "31") {
+   if (day == '1' || day == '01' || day == '21' || day == '31') {
       dayString = `${day}ST`;
-   } else if (day == "2" || day == "02" || day == "22") {
+   } else if (day == '2' || day == '02' || day == '22') {
       dayString = `${day}ND`;
-   } else if (day == "3" || day == "03" || day == "23") {
+   } else if (day == '3' || day == '03' || day == '23') {
       dayString = `${day}RD`;
    } else {
       dayString = `${day}TH`;
@@ -73,6 +73,18 @@ const DayContainer = props => {
    try {
       windowWidth = window.innerWidth;
    } catch (windowError) {}
+
+   props.things.sort((a, b) => {
+      const scoreA = a.votes.reduce(
+         (accumulator, currentValue) => accumulator + currentValue.value,
+         0
+      );
+      const scoreB = b.votes.reduce(
+         (accumulator, currentValue) => accumulator + currentValue.value,
+         0
+      );
+      return scoreB - scoreA;
+   });
 
    const littleThingsArray = [];
    props.things.forEach((thing, index) => {

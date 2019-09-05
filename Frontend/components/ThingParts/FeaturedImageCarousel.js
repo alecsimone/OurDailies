@@ -230,11 +230,13 @@ class FeaturedImageCarousel extends Component {
 
       const mediaLinksArray = justTheLinks.filter(
          link =>
-            (link !== thing.featuredImage && link.includes("jpg")) ||
-            link.includes('png') ||
-            link.includes('gif') ||
-            link.includes('youtube.com/watch?v=') ||
-            link.includes('youtu.be/')
+            link !== thing.featuredImage &&
+            (link.includes('jpg') ||
+               link.includes("jpeg") ||
+               link.includes('png') ||
+               link.includes('gif') ||
+               link.includes('youtube.com/watch?v=') ||
+               link.includes('youtu.be/'))
       );
       const allMedia =
          thing.featuredImage != null
@@ -328,6 +330,7 @@ class FeaturedImageCarousel extends Component {
          );
       } else if (
          currentLink.includes("jpg") ||
+         currentLink.includes("jpeg") ||
          currentLink.includes("png") ||
          currentLink.includes("gif")
       ) {

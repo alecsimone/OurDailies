@@ -24,7 +24,7 @@ const StyledLittleThing = styled.article`
    border-radius: 2px;
    box-shadow: 0 0 0.25rem ${props => props.theme.highContrastSecondaryAccent};
    :before {
-      content: "";
+      content: '';
       background: ${props => props.theme.majorColor};
       box-shadow: 0 -0.1rem 0.2rem ${props => props.theme.majorColor};
       z-index: -1;
@@ -123,7 +123,7 @@ class LittleThing extends Component {
                <span key={narrative.title}>
                   <Link
                      href={{
-                        pathname: "/narrative",
+                        pathname: '/narrative',
                         query: {
                            id: narrative.id
                         }
@@ -139,7 +139,7 @@ class LittleThing extends Component {
             <span key={narrative.title}>
                <Link
                   href={{
-                     pathname: "/narrative",
+                     pathname: '/narrative',
                      query: {
                         id: narrative.id
                      }
@@ -158,7 +158,9 @@ class LittleThing extends Component {
       );
 
       return (
-         <StyledLittleThing>
+         <StyledLittleThing
+            className={data.eliminated ? 'eliminated' : 'notEliminated'}
+         >
             <div className="lede">
                <h3>
                   <Link

@@ -1,11 +1,11 @@
-import styled from 'styled-components';
-import gql from 'graphql-tag';
-import { Query, Subscription } from 'react-apollo';
-import Head from 'next/head';
-import FullThing from '../components/FullThing';
-import FullThingEmbed from '../components/FullThingEmbed';
-import Error from '../components/ErrorMessage';
-import Member from '../components/Member';
+import styled from "styled-components";
+import gql from "graphql-tag";
+import { Query, Subscription } from "react-apollo";
+import Head from "next/head";
+import FullThing from "../components/FullThing";
+import FullThingEmbed from "../components/FullThingEmbed";
+import Error from "../components/ErrorMessage";
+import Member from "../components/Member";
 
 const SINGLE_THING_QUERY = gql`
    query SINGLE_THING_QUERY($id: ID!) {
@@ -120,9 +120,10 @@ const SingleThing = props => (
                }
                data.thing.includedLinks.forEach(link => {
                   if (
-                     link.url.includes("jpg") ||
-                     link.url.includes("png") ||
-                     link.url.includes("gif")
+                     link.url.includes('jpg') ||
+                     link.url.includes('jpeg') ||
+                     link.url.includes('png') ||
+                     link.url.includes('gif')
                   ) {
                      thingComponent = (
                         <FullThing thing={data.thing} member={memberData} />

@@ -1,15 +1,16 @@
-const { forwardTo } = require("prisma-binding");
+const { forwardTo } = require('prisma-binding');
+const { getFinalists } = require('../utils');
 
 const Query = {
-   thing: forwardTo("db"),
-   things: forwardTo("db"),
-   narratives: forwardTo("db"),
-   narrative: forwardTo("db"),
-   members: forwardTo("db"),
-   member: forwardTo("db"),
-   commentsConnection: forwardTo("db"),
-   votesConnection: forwardTo("db"),
-   thingsConnection: forwardTo("db"),
+   thing: forwardTo('db'),
+   things: forwardTo('db'),
+   narratives: forwardTo('db'),
+   narrative: forwardTo('db'),
+   members: forwardTo('db'),
+   member: forwardTo('db'),
+   commentsConnection: forwardTo('db'),
+   votesConnection: forwardTo('db'),
+   thingsConnection: forwardTo('db'),
    me(parent, args, ctx, info) {
       if (!ctx.request.memberId) {
          return null;
@@ -29,11 +30,10 @@ const Query = {
          },
          `{finalistDate}`
       );
-      const tPos = mostRecentFinalist.finalistDate.indexOf("T");
+      const tPos = mostRecentFinalist.finalistDate.indexOf('T');
       const mostRecentFinalistDate = new Date(
          mostRecentFinalist.finalistDate.substring(0, tPos)
       );
-      console.log(mostRecentFinalistDate);
       const startingUnixTime =
          mostRecentFinalistDate.getTime() + 1000 * 60 * 60 * 4;
       const endingUnixTime = startingUnixTime + 1000 * 60 * 60 * 24;
@@ -93,7 +93,7 @@ const Query = {
                   eliminated: false
                }
             },
-            orderBy: "createdAt_DESC",
+            orderBy: 'createdAt_DESC',
             first: 3
          },
          info
@@ -118,21 +118,8 @@ const Query = {
       return thingsForCurate;
    },
    async thingsForFinalists(parent, args, ctx, info) {
-      const now = new Date();
-      const yesterday = new Date(now.getTime() - 1000 * 60 * 60 * 24);
-      const thingsForFinalists = await ctx.db.query.things(
-         {
-            where: {
-               AND: {
-                  finalistDate_gte: yesterday.toISOString(),
-                  eliminated: false
-               }
-            }
-         },
-         info
-      );
-
-      return thingsForFinalists;
+      const finalists = await getFinalists(ctx);
+      return finalists;
    }
 };
 

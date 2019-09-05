@@ -1,3 +1,5 @@
 node_modules/
 variables.env
 .next/
+Chat/sounds/
+Chat/third-party/

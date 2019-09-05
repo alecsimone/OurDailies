@@ -1,11 +1,11 @@
-import styled from "styled-components";
-import gql from "graphql-tag";
-import { Query } from "react-apollo";
-import Head from "next/head";
-import Error from "../components/ErrorMessage";
-import Thing from "../components/Thing";
-import LittleThing from "../components/LittleThing";
-import TinyThing from "../components/TinyThing";
+import styled from 'styled-components';
+import gql from 'graphql-tag';
+import { Query } from 'react-apollo';
+import Head from 'next/head';
+import Error from '../components/ErrorMessage';
+import Thing from '../components/Thing';
+import LittleThing from '../components/LittleThing';
+import TinyThing from '../components/TinyThing';
 
 const NARRATIVE_THINGS_QUERY = gql`
    query NARRATIVE_THINGS_QUERY($id: ID!) {
@@ -23,12 +23,56 @@ const NARRATIVE_THINGS_QUERY = gql`
                featuredImage
                originalSource
                summary
+               includedLinks {
+                  title
+                  url
+                  id
+               }
+               includedThings {
+                  id
+                  title
+                  originalSource
+                  author {
+                     displayName
+                  }
+                  createdAt
+               }
                partOfNarratives {
                   id
                   title
                }
+               comments {
+                  id
+                  author {
+                     id
+                     displayName
+                     avatar
+                     rep
+                  }
+                  comment
+                  createdAt
+                  updatedAt
+               }
+               votes {
+                  voter {
+                     id
+                     displayName
+                     avatar
+                     roles
+                  }
+                  value
+               }
+               passes {
+                  passer {
+                     id
+                     displayName
+                     avatar
+                     roles
+                  }
+               }
                finalistDate
                createdAt
+               updatedAt
             }
          }
       }

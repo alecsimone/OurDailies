@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
 import styled from 'styled-components';
-import Head from "next/head";
-import Member from "../components/Member";
-import Finalists from "../components/Finalists";
+import Head from 'next/head';
+import Member from '../components/Member';
+import Finalists from '../components/Finalists';
 
 const FINALIST_THINGS_QUERY = gql`
    query FINALIST_THINGS_QUERY {
@@ -64,6 +64,7 @@ const FINALIST_THINGS_QUERY = gql`
                roles
             }
          }
+         eliminated
          createdAt
          updatedAt
       }
@@ -76,6 +77,9 @@ const StyledFinalistsPage = styled.div`
       text-align: center;
       font-weight: 600;
       font-size: ${props => props.theme.smallHead};
+   }
+   article.eliminated {
+      display: none;
    }
 `;
 
@@ -92,7 +96,7 @@ class finalists extends Component {
                      query={FINALIST_THINGS_QUERY}
                      pollInterval={
                         memberData.me != null &&
-                        memberData.me.roles.includes("Admin")
+                        memberData.me.roles.includes('Admin')
                            ? 3000
                            : 10000
                      }

@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
-import { TOGGLE_MODAL_MUTATION } from "../Modal";
-import { NEW_THINGS_QUERY } from "../../pages/new";
-import { CURATE_THINGS_QUERY } from "../../pages/curate";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
+import { TOGGLE_MODAL_MUTATION } from '../Modal';
+import { NEW_THINGS_QUERY } from '../../pages/new';
+import { CURATE_THINGS_QUERY } from '../../pages/curate';
 
 const VOTE_ON_THING_MUTATION = gql`
    mutation VOTE_ON_THING_MUTATION($thingID: ID!) {
@@ -94,7 +94,7 @@ const StyledVoteBar = styled.div`
                   transition: filter 0.4s ease-out;
                }
             }
-            &[aria-disabled="true"] {
+            &[aria-disabled='true'] {
                animation-name: pulse;
                animation-duration: 750ms;
                animation-iteration-count: infinite;
@@ -116,7 +116,7 @@ const StyledVoteBar = styled.div`
       .passers,
       button {
          :before {
-            content: "";
+            content: '';
             background: ${props => props.theme.veryLowContrastGrey};
             height: 100%;
             width: 4px;
@@ -170,7 +170,7 @@ const StyledVoteBar = styled.div`
       justify-content: flex-end;
       button.pass {
          padding: 0.4rem;
-         &[aria-disabled="true"] {
+         &[aria-disabled='true'] {
             background: ${props => props.theme.lowContrastGrey};
          }
       }
@@ -181,7 +181,7 @@ const StyledVoteBar = styled.div`
          padding: 1px 0 0 0;
          margin-right: 1.6rem;
          opacity: 0.6;
-         &[aria-disabled="true"],
+         &[aria-disabled='true'],
          img.loading {
             animation-name: spin;
             animation-duration: 750ms;
@@ -272,7 +272,7 @@ class VoteBar extends Component {
                        voteOnThing: {
                           __typename: 'Vote',
                           voter: {
-                             __typename: "Member",
+                             __typename: 'Member',
                              id: this.props.member.id,
                              displayName: this.props.member.displayName,
                              avatar: this.props.member.avatar,
@@ -312,7 +312,13 @@ class VoteBar extends Component {
             }}
          >
             {(voteOnThing, { loading, error }) => (
-               <button onClick={voteOnThing}>
+               <button
+                  onClick={() => {
+                     voteOnThing().catch(err => {
+                        alert(err.message);
+                     });
+                  }}
+               >
                   <img
                      src="/static/logo-small.png"
                      className={hasVoted ? 'hasVoted' : 'notVoted'}
@@ -326,7 +332,7 @@ class VoteBar extends Component {
       const nonVotingButton = (
          <Mutation
             mutation={TOGGLE_MODAL_MUTATION}
-            variables={{ modalContent: "Login" }}
+            variables={{ modalContent: 'Login' }}
          >
             {toggleModal => (
                <button onClick={toggleModal}>
@@ -356,7 +362,7 @@ class VoteBar extends Component {
                        passOnThing: {
                           __typename: 'Pass',
                           passer: {
-                             __typename: "Member",
+                             __typename: 'Member',
                              id: this.props.member.id,
                              displayName: this.props.member.displayName,
                              avatar: this.props.member.avatar,
@@ -396,7 +402,11 @@ class VoteBar extends Component {
          >
             {(passOnThing, { loading, error }) => (
                <button
-                  onClick={passOnThing}
+                  onClick={() => {
+                     passOnThing().catch(err => {
+                        alert(err.message);
+                     });
+                  }}
                   aria-disabled={loading}
                   className="pass"
                >
@@ -409,7 +419,7 @@ class VoteBar extends Component {
       const nonPassingButton = (
          <Mutation
             mutation={TOGGLE_MODAL_MUTATION}
-            variables={{ modalContent: "Login" }}
+            variables={{ modalContent: 'Login' }}
          >
             {toggleModal => (
                <button onClick={toggleModal} className="pass">

@@ -1,0 +1,38 @@
+{
+   "manifest_version": 2,
+   "name": "DailiesChat",
+   "version": "0.2",
+   "description": "Integrates twitch chat with the Dailies website, and adds a few improvements to the popout chat window for use while streaming.",
+   "icons": {
+      "48": "icons/DailiesChat-48.png"
+   },
+   "web_accessible_resources": [
+      "sounds/*.mp3",
+      "images/*.png",
+      "images/*.jpg"
+   ],
+   "permissions": [
+      "http://localhost:4444/"
+   ],
+   "content_scripts": [
+      {
+         "matches": [
+            "https://www.twitch.tv/popout/*"
+         ],
+         "js": [
+            "third-party/jquery-3.3.1.min.js",
+            "DailiesChat.js"
+         ],
+         "css": [
+            "ChatStyles.css"
+         ]
+      }
+   ],
+   "background": {
+      "scripts": [
+         "third-party/jquery-3.3.1.min.js",
+         "background.js"
+      ],
+      "persistent": false
+   }
+}

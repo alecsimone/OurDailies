@@ -34,7 +34,11 @@ type Mutation {
   addCommentToThing(comment: String!, thingID: ID!): Comment!
   deleteComment(id: ID!): Comment!
   voteOnThing(thingID: ID!): Vote
+  liveChatVote(voter: ID!): Vote
   passOnThing(thingID: ID!): Pass
+  liveChatPass(voter: ID!): Pass
+  contenderVote(voteNumber: Int!, direction: String!, voter: ID!): SuccessMessage
+  resetLiveThing: Int
   eliminateThing(thingID: ID!): Thing
   promoteThing(thingID: ID!): Thing
 }
