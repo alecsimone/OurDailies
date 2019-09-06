@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
-import styled from "styled-components";
+import React, { Component } from 'react';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
 import DayContainer from './DayContainer';
-import Thing from "./Thing";
-import LittleThing from "./LittleThing";
-import TinyThing from "./TinyThing";
+import Thing from './Thing';
+import LittleThing from './LittleThing';
+import TinyThing from './TinyThing';
 
 const THINGS_FOR_GIVEN_DAY_QUERY = gql`
    query THINGS_FOR_GIVEN_DAY_QUERY($day: String!) {
@@ -112,7 +112,7 @@ class Things extends Component {
    }
 
    handleScroll = e => {
-      const thingContainer = document.getElementById("thingContainer");
+      const thingContainer = document.getElementById('thingContainer');
       if (thingContainer == null) {
          window.removeEventListener('scroll', this.handleScroll);
          return;
@@ -120,7 +120,8 @@ class Things extends Component {
       const thingContainerBottom =
          thingContainer.offsetTop + thingContainer.scrollHeight;
       const windowHeight = window.innerHeight;
-      const bottomOfWindow = e.pageY + windowHeight;
+      const scrollPos = e.pageY ? e.pageY : document.documentElement.scrollTop;
+      const bottomOfWindow = scrollPos + windowHeight;
       if (
          bottomOfWindow + 500 > thingContainerBottom &&
          !this.state.pullingMore
@@ -131,7 +132,7 @@ class Things extends Component {
    };
 
    getNextDaysThings = async () => {
-      console.log("Pulling more!");
+      console.log('Pulling more!');
       const { client } = this.props;
       const lastDateQueried = new Date(this.state.lastDayQueried);
       const nextDateToQuery = new Date(

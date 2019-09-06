@@ -6,11 +6,11 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import Error from './ErrorMessage';
 import { convertISOtoAgo } from '../lib/utils';
-import VoteBar from "./ThingParts/VoteBar";
-import NarrativesBoxEditable from "./ThingParts/NarrativesBoxEditable";
-import LinksBox from "./ThingParts/LinksBox";
-import Summary from "./ThingParts/Summary";
-import Comments from "./ThingParts/Comments";
+import VoteBar from './ThingParts/VoteBar';
+import NarrativesBoxEditable from './ThingParts/NarrativesBoxEditable';
+import LinksBox from './ThingParts/LinksBox';
+import Summary from './ThingParts/Summary';
+import Comments from './ThingParts/Comments';
 
 const StyledFullThing = styled.article`
    position: relative;
@@ -19,6 +19,7 @@ const StyledFullThing = styled.article`
    border: 2px solid ${props => props.theme.lowContrastGrey};
    border-radius: 3px;
    max-height: 90vh;
+   height: 100%;
    .embed {
       width: 67%;
       position: relative;
@@ -63,6 +64,19 @@ const StyledFullThing = styled.article`
          padding: 0;
          margin: 0;
       }
+      scrollbar-width: thin;
+      &::-webkit-scrollbar {
+         width: 0.5rem;
+         background: ${props => props.theme.background};
+      }
+      &::-webkit-scrollbar-track {
+         -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3);
+      }
+      &::-webkit-scrollbar-thumb {
+         border-radius: 3px;
+         -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.5);
+         background: ${props => props.theme.lowContrastGrey};
+      }
    }
 `;
 
@@ -90,24 +104,24 @@ class FullThingEmbed extends Component {
                </h3>
                <div className="meta">
                   {convertISOtoAgo(thing.createdAt)}
-                  {" AGO "}
+                  {' AGO '}
                   {thing.author ? (
                      <div>Submitted by {thing.author.displayName}</div>
                   ) : (
-                     ""
+                     ''
                   )}
                </div>
                <Summary
                   summary={thing.summary}
                   thingID={thing.id}
                   member={member.me}
-                  key={"Summary-" + thing.id}
+                  key={`Summary-${thing.id}`}
                />
                <NarrativesBoxEditable
                   partOfNarratives={thing.partOfNarratives}
                   thingID={thing.id}
                   member={member.me}
-                  key={"NarrativesBoxEditable-" + thing.id}
+                  key={`NarrativesBoxEditable-${thing.id}`}
                />
                <VoteBar
                   key={thing.id}
@@ -122,13 +136,13 @@ class FullThingEmbed extends Component {
                   links={thing.includedLinks}
                   thingID={thing.id}
                   member={member.me}
-                  key={"LinksBox-" + thing.id}
+                  key={`LinksBox-${thing.id}`}
                />
                <Comments
                   comments={thing.comments}
                   thingID={thing.id}
                   member={member.me}
-                  key={"Comments-" + thing.id}
+                  key={`Comments-${thing.id}`}
                />
             </div>
          </StyledFullThing>

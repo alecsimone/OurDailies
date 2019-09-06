@@ -88,6 +88,8 @@ injectGlobal`
       font-family: "Proxima Nova", sans-serif;
       box-sizing: border-box;
       font-size: 8px;
+      scrollbar-color: ${theme.lowContrastGrey} ${theme.background};
+      scrollbar-width: thin;
       @media screen and (min-width: 800px) {
          font-size: 10px;
       }
@@ -103,6 +105,18 @@ injectGlobal`
       margin: 0;
       font-size: ${theme.smallText};
       font-weight: 400;
+   }
+   body::-webkit-scrollbar {
+      width: .5rem;
+      background: ${theme.background};
+   }
+   body::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.3);
+   }
+   body::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.5);
+      background: ${theme.lowContrastGrey};
    }
    a {
       text-decoration: none;
