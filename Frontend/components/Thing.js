@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import Link from "next/link";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import VoteBar from "./ThingParts/VoteBar";
+import VoteBar from './ThingParts/VoteBar';
 import Member from './Member';
-import { convertISOtoAgo } from "../lib/utils";
+import { convertISOtoAgo } from '../lib/utils';
 
 const GET_VOTES = gql`
    query GET_VOTES($id: ID!) {
@@ -170,7 +170,7 @@ class Thing extends Component {
                   <h3>
                      <Link
                         href={{
-                           pathname: "/thing",
+                           pathname: '/thing',
                            query: {
                               id: data.id
                            }

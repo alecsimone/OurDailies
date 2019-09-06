@@ -78,9 +78,6 @@ const StyledFinalistsPage = styled.div`
       font-weight: 600;
       font-size: ${props => props.theme.smallHead};
    }
-   article.eliminated {
-      display: none;
-   }
 `;
 
 class finalists extends Component {

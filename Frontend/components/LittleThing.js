@@ -17,10 +17,11 @@ const StyledLittleThing = styled.article`
    flex-grow: 1;
    max-width: 60rem;
    position: relative;
-   padding: 0 1rem;
+   padding: 1.25rem 1rem 0 1rem;
    margin: 0 1.5rem 4rem;
    justify-self: center;
-   background: hsla(210, 40%, 40%, 0.07);
+   align-items: flex-start;
+   background: ${props => props.theme.veryLowContrastCoolGrey};
    border-radius: 2px;
    box-shadow: 0 0 0.25rem ${props => props.theme.highContrastSecondaryAccent};
    :before {
@@ -31,7 +32,7 @@ const StyledLittleThing = styled.article`
       width: 100%;
       height: 2.75rem;
       position: absolute;
-      top: -1.25rem;
+      top: 0;
       left: 0;
       opacity: 0.8;
       border-radius: 2px 2px 0 0;
@@ -85,6 +86,7 @@ const StyledLittleThing = styled.article`
    div.narratives {
       margin: 6rem 1.5rem 3rem;
       flex-grow: 1;
+      width: 95%;
       h5 {
          color: ${props => props.theme.primaryAccent};
          font-size: ${props => props.theme.bigText};
@@ -159,7 +161,11 @@ class LittleThing extends Component {
 
       return (
          <StyledLittleThing
-            className={data.eliminated ? 'eliminated' : 'notEliminated'}
+            className={
+               this.props.finalistNumber
+                  ? `finalist-${this.props.finalistNumber}`
+                  : 'littleThing'
+            }
          >
             <div className="lede">
                <h3>
