@@ -5,6 +5,11 @@ const StyledFinalistsBar = styled.div`
    padding: 0.6rem;
    background: ${props => props.theme.veryLowContrastCoolGrey};
    display: flex;
+   font-weight: 700;
+   font-size: ${props => props.theme.bigText};
+   line-height: 1.75;
+   text-align: center;
+   justify-content: center;
 `;
 
 const FinalistsBar = props => {
@@ -24,7 +29,11 @@ const FinalistsBar = props => {
    }, 0);
 
    if (totalScore <= 0) {
-      return <StyledFinalistsBar>No votes yet!</StyledFinalistsBar>;
+      return (
+         <StyledFinalistsBar id="finalistsbar">
+            No votes yet!
+         </StyledFinalistsBar>
+      );
    }
 
    const thingBoxes = things.map((thing, index) => {
@@ -44,7 +53,9 @@ const FinalistsBar = props => {
       );
    });
 
-   return <StyledFinalistsBar>{thingBoxes}</StyledFinalistsBar>;
+   return (
+      <StyledFinalistsBar id="finalistsbar">{thingBoxes}</StyledFinalistsBar>
+   );
 };
 
 export default FinalistsBar;

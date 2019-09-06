@@ -26,7 +26,6 @@ const theme = {
    superLowContrastCoolTint: 'hsla(210, 40%, 40%, 0.07)',
    highContrastGrey: 'hsl(28, 9%, 64%, .9)'
 
-
    // Elite
    // background: 'hsl(216, 24%, 4%)',
    // mainText: 'hsla(33, 17%, 88%, .9)',
@@ -170,7 +169,7 @@ class Page extends Component {
    render() {
       return (
          <ThemeProvider theme={theme}>
-            <StyledPage>
+            <StyledPage id="page">
                <Meta />
                <Header />
                {this.props.children}

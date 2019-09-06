@@ -103,7 +103,7 @@ const StyledFinalists = styled.div`
       align-items: center;
       justify-content: center;
       border-right: 1px solid ${props => props.theme.background};
-      /* height: 3.5rem; */
+      height: 100%;
       text-shadow: 0 0 3px black;
       font-weight: 700;
       font-size: ${props => props.theme.bigText};

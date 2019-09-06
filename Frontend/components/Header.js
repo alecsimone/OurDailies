@@ -57,7 +57,7 @@ const StyledHeader = styled.div`
 `;
 
 const Header = () => (
-   <StyledHeader>
+   <StyledHeader id="header">
       <LogoBox />
       <StageBox />
       <MemberBox />
