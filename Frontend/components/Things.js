@@ -10,6 +10,7 @@ import TinyThing from './TinyThing';
 const THINGS_FOR_GIVEN_DAY_QUERY = gql`
    query THINGS_FOR_GIVEN_DAY_QUERY($day: String!) {
       thingsForGivenDay(day: $day) {
+         __typename
          id
          title
          author {

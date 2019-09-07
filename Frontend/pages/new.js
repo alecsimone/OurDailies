@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
 import styled from 'styled-components';
-import Head from "next/head";
+import Head from 'next/head';
 import FullThing from '../components/FullThing';
 import FullThingEmbed from '../components/FullThingEmbed';
-import Error from "../components/ErrorMessage";
-import Member from "../components/Member";
-import MustSignIn from "../components/MustSignIn";
+import Error from '../components/ErrorMessage';
+import Member from '../components/Member';
+import MustSignIn from '../components/MustSignIn';
 
 const NEW_THINGS_QUERY = gql`
    query NEW_THINGS_QUERY {
       thingsForNew {
+         __typename
          id
          title
          author {

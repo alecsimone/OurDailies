@@ -1,13 +1,14 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import { Query, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
-import styled from "styled-components";
-import Things from "../components/Things";
-import NarrativesBar from "../components/NarrativesBar";
+import styled from 'styled-components';
+import Things from '../components/Things';
+import NarrativesBar from '../components/NarrativesBar';
 
 const THINGS_FOR_MOST_RECENT_DAY_QUERY = gql`
    query THINGS_FOR_MOST_RECENT_DAY_QUERY {
       thingsForMostRecentDay {
+         __typename
          id
          title
          author {

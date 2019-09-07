@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Query } from 'react-apollo';
+import { Query, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 import Head from 'next/head';
@@ -9,6 +9,7 @@ import Finalists from '../components/Finalists';
 const FINALIST_THINGS_QUERY = gql`
    query FINALIST_THINGS_QUERY {
       thingsForFinalists {
+         __typename
          id
          title
          author {
@@ -97,6 +98,12 @@ class finalists extends Component {
                            ? 3000
                            : 10000
                      }
+                     updateQuery={(proxy, data) => {
+                        console.log('hello');
+                        console.log(proxy);
+                        console.log(data);
+                        return true;
+                     }}
                   >
                      {({ error, loading, data }) => (
                         <Finalists

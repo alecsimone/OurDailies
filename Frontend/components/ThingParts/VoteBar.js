@@ -283,31 +283,93 @@ class VoteBar extends Component {
                     }
                   : { fuck: 'you' }
             }
-            update={(proxy, { data: { voteOnThing } }) => {
-               const data = proxy.readQuery({
-                  query: SINGLE_THING_QUERY,
-                  variables: { id: this.props.thingID }
+            update={(cache, { data: { voteOnThing } }) => {
+               const thing = cache.readFragment({
+                  id: `Thing:${this.props.thingID}`,
+                  fragment: gql`
+                     fragment thisThing on Thing {
+                        __typename
+                        id
+                        votes {
+                           voter {
+                              id
+                              displayName
+                              avatar
+                              roles
+                           }
+                           value
+                        }
+                        passes {
+                           passer {
+                              id
+                              displayName
+                              avatar
+                              roles
+                           }
+                        }
+                     }
+                  `
                });
+
                let hasVoted = false;
                let newVotes;
-               data.thing.votes.forEach(vote => {
+               thing.votes.forEach(vote => {
                   if (vote.voter.id === this.props.member.id) {
                      hasVoted = true;
                   }
                });
                if (hasVoted) {
-                  newVotes = data.thing.votes.filter(
+                  newVotes = thing.votes.filter(
                      vote => vote.voter.id !== this.props.member.id
                   );
                } else {
                   const newVoteArray = [voteOnThing];
-                  newVotes = data.thing.votes.concat(newVoteArray);
+                  newVotes = thing.votes.concat(newVoteArray);
                }
-               data.thing.votes = newVotes;
-               proxy.writeQuery({
-                  query: SINGLE_THING_QUERY,
-                  variables: { id: this.props.thingID },
-                  data
+               thing.votes = newVotes;
+
+               let hasPassed = false;
+               let newPasses;
+               thing.passes.forEach(pass => {
+                  if (pass.passer.id === this.props.member.id) {
+                     hasPassed = true;
+                  }
+               });
+               if (hasPassed) {
+                  newPasses = thing.passes.filter(
+                     pass => pass.passer.id !== this.props.member.id
+                  );
+               }
+               if (newPasses == null) newPasses = [];
+               thing.passes = newPasses;
+               console.log(thing);
+
+               cache.writeFragment({
+                  id: `Thing:${this.props.thingID}`,
+                  fragment: gql`
+                     fragment thisThing on Thing {
+                        __typename
+                        id
+                        votes {
+                           voter {
+                              id
+                              displayName
+                              avatar
+                              roles
+                           }
+                           value
+                        }
+                        passes {
+                           passer {
+                              id
+                              displayName
+                              avatar
+                              roles
+                           }
+                        }
+                     }
+                  `,
+                  data: thing
                });
             }}
          >
@@ -372,31 +434,92 @@ class VoteBar extends Component {
                     }
                   : { fuck: 'you' }
             }
-            update={(proxy, { data: { passOnThing } }) => {
-               const data = proxy.readQuery({
-                  query: SINGLE_THING_QUERY,
-                  variables: { id: this.props.thingID }
+            update={(cache, { data: { passOnThing } }) => {
+               const thing = cache.readFragment({
+                  id: `Thing:${this.props.thingID}`,
+                  fragment: gql`
+                     fragment thisThing on Thing {
+                        __typename
+                        id
+                        votes {
+                           voter {
+                              id
+                              displayName
+                              avatar
+                              roles
+                           }
+                           value
+                        }
+                        passes {
+                           passer {
+                              id
+                              displayName
+                              avatar
+                              roles
+                           }
+                        }
+                     }
+                  `
                });
+
                let hasPassed = false;
                let newPasses;
-               data.thing.passes.forEach(pass => {
-                  if (pass.passer.id === this.props.member.id) {
+               thing.passes.forEach(pass => {
+                  if (pass.passser.id === this.props.member.id) {
                      hasPassed = true;
                   }
                });
                if (hasPassed) {
-                  newPasses = data.thing.passes.filter(
-                     pass => pass.passer.id !== this.props.member.id
+                  newPasses = thing.passes.filter(
+                     pass => pass.passser.id !== this.props.member.id
                   );
                } else {
                   const newPassArray = [passOnThing];
-                  newPasses = data.thing.passes.concat(newPassArray);
+                  newPasses = thing.passes.concat(newPassArray);
                }
-               data.thing.passes = newPasses;
-               proxy.writeQuery({
-                  query: SINGLE_THING_QUERY,
-                  variables: { id: this.props.thingID },
-                  data
+               thing.passes = newPasses;
+
+               let hasVoted = false;
+               let newVotes;
+               thing.votes.forEach(vote => {
+                  if (vote.voter.id === this.props.member.id) {
+                     hasVoted = true;
+                  }
+               });
+               if (hasVoted) {
+                  newVotes = thing.votes.filter(
+                     vote => vote.voter.id !== this.props.member.id
+                  );
+               }
+               if (newVotes == null) newVotes = [];
+               thing.votes = newVotes;
+
+               cache.writeFragment({
+                  id: `Thing:${this.props.thingID}`,
+                  fragment: gql`
+                     fragment thisThing on Thing {
+                        __typename
+                        id
+                        votes {
+                           voter {
+                              id
+                              displayName
+                              avatar
+                              roles
+                           }
+                           value
+                        }
+                        passes {
+                           passer {
+                              id
+                              displayName
+                              avatar
+                              roles
+                           }
+                        }
+                     }
+                  `,
+                  data: thing
                });
             }}
          >

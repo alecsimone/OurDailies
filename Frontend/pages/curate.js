@@ -1,15 +1,16 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import styled from "styled-components";
+import styled from 'styled-components';
 import Head from 'next/head';
-import FullThing from "../components/FullThing";
+import FullThing from '../components/FullThing';
 import Member from '../components/Member';
 import Curate from '../components/Curate';
 
 const CURATE_THINGS_QUERY = gql`
    query CURATE_THINGS_QUERY {
       thingsForCurate {
+         __typename
          id
          title
          author {
@@ -93,7 +94,7 @@ class CuratePage extends Component {
                      query={CURATE_THINGS_QUERY}
                      pollInterval={
                         memberData.me != null &&
-                        memberData.me.roles.includes("Admin")
+                        memberData.me.roles.includes('Admin')
                            ? 3000
                            : 10000
                      }

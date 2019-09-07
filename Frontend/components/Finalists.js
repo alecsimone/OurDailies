@@ -158,7 +158,6 @@ const StyledFinalists = styled.div`
 
 class Finalists extends Component {
    render() {
-      console.log((6 % 6) + 1);
       const littleThingsArray = this.props.things.map((thing, index) => (
          <article
             className={thing.eliminated ? 'eliminated' : 'notEliminated'}

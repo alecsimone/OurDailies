@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Mutation } from "react-apollo";
+import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import ErrorMessage from "../ErrorMessage";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
+import ErrorMessage from '../ErrorMessage';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
 import TinyThing from '../TinyThing';
+import { homeNoHTTP } from '../../config';
 
 const ADD_LINK_TO_THING_MUTATION = gql`
    mutation ADD_LINK_TO_THING_MUTATION(
@@ -100,7 +101,7 @@ const StyledLinksBox = styled.div`
             top: 0px;
             cursor: pointer;
          }
-         &[type="submit"] {
+         &[type='submit'] {
             display: none;
          }
       }
@@ -203,15 +204,15 @@ class LinksBox extends Component {
                            onSubmit={async e => {
                               e.preventDefault();
                               if (
-                                 this.state.linkTitle == "" &&
+                                 this.state.linkTitle == '' &&
                                  !this.state.linkURL.includes(
-                                    "localhost:7777/thing?id="
+                                    `${homeNoHTTP}/thing?id=`
                                  )
                               ) {
-                                 alert("You need to give that link a  title");
+                                 alert('You need to give that link a  title');
                                  return;
                               }
-                              if (this.state.linkURL == "") {
+                              if (this.state.linkURL == '') {
                                  alert("You didn't give a URL, dummy");
                                  return;
                               }

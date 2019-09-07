@@ -1,13 +1,13 @@
-import withApollo from "next-with-apollo";
+import withApollo from 'next-with-apollo';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
-import { withClientState } from "apollo-link-state";
+import { withClientState } from 'apollo-link-state';
 import { ApolloLink, Observable, split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
-import { endpoint } from "../config";
+import { endpoint, endpointNoHTTP } from '../config';
 import { LOCAL_STATE_QUERY, TOGGLE_MODAL_MUTATION } from '../components/Modal';
 
 function createClient({ headers }) {
@@ -22,30 +22,30 @@ function createClient({ headers }) {
    const request = async operation => {
       operation.setContext({
          fetchOptions: {
-            credentials: "include"
+            credentials: 'include'
          },
          headers
       });
    };
 
    const httpLink = new HttpLink({
-      uri: process.env.NODE_ENV === "development" ? endpoint : endpoint,
+      uri: process.env.NODE_ENV === 'development' ? endpoint : endpoint,
       credentials: 'same-origin'
    });
 
    const wsLink = process.browser
       ? new WebSocketLink({
-           uri: `ws://localhost:4444/subscriptions`,
+           uri: `ws://${endpointNoHTTP}/subscriptions`,
            options: {
               reconnect: true
            }
         })
-      : () => console.log("SSR");
+      : () => console.log('SSR');
 
    const link = split(
       ({ query }) => {
          const { kind, operation } = getMainDefinition(query);
-         return kind === "operationDefinition" && operation === "subscription";
+         return kind === 'operationDefinition' && operation === 'subscription';
       },
       wsLink,
       httpLink
