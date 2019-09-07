@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Query, Mutation } from "react-apollo";
-import gql from "graphql-tag";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Query, Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
 import Signup from './Signup';
 import Login from './Login';
 import SubmitForm from './SubmitForm';
@@ -31,13 +31,15 @@ const StyledModal = styled.div`
    z-index: 3;
    .modalContent {
       background: ${props => props.theme.background};
+      box-shadow: 0 0.1rem 0.2rem ${props => props.theme.background};
+      border: 3px solid ${props => props.theme.secondaryAccent40};
       position: absolute;
       width: 50%;
       height: 50%;
       left: 25%;
       top: 25%;
       text-align: center;
-      border-radius: 4px;
+      border-radius: 0.5rem;
       padding: 2rem;
       display: flex;
       flex-direction: column;
@@ -83,7 +85,7 @@ class Modal extends Component {
                                  <SubmitForm callBack={toggleModal} />
                               </MustSignIn>
                            ) : (
-                              ""
+                              ''
                            )}
                            <button className="closeModal" onClick={toggleModal}>
                               &times;

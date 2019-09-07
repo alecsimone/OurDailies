@@ -18,13 +18,14 @@ const theme = {
    majorColor: 'hsl(210, 100%, 40%)',
    primaryAccent: 'hsl(120, 100%, 25%)',
    secondaryAccent: 'hsl(42, 79%, 64%)',
+   secondaryAccent40: 'hsla(42, 79%, 80%, .4)',
    highContrastSecondaryAccent: 'hsl(42, 100%, 100%, .1)',
    lowContrastGrey: 'hsl(30, 10%, 33%)',
    veryLowContrastGrey: 'hsla(30, 10%, 33%, .5)',
    lowContrastCoolGrey: 'hsl(210, 15%, 48%, .6)',
    veryLowContrastCoolGrey: 'hsl(210, 15%, 48%, .1)',
    superLowContrastCoolTint: 'hsla(210, 40%, 40%, 0.07)',
-   highContrastGrey: 'hsl(28, 9%, 64%, .9)'
+   highContrastGrey: 'hsla(28, 9%, 64%, .9)'
 
    // Elite
    // background: 'hsl(216, 24%, 4%)',
