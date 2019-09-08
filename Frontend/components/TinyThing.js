@@ -98,12 +98,12 @@ class TinyThing extends Component {
                   }
                }}
             >
-               <h3>
-                  <a>{thing.title}</a>
-               </h3>
+               <a>
+                  <h3>{thing.title}</h3>
+               </a>
             </Link>
             <div className="metaContainer">
-               <p className="meta" poo={console.log(thing.votes)}>
+               <p className="meta">
                   {thing.votes != null && (
                      <span className="score">+{getScoreForThing(thing)} </span>
                   )}

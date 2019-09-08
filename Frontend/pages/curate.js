@@ -85,6 +85,15 @@ const StyledCuratePage = styled.div`
 `;
 
 class CuratePage extends Component {
+   state = {
+      mainThingId: false
+   };
+
+   makeMain = id => {
+      console.log(`We makin the thing with id ${id} main, baby!`);
+      this.setState({ mainThingId: id });
+   };
+
    render() {
       return (
          <StyledCuratePage>
@@ -95,6 +104,7 @@ class CuratePage extends Component {
                {({ data: memberData }) => (
                   <Query
                      query={CURATE_THINGS_QUERY}
+                     fetchPolicy="cache-and-network"
                      pollInterval={
                         memberData.me != null &&
                         memberData.me.roles.includes('Admin')
@@ -102,13 +112,16 @@ class CuratePage extends Component {
                            : 10000
                      }
                   >
-                     {({ error, loading, data }) => {
+                     {({ error, loading, data, fetchMore, networkStatus }) => {
+                        if (networkStatus === 1) return <div>Loading...</div>;
                         if (data.thingsForCurate.length > 0) {
                            return (
                               <Curate
                                  things={data.thingsForCurate}
                                  member={memberData}
-                                 key={loading}
+                                 makeMain={this.makeMain}
+                                 mainThingId={this.state.mainThingId}
+                                 key={networkStatus}
                               />
                            );
                         }

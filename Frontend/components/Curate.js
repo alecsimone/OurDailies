@@ -20,50 +20,55 @@ const StyledCurate = styled.div`
 `;
 
 class Curate extends Component {
-   state = {
-      mainThingId: this.props.things[0].id
-   };
+   sortedThings = this.props.things.sort((a, b) => {
+      const aScore = getScoreForThing(a);
+      const bScore = getScoreForThing(b);
+      if (aScore === bScore) {
+         const aCreatedAt = new Date(a.createdAt).getTime();
+         const bCreatedAt = new Date(b.createdAt).getTime();
+         return bCreatedAt - aCreatedAt;
+      }
+      return bScore - aScore;
+   });
 
-   makeMain = id => {
-      console.log(`We makin the thing with id ${id} main, baby!`);
-      let newMain;
-      this.props.things.forEach(thing => {
-         if (thing.id === id) newMain = thing.id;
-      });
-      this.setState({ mainThingId: newMain });
-   };
+   // state = {
+   //    mainThingId: this.sortedThings[0].id
+   // };
+
+   // makeMain = id => {
+   //    console.log(`We makin the thing with id ${id} main, baby!`);
+   //    let newMain;
+   //    this.props.things.forEach(thing => {
+   //       if (thing.id === id) newMain = thing.id;
+   //    });
+   //    this.setState({ mainThingId: newMain });
+   // };
 
    render() {
       const { things, member } = this.props;
 
       let mainThingData;
       things.forEach(thing => {
-         if (thing.id === this.state.mainThingId) mainThingData = thing;
+         if (thing.id === this.props.mainThingId) mainThingData = thing;
       });
-      if (mainThingData == null) mainThingData = things[0];
+      if (mainThingData == null) mainThingData = this.sortedThings[0];
       const mainThing = (
          <FullThing
             thing={mainThingData}
             member={member}
-            key={this.state.mainThingId}
+            key={mainThingData.id}
          />
       );
 
-      const tinyThingsData = things.filter(
+      const tinyThingsData = this.sortedThings.filter(
          thing => thing.id !== mainThingData.id
       );
 
-      const sortedTinyThings = tinyThingsData.sort((a, b) => {
-         const aScore = getScoreForThing(a);
-         const bScore = getScoreForThing(b);
-         return bScore - aScore;
-      });
-
-      const tinyThings = sortedTinyThings.map(tinyThingData => (
+      const tinyThings = tinyThingsData.map(tinyThingData => (
          <TinyThing
             thing={tinyThingData}
             key={tinyThingData.id}
-            checkbox={this.makeMain}
+            checkbox={this.props.makeMain}
          />
       ));
 

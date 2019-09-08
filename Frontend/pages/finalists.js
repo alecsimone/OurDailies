@@ -100,14 +100,12 @@ class finalists extends Component {
                            : 10000
                      }
                   >
-                     {({ error, loading, data }) =>
-                        console.log(data.thingsForFinalists) || (
-                           <Finalists
-                              things={data.thingsForFinalists}
-                              member={memberData}
-                           />
-                        )
-                     }
+                     {({ error, loading, data }) => (
+                        <Finalists
+                           things={data.thingsForFinalists}
+                           member={memberData}
+                        />
+                     )}
                   </Query>
                )}
             </Member>
