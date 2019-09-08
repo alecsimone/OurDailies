@@ -7,7 +7,12 @@ import { withClientState } from 'apollo-link-state';
 import { ApolloLink, Observable, split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
-import { endpoint, endpointNoHTTP, prodEndpoint } from '../config';
+import {
+   endpoint,
+   endpointNoHTTP,
+   prodEndpoint,
+   prodEndpointNoHTTP
+} from '../config';
 import { LOCAL_STATE_QUERY, TOGGLE_MODAL_MUTATION } from '../components/Modal';
 
 function createClient({ headers }) {
@@ -35,7 +40,11 @@ function createClient({ headers }) {
 
    const wsLink = process.browser
       ? new WebSocketLink({
-           uri: `ws://${endpointNoHTTP}/subscriptions`,
+           uri: `ws://${
+              process.env.NODE_ENV === 'development'
+                 ? endpointNoHTTP
+                 : prodEndpointNoHTTP
+           }/subscriptions`,
            options: {
               reconnect: true
            }
