@@ -33,12 +33,12 @@ server.express.use(async (req, res, next) => {
 // "moz-extension://*",
 // "https://www.twitch.tv/popout/ourdailies/chat?popout="
 // Another comment
+// cors: {
+//    credentials: true,
+//    origin: /http*/
+// },
 server.start(
    {
-      cors: {
-         credentials: true,
-         origin: /http*/
-      },
       subscriptions: '/subscriptions'
    },
    serverDetails => {
