@@ -40,27 +40,27 @@ function createClient({ headers }) {
       credentials: 'same-origin'
    });
 
-   const wsLink = process.browser
-      ? new WebSocketLink({
-           uri: `ws://${
-              process.env.NODE_ENV === 'development'
-                 ? endpointNoHTTP
-                 : prodEndpointNoHTTP
-           }/subscriptions`,
-           options: {
-              reconnect: true
-           }
-        })
-      : () => console.log('SSR');
+   // const wsLink = process.browser
+   //    ? new WebSocketLink({
+   //         uri: `ws://${
+   //            process.env.NODE_ENV === 'development'
+   //               ? endpointNoHTTP
+   //               : prodEndpointNoHTTP
+   //         }/subscriptions`,
+   //         options: {
+   //            reconnect: true
+   //         }
+   //      })
+   //    : () => console.log('SSR');
 
-   const link = split(
-      ({ query }) => {
-         const { kind, operation } = getMainDefinition(query);
-         return kind === 'operationDefinition' && operation === 'subscription';
-      },
-      wsLink,
-      httpLink
-   );
+   // const link = split(
+   //    ({ query }) => {
+   //       const { kind, operation } = getMainDefinition(query);
+   //       return kind === 'operationDefinition' && operation === 'subscription';
+   //    },
+   //    wsLink,
+   //    httpLink
+   // );
 
    const requestLink = new ApolloLink(
       (operation, forward) =>
@@ -95,7 +95,7 @@ function createClient({ headers }) {
             if (networkError) console.log(`[Network error]: ${networkError}`);
          }),
          requestLink,
-         link
+         httpLink
       ]),
       cache,
       resolvers: {
