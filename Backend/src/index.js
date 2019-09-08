@@ -36,7 +36,7 @@ server.express.use(async (req, res, next) => {
 // cors: {
 //    credentials: true,
 //    origin: /http*/
-// },
+// }
 server.start(
    {
       subscriptions: '/subscriptions'

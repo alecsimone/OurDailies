@@ -92,7 +92,7 @@ function createClient({ headers }) {
                );
             if (networkError) console.log(`[Network error]: ${networkError}`);
          }),
-         requestLink,
+         // requestLink,
          link
       ]),
       cache,
