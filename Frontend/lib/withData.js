@@ -7,7 +7,7 @@ import { withClientState } from 'apollo-link-state';
 import { ApolloLink, Observable, split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
-import { endpoint, endpointNoHTTP } from '../config';
+import { endpoint, endpointNoHTTP, prodEndpoint } from '../config';
 import { LOCAL_STATE_QUERY, TOGGLE_MODAL_MUTATION } from '../components/Modal';
 
 function createClient({ headers }) {
@@ -29,7 +29,7 @@ function createClient({ headers }) {
    };
 
    const httpLink = new HttpLink({
-      uri: process.env.NODE_ENV === 'development' ? endpoint : endpoint,
+      uri: process.env.NODE_ENV === 'development' ? endpoint : prodEndpoint,
       credentials: 'same-origin'
    });
 
