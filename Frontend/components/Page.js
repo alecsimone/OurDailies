@@ -177,7 +177,7 @@ const StyledPage = styled.div`
    @media screen and (min-width: 800px) {
       width: 94%;
    }
-   margin: 4rem auto;
+   margin: 2rem auto;
 `;
 
 class Page extends Component {

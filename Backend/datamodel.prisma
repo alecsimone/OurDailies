@@ -20,6 +20,9 @@ type Thing {
 type Narrative {
   id: ID! @id @unique
   title: String! @unique
+  connectedThings: [Thing]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type Comment {
@@ -38,6 +41,8 @@ type Link {
   title: String!
   url: String!
   onThing: Thing
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type Vote {
@@ -75,6 +80,7 @@ type Member {
   resetToken: String
   resetTokenExpiry: Float
   createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 enum Role {

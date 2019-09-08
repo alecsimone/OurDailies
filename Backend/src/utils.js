@@ -277,6 +277,7 @@ async function getFinalists(ctx) {
             roles
          }
       }
+      finalistDate
       eliminated
       createdAt
       updatedAt}`

@@ -274,6 +274,8 @@ type Link {
   title: String!
   url: String!
   onThing: Thing
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 type LinkConnection {
@@ -325,6 +327,8 @@ type LinkPreviousValues {
   id: ID!
   title: String!
   url: String!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 type LinkSubscriptionPayload {
@@ -440,6 +444,22 @@ input LinkWhereInput {
   url_ends_with: String
   url_not_ends_with: String
   onThing: ThingWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [LinkWhereInput!]
   OR: [LinkWhereInput!]
   NOT: [LinkWhereInput!]
@@ -470,6 +490,7 @@ type Member {
   resetToken: String
   resetTokenExpiry: Float
   createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 type MemberConnection {
@@ -644,6 +665,7 @@ type MemberPreviousValues {
   resetToken: String
   resetTokenExpiry: Float
   createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 type MemberSubscriptionPayload {
@@ -972,6 +994,14 @@ input MemberWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [MemberWhereInput!]
   OR: [MemberWhereInput!]
   NOT: [MemberWhereInput!]
@@ -1036,6 +1066,9 @@ enum MutationType {
 type Narrative {
   id: ID!
   title: String!
+  connectedThings(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Thing!]
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 type NarrativeConnection {
@@ -1046,11 +1079,16 @@ type NarrativeConnection {
 
 input NarrativeCreateInput {
   title: String!
+  connectedThings: ThingCreateManyWithoutPartOfNarrativesInput
 }
 
-input NarrativeCreateManyInput {
-  create: [NarrativeCreateInput!]
+input NarrativeCreateManyWithoutConnectedThingsInput {
+  create: [NarrativeCreateWithoutConnectedThingsInput!]
   connect: [NarrativeWhereUniqueInput!]
+}
+
+input NarrativeCreateWithoutConnectedThingsInput {
+  title: String!
 }
 
 type NarrativeEdge {
@@ -1072,6 +1110,8 @@ enum NarrativeOrderByInput {
 type NarrativePreviousValues {
   id: ID!
   title: String!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 type NarrativeSubscriptionPayload {
@@ -1092,32 +1132,33 @@ input NarrativeSubscriptionWhereInput {
   NOT: [NarrativeSubscriptionWhereInput!]
 }
 
-input NarrativeUpdateDataInput {
-  title: String
-}
-
 input NarrativeUpdateInput {
   title: String
+  connectedThings: ThingUpdateManyWithoutPartOfNarrativesInput
 }
 
-input NarrativeUpdateManyInput {
-  create: [NarrativeCreateInput!]
+input NarrativeUpdateManyWithoutConnectedThingsInput {
+  create: [NarrativeCreateWithoutConnectedThingsInput!]
   delete: [NarrativeWhereUniqueInput!]
   connect: [NarrativeWhereUniqueInput!]
   disconnect: [NarrativeWhereUniqueInput!]
-  update: [NarrativeUpdateWithWhereUniqueNestedInput!]
-  upsert: [NarrativeUpsertWithWhereUniqueNestedInput!]
+  update: [NarrativeUpdateWithWhereUniqueWithoutConnectedThingsInput!]
+  upsert: [NarrativeUpsertWithWhereUniqueWithoutConnectedThingsInput!]
 }
 
-input NarrativeUpdateWithWhereUniqueNestedInput {
-  where: NarrativeWhereUniqueInput!
-  data: NarrativeUpdateDataInput!
+input NarrativeUpdateWithoutConnectedThingsDataInput {
+  title: String
 }
 
-input NarrativeUpsertWithWhereUniqueNestedInput {
+input NarrativeUpdateWithWhereUniqueWithoutConnectedThingsInput {
   where: NarrativeWhereUniqueInput!
-  update: NarrativeUpdateDataInput!
-  create: NarrativeCreateInput!
+  data: NarrativeUpdateWithoutConnectedThingsDataInput!
+}
+
+input NarrativeUpsertWithWhereUniqueWithoutConnectedThingsInput {
+  where: NarrativeWhereUniqueInput!
+  update: NarrativeUpdateWithoutConnectedThingsDataInput!
+  create: NarrativeCreateWithoutConnectedThingsInput!
 }
 
 input NarrativeWhereInput {
@@ -1149,6 +1190,25 @@ input NarrativeWhereInput {
   title_not_starts_with: String
   title_ends_with: String
   title_not_ends_with: String
+  connectedThings_every: ThingWhereInput
+  connectedThings_some: ThingWhereInput
+  connectedThings_none: ThingWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [NarrativeWhereInput!]
   OR: [NarrativeWhereInput!]
   NOT: [NarrativeWhereInput!]
@@ -1406,7 +1466,7 @@ input ThingCreateInput {
   summary: ThingCreatesummaryInput
   includedLinks: LinkCreateManyWithoutOnThingInput
   includedThings: ThingCreateManyInput
-  partOfNarratives: NarrativeCreateManyInput
+  partOfNarratives: NarrativeCreateManyWithoutConnectedThingsInput
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   comments: CommentCreateManyWithoutOnThingInput
@@ -1421,6 +1481,11 @@ input ThingCreateManyInput {
 
 input ThingCreateManyWithoutAuthorInput {
   create: [ThingCreateWithoutAuthorInput!]
+  connect: [ThingWhereUniqueInput!]
+}
+
+input ThingCreateManyWithoutPartOfNarrativesInput {
+  create: [ThingCreateWithoutPartOfNarrativesInput!]
   connect: [ThingWhereUniqueInput!]
 }
 
@@ -1455,7 +1520,7 @@ input ThingCreateWithoutAuthorInput {
   summary: ThingCreatesummaryInput
   includedLinks: LinkCreateManyWithoutOnThingInput
   includedThings: ThingCreateManyInput
-  partOfNarratives: NarrativeCreateManyInput
+  partOfNarratives: NarrativeCreateManyWithoutConnectedThingsInput
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   comments: CommentCreateManyWithoutOnThingInput
@@ -1471,7 +1536,7 @@ input ThingCreateWithoutCommentsInput {
   summary: ThingCreatesummaryInput
   includedLinks: LinkCreateManyWithoutOnThingInput
   includedThings: ThingCreateManyInput
-  partOfNarratives: NarrativeCreateManyInput
+  partOfNarratives: NarrativeCreateManyWithoutConnectedThingsInput
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   eliminated: Boolean
@@ -1485,7 +1550,22 @@ input ThingCreateWithoutIncludedLinksInput {
   originalSource: String!
   summary: ThingCreatesummaryInput
   includedThings: ThingCreateManyInput
-  partOfNarratives: NarrativeCreateManyInput
+  partOfNarratives: NarrativeCreateManyWithoutConnectedThingsInput
+  votes: VoteCreateManyWithoutOnThingInput
+  passes: PassCreateManyWithoutOnThingInput
+  comments: CommentCreateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingCreateWithoutPartOfNarrativesInput {
+  title: String!
+  author: MemberCreateOneWithoutSubmissionsInput!
+  featuredImage: String
+  originalSource: String!
+  summary: ThingCreatesummaryInput
+  includedLinks: LinkCreateManyWithoutOnThingInput
+  includedThings: ThingCreateManyInput
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   comments: CommentCreateManyWithoutOnThingInput
@@ -1501,7 +1581,7 @@ input ThingCreateWithoutPassesInput {
   summary: ThingCreatesummaryInput
   includedLinks: LinkCreateManyWithoutOnThingInput
   includedThings: ThingCreateManyInput
-  partOfNarratives: NarrativeCreateManyInput
+  partOfNarratives: NarrativeCreateManyWithoutConnectedThingsInput
   votes: VoteCreateManyWithoutOnThingInput
   comments: CommentCreateManyWithoutOnThingInput
   eliminated: Boolean
@@ -1516,7 +1596,7 @@ input ThingCreateWithoutVotesInput {
   summary: ThingCreatesummaryInput
   includedLinks: LinkCreateManyWithoutOnThingInput
   includedThings: ThingCreateManyInput
-  partOfNarratives: NarrativeCreateManyInput
+  partOfNarratives: NarrativeCreateManyWithoutConnectedThingsInput
   passes: PassCreateManyWithoutOnThingInput
   comments: CommentCreateManyWithoutOnThingInput
   eliminated: Boolean
@@ -1585,7 +1665,7 @@ input ThingUpdateDataInput {
   summary: ThingUpdatesummaryInput
   includedLinks: LinkUpdateManyWithoutOnThingInput
   includedThings: ThingUpdateManyInput
-  partOfNarratives: NarrativeUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   comments: CommentUpdateManyWithoutOnThingInput
@@ -1601,7 +1681,7 @@ input ThingUpdateInput {
   summary: ThingUpdatesummaryInput
   includedLinks: LinkUpdateManyWithoutOnThingInput
   includedThings: ThingUpdateManyInput
-  partOfNarratives: NarrativeUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   comments: CommentUpdateManyWithoutOnThingInput
@@ -1625,6 +1705,15 @@ input ThingUpdateManyWithoutAuthorInput {
   disconnect: [ThingWhereUniqueInput!]
   update: [ThingUpdateWithWhereUniqueWithoutAuthorInput!]
   upsert: [ThingUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input ThingUpdateManyWithoutPartOfNarrativesInput {
+  create: [ThingCreateWithoutPartOfNarrativesInput!]
+  delete: [ThingWhereUniqueInput!]
+  connect: [ThingWhereUniqueInput!]
+  disconnect: [ThingWhereUniqueInput!]
+  update: [ThingUpdateWithWhereUniqueWithoutPartOfNarrativesInput!]
+  upsert: [ThingUpsertWithWhereUniqueWithoutPartOfNarrativesInput!]
 }
 
 input ThingUpdateOneWithoutCommentsInput {
@@ -1674,7 +1763,7 @@ input ThingUpdateWithoutAuthorDataInput {
   summary: ThingUpdatesummaryInput
   includedLinks: LinkUpdateManyWithoutOnThingInput
   includedThings: ThingUpdateManyInput
-  partOfNarratives: NarrativeUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   comments: CommentUpdateManyWithoutOnThingInput
@@ -1690,7 +1779,7 @@ input ThingUpdateWithoutCommentsDataInput {
   summary: ThingUpdatesummaryInput
   includedLinks: LinkUpdateManyWithoutOnThingInput
   includedThings: ThingUpdateManyInput
-  partOfNarratives: NarrativeUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   eliminated: Boolean
@@ -1704,7 +1793,22 @@ input ThingUpdateWithoutIncludedLinksDataInput {
   originalSource: String
   summary: ThingUpdatesummaryInput
   includedThings: ThingUpdateManyInput
-  partOfNarratives: NarrativeUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
+  votes: VoteUpdateManyWithoutOnThingInput
+  passes: PassUpdateManyWithoutOnThingInput
+  comments: CommentUpdateManyWithoutOnThingInput
+  eliminated: Boolean
+  finalistDate: DateTime
+}
+
+input ThingUpdateWithoutPartOfNarrativesDataInput {
+  title: String
+  author: MemberUpdateOneRequiredWithoutSubmissionsInput
+  featuredImage: String
+  originalSource: String
+  summary: ThingUpdatesummaryInput
+  includedLinks: LinkUpdateManyWithoutOnThingInput
+  includedThings: ThingUpdateManyInput
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   comments: CommentUpdateManyWithoutOnThingInput
@@ -1720,7 +1824,7 @@ input ThingUpdateWithoutPassesDataInput {
   summary: ThingUpdatesummaryInput
   includedLinks: LinkUpdateManyWithoutOnThingInput
   includedThings: ThingUpdateManyInput
-  partOfNarratives: NarrativeUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
   votes: VoteUpdateManyWithoutOnThingInput
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
@@ -1735,7 +1839,7 @@ input ThingUpdateWithoutVotesDataInput {
   summary: ThingUpdatesummaryInput
   includedLinks: LinkUpdateManyWithoutOnThingInput
   includedThings: ThingUpdateManyInput
-  partOfNarratives: NarrativeUpdateManyInput
+  partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
   passes: PassUpdateManyWithoutOnThingInput
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
@@ -1750,6 +1854,11 @@ input ThingUpdateWithWhereUniqueNestedInput {
 input ThingUpdateWithWhereUniqueWithoutAuthorInput {
   where: ThingWhereUniqueInput!
   data: ThingUpdateWithoutAuthorDataInput!
+}
+
+input ThingUpdateWithWhereUniqueWithoutPartOfNarrativesInput {
+  where: ThingWhereUniqueInput!
+  data: ThingUpdateWithoutPartOfNarrativesDataInput!
 }
 
 input ThingUpsertWithoutCommentsInput {
@@ -1782,6 +1891,12 @@ input ThingUpsertWithWhereUniqueWithoutAuthorInput {
   where: ThingWhereUniqueInput!
   update: ThingUpdateWithoutAuthorDataInput!
   create: ThingCreateWithoutAuthorInput!
+}
+
+input ThingUpsertWithWhereUniqueWithoutPartOfNarrativesInput {
+  where: ThingWhereUniqueInput!
+  update: ThingUpdateWithoutPartOfNarrativesDataInput!
+  create: ThingCreateWithoutPartOfNarrativesInput!
 }
 
 input ThingWhereInput {

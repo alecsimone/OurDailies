@@ -225,7 +225,7 @@ const Mutations = {
    },
    async addSummaryLineToThing(parent, { summaryLine, thingID }, ctx, info) {
       loggedInGate(ctx);
-      modGate(ctx.request.member);
+      fullMemberGate(ctx.request.member);
 
       const currentSummary = await ctx.db.query.thing(
          {

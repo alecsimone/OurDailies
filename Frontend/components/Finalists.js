@@ -5,7 +5,7 @@ import FinalistsBar from './FinalistsBar';
 
 const StyledFinalists = styled.div`
    .littleThings {
-      margin-top: 4rem;
+      margin-top: 6rem;
       display: flex;
       align-items: stretch;
       flex-wrap: wrap;

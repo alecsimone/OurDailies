@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import FullThing from './FullThing';
 import TinyThing from './TinyThing';
+import { getScoreForThing } from '../lib/utils';
 
 const StyledCurate = styled.div`
    display: flex;
@@ -52,7 +53,13 @@ class Curate extends Component {
          thing => thing.id !== mainThingData.id
       );
 
-      const tinyThings = tinyThingsData.map(tinyThingData => (
+      const sortedTinyThings = tinyThingsData.sort((a, b) => {
+         const aScore = getScoreForThing(a);
+         const bScore = getScoreForThing(b);
+         return bScore - aScore;
+      });
+
+      const tinyThings = sortedTinyThings.map(tinyThingData => (
          <TinyThing
             thing={tinyThingData}
             key={tinyThingData.id}

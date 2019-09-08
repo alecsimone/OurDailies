@@ -133,7 +133,6 @@ class Things extends Component {
    };
 
    getNextDaysThings = async () => {
-      console.log('Pulling more!');
       const { client } = this.props;
       const lastDateQueried = new Date(this.state.lastDayQueried);
       const nextDateToQuery = new Date(

@@ -6,7 +6,11 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import psl from 'psl';
 import Error from './ErrorMessage.js';
-import { convertISOtoAgo, extractHostname } from '../lib/utils';
+import {
+   convertISOtoAgo,
+   extractHostname,
+   getScoreForThing
+} from '../lib/utils';
 
 const StyledTinyThing = styled.article`
    position: relative;
@@ -23,7 +27,7 @@ const StyledTinyThing = styled.article`
    white-space: nowrap;
    color: ${props => props.theme.lowContrastGrey};
    :before {
-      content: "";
+      content: '';
       background: ${props => props.theme.majorColor};
       width: 0.5rem;
       height: 100%;
@@ -64,7 +68,10 @@ const StyledTinyThing = styled.article`
       }
       p {
          margin: 0;
-         span {
+         span.score {
+            color: ${props => props.theme.secondaryAccent};
+            margin-right: 0.25rem;
+            font-weight: 600;
          }
       }
       input {
@@ -77,31 +84,9 @@ const StyledTinyThing = styled.article`
    }
 `;
 
-const UPDATE_SUBMISSION_MUTATION = gql`
-   mutation UPDATE_SUBMISSION_MUTATION(
-      $id: ID!
-      $title: String
-      $url: String
-      $description: String
-   ) {
-      updateSubmission(
-         id: $id
-         title: $title
-         url: $url
-         description: $description
-      ) {
-         id
-         title
-         url
-         description
-      }
-   }
-`;
-
 class TinyThing extends Component {
    render() {
       const { thing } = this.props;
-      const type = thing.__typename.toLowerCase();
 
       return (
          <StyledTinyThing className="tinyThing">
@@ -118,10 +103,13 @@ class TinyThing extends Component {
                </h3>
             </Link>
             <div className="metaContainer">
-               <p className="meta">
+               <p className="meta" poo={console.log(thing.votes)}>
+                  {thing.votes != null && (
+                     <span className="score">+{getScoreForThing(thing)} </span>
+                  )}
                   {convertISOtoAgo(thing.createdAt)}
                   {' AGO '}
-                  <span>via</span>
+                  <span className="via">via</span>
                </p>
                <a
                   className="SubTitleLink"

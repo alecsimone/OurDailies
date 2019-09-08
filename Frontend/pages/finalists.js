@@ -65,6 +65,7 @@ const FINALIST_THINGS_QUERY = gql`
                roles
             }
          }
+         finalistDate
          eliminated
          createdAt
          updatedAt
@@ -98,19 +99,15 @@ class finalists extends Component {
                            ? 3000
                            : 10000
                      }
-                     updateQuery={(proxy, data) => {
-                        console.log('hello');
-                        console.log(proxy);
-                        console.log(data);
-                        return true;
-                     }}
                   >
-                     {({ error, loading, data }) => (
-                        <Finalists
-                           things={data.thingsForFinalists}
-                           member={memberData}
-                        />
-                     )}
+                     {({ error, loading, data }) =>
+                        console.log(data.thingsForFinalists) || (
+                           <Finalists
+                              things={data.thingsForFinalists}
+                              member={memberData}
+                           />
+                        )
+                     }
                   </Query>
                )}
             </Member>

@@ -38,7 +38,7 @@ const StyledLittleThing = styled.article`
       border-radius: 2px 2px 0 0;
    }
    div.lede {
-      width: calc(100% - 2rem;);
+      width: 100%;
       height: 40rem;
       position: relative;
       h3 {

@@ -1,8 +1,10 @@
 import styled from 'styled-components';
+import { getScoreForThing } from '../lib/utils';
 
 const StyledFinalistsBar = styled.div`
    width: 100%;
    padding: 0.6rem;
+   margin: 3rem 0;
    background: ${props => props.theme.veryLowContrastCoolGrey};
    display: flex;
    font-weight: 700;
@@ -19,10 +21,7 @@ const FinalistsBar = props => {
    const sum = a.reduce((total, number) => total + number, 3);
 
    const totalScore = things.reduce((score, thing, index) => {
-      const thingScore = thing.votes.reduce(
-         (points, vote) => points + vote.value,
-         0
-      );
+      const thingScore = getScoreForThing(thing);
       things[index].score = thingScore;
       if (thing.eliminated) return score;
       return score + thingScore;

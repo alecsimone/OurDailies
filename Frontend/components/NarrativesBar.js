@@ -1,14 +1,32 @@
-import React, { Component } from "react";
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import Link from "next/link";
+import React, { Component } from 'react';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { getScoreForThing } from '../lib/utils';
 
 const ALL_NARRATIVES_QUERY = gql`
    query ALL_NARRATIVES_QUERY {
       narratives(last: 10) {
          id
          title
+      }
+   }
+`;
+
+const FRESHEST_NARRATIVES_QUERY = gql`
+   query FRESHEST_NARRATIVES_QUERY {
+      narratives(first: 200, orderBy: updatedAt_DESC) {
+         id
+         title
+         updatedAt
+         connectedThings {
+            title
+            createdAt
+            votes {
+               value
+            }
+         }
       }
    }
 `;
@@ -47,17 +65,45 @@ const StyledNarrativesBar = styled.div`
 `;
 
 class NarrativesBar extends Component {
+   numberToDisplay = 15;
+
+   pickTheNarratives = data => {
+      const { narratives } = data;
+      // Go through each narrative and give it a score property
+      narratives.forEach((narrativeObject, index) => {
+         const score = narrativeObject.connectedThings.reduce(
+            (narrativeScore, thingObject) => {
+               const createdDaysAgo = Math.floor(
+                  (new Date() - new Date(thingObject.createdAt)) /
+                     (1000 * 60 * 60 * 24)
+               );
+               if (createdDaysAgo > 7) {
+                  return narrativeScore;
+               }
+               const thisThingScore = getScoreForThing(thingObject);
+               return narrativeScore + thisThingScore;
+            },
+            0
+         );
+         narratives[index].score = score;
+      });
+      const sortedNarratives = narratives.sort((a, b) => b.score - a.score);
+      const topNarratives = sortedNarratives.slice(0, this.numberToDisplay);
+      return topNarratives;
+   };
+
    render() {
       return (
-         <Query query={ALL_NARRATIVES_QUERY}>
+         <Query query={FRESHEST_NARRATIVES_QUERY}>
             {({ data, error, loading }) => {
                if (loading) return <p>Loading...</p>;
                if (error) return <p>Error: {error.message}</p>;
+               const topNarrativesArray = this.pickTheNarratives(data);
                return (
                   <StyledNarrativesBar>
-                     <h5>NARRATIVES: </h5>
-                     {data.narratives.map((narrative, index) => {
-                        if (index < data.narratives.length - 1) {
+                     <h5>BIG THIS WEEK: </h5>
+                     {topNarrativesArray.map((narrative, index) => {
+                        if (index < topNarrativesArray.length - 1) {
                            return (
                               <span key={narrative.title}>
                                  <Link

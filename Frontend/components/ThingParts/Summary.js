@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Mutation, ApolloConsumer } from "react-apollo";
-import gql from "graphql-tag";
-import ErrorMessage from "../ErrorMessage";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
-import { CURATE_THINGS_QUERY } from "../../pages/curate";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Mutation, ApolloConsumer } from 'react-apollo';
+import gql from 'graphql-tag';
+import ErrorMessage from '../ErrorMessage';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
+import { CURATE_THINGS_QUERY } from '../../pages/curate';
 
 const ADD_SUMMARY_LINE_TO_THING_MUTATION = gql`
    mutation ADD_SUMMARY_LINE_TO_THING_MUTATION(
@@ -37,7 +37,7 @@ const StyledSummary = styled.div`
       li {
          font-size: ${props => props.theme.smallText};
          line-height: 1.4;
-         list-style-type: " - ";
+         list-style-type: ' - ';
          display: flex;
          align-items: center;
          justify-content: space-between;
@@ -77,7 +77,7 @@ const StyledSummary = styled.div`
       background: none;
       margin: 0 0 3rem 0;
       padding: 0.5rem 1rem calc(0.5rem - 1px) 1rem;
-      &[aria-disabled="true"] {
+      &[aria-disabled='true'] {
          background: ${props => props.theme.lowContrastCoolGrey};
       }
       &:focus {
@@ -96,11 +96,11 @@ const StyledSummary = styled.div`
 
 class Summary extends Component {
    state = {
-      lineToAdd: ""
+      lineToAdd: ''
    };
 
    handleKeyDown = (e, addSummaryLineToThing) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+      if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
          this.setState({ lineToAdd: '' });
          addSummaryLineToThing();
@@ -177,7 +177,9 @@ class Summary extends Component {
                   <ErrorMessage error={error} />
                   {this.props.member != null &&
                      this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator'].includes(role)
+                        ['Admin', 'Editor', 'Moderator', 'Member'].includes(
+                           role
+                        )
                      ) && (
                         <textarea
                            placeholder={

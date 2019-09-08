@@ -31,6 +31,9 @@ const CURATE_THINGS_QUERY = gql`
             author {
                displayName
             }
+            votes {
+               value
+            }
             createdAt
          }
          partOfNarratives {

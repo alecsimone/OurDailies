@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import Thing from "./Thing";
-import LittleThing from "./LittleThing";
+import Thing from './Thing';
+import LittleThing from './LittleThing';
+import { getScoreForThing } from '../lib/utils';
 
 const StyledDayContainer = styled.div`
    .dateBar {
@@ -19,7 +20,7 @@ const StyledDayContainer = styled.div`
          background: ${props => props.theme.background};
       }
       :before {
-         content: " ";
+         content: ' ';
          background: hsla(0, 0%, 13%, 1);
          height: 3px;
          width: 100%;
@@ -75,14 +76,8 @@ const DayContainer = props => {
    } catch (windowError) {}
 
    props.things.sort((a, b) => {
-      const scoreA = a.votes.reduce(
-         (accumulator, currentValue) => accumulator + currentValue.value,
-         0
-      );
-      const scoreB = b.votes.reduce(
-         (accumulator, currentValue) => accumulator + currentValue.value,
-         0
-      );
+      const scoreA = getScoreForThing(a);
+      const scoreB = getScoreForThing(b);
       return scoreB - scoreA;
    });
 

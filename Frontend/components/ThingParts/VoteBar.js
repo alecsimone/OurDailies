@@ -572,7 +572,9 @@ class VoteBar extends Component {
             {(eliminateThing, { loading, error }) => (
                <button
                   className="eliminate"
-                  onClick={eliminateThing}
+                  onClick={() => {
+                     if (confirm('Eliminate this thing?')) eliminateThing();
+                  }}
                   aria-disabled={loading}
                >
                   <img src="/static/red-x.png" />
@@ -600,7 +602,12 @@ class VoteBar extends Component {
          >
             {(promoteThing, { loading, error }) => (
                <div className="promoteContainer">
-                  <button onClick={promoteThing} className="promote">
+                  <button
+                     onClick={() => {
+                        if (confirm('Promote this thing?')) promoteThing();
+                     }}
+                     className="promote"
+                  >
                      <img
                         src="/static/green-plus.png"
                         className={loading ? 'loading' : 'promoteimg'}
@@ -622,7 +629,7 @@ class VoteBar extends Component {
             <div className="passBar">
                {this.props.member &&
                   this.props.member.roles.includes('Admin') &&
-                  !this.props.finalistDate &&
+                  this.props.finalistDate == null &&
                   promoteButton}
                {this.props.member &&
                   this.props.member.roles.includes('Admin') &&
