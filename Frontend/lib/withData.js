@@ -29,7 +29,9 @@ function createClient({ headers }) {
          fetchOptions: {
             credentials: 'include'
          },
-         headers
+         headers: {
+            cookie: headers && headers.cookie
+         }
       });
    };
 
@@ -92,7 +94,7 @@ function createClient({ headers }) {
                );
             if (networkError) console.log(`[Network error]: ${networkError}`);
          }),
-         // requestLink,
+         requestLink,
          link
       ]),
       cache,
