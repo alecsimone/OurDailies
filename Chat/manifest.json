@@ -12,7 +12,8 @@
       "images/*.jpg"
    ],
    "permissions": [
-      "http://localhost:4444/"
+      "http://localhost:4444/",
+      "https://playground.ourdailies.org/"
    ],
    "content_scripts": [
       {
@@ -21,7 +22,6 @@
          ],
          "js": [
             "third-party/jquery-3.3.1.min.js",
-            "privateData.js",
             "DailiesChat.js"
          ],
          "css": [
@@ -32,6 +32,7 @@
    "background": {
       "scripts": [
          "third-party/jquery-3.3.1.min.js",
+         "privateData.js",
          "background.js"
       ],
       "persistent": false

@@ -1,4 +1,5 @@
-const ajaxURL = 'http://localhost:4444';
+// const ajaxURL = 'http://localhost:4444';
+const ajaxURL = 'https://playground.ourdailies.org';
 
 let urls;
 
@@ -6,7 +7,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
    fetch(ajaxURL, {
       method: 'POST',
       headers: {
-         'Content-Type': 'application/json'
+         'Content-Type': 'application/json',
+         Authorization: `Bearer ${privateData.prismaToken}`
       },
       body: request
    })
