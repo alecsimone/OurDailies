@@ -60,7 +60,8 @@ const Mutations = {
       const token = jwt.sign({ memberId: member.id }, process.env.APP_SECRET);
       ctx.response.cookie('token', token, {
          httpOnly: true,
-         maxAge: 1000 * 60 * 60 * 24 * 365 * 4
+         maxAge: 1000 * 60 * 60 * 24 * 365 * 4,
+         domain: process.env.DOMAIN
       });
       return member;
    },
@@ -80,7 +81,7 @@ const Mutations = {
       ctx.response.cookie('token', token, {
          httpOnly: true,
          maxAge: 1000 * 60 * 60 * 24 * 365 * 4,
-         domain: 'ourdailies.org'
+         domain: process.env.DOMAIN
       });
 
       return member;
