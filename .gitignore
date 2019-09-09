@@ -3,3 +3,4 @@ variables.env
 .next/
 Chat/sounds/
 Chat/third-party/
+Chat/privateData.js

@@ -21,6 +21,7 @@
          ],
          "js": [
             "third-party/jquery-3.3.1.min.js",
+            "privateData.js",
             "DailiesChat.js"
          ],
          "css": [

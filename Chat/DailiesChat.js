@@ -2,6 +2,8 @@ window.onload = function() {
    removeRoomsBar();
    setupGlobalVariables();
 
+   console.log(privateData.prismaToken);
+
    getMemberDB();
 
    const wholeChatBox = $('.chat-list');
