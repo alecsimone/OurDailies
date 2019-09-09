@@ -37,7 +37,11 @@ server.start(
    {
       cors: {
          credentials: true,
-         origin: ['http://localhost:*', 'https://www.twitch.tv/popout/ourdailies/chat?popout=', 'http*://ourdailies.org']
+         origin: [
+            'http://localhost:*',
+            'https://www.twitch.tv/popout/ourdailies/chat?popout=',
+            'http*://*ourdailies.org'
+         ]
       }
    },
    serverDetails => {
