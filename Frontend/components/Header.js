@@ -27,6 +27,7 @@ const StyledHeader = styled.div`
       width: 100%;
    }
    .logoBox {
+      margin-right: 2rem;
    }
    .stageBox {
       flex-grow: 1;
@@ -36,10 +37,18 @@ const StyledHeader = styled.div`
       display: flex;
       justify-content: space-around;
       @media screen and (min-width: 800px) {
-         display: inline-block;
+         max-width: 800px;
          width: auto;
          order: 0;
          text-align: right;
+      }
+      @media screen and (min-width: 1480px) {
+         display: inline-block;
+         max-width: none;
+         a,
+         a:visited {
+            margin-right: 8rem;
+         }
       }
       a,
       a:visited {
@@ -47,7 +56,7 @@ const StyledHeader = styled.div`
          font-size: ${props => props.theme.bigText};
          cursor: pointer;
          @media screen and (min-width: 800px) {
-            margin-right: 8rem;
+            /* margin-right: 8rem; */
             position: relative;
          }
       }
