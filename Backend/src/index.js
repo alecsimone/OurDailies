@@ -39,7 +39,7 @@ server.start(
    {
       cors: {
          credentials: true,
-         origin: [/https:\/\/www\.ourdailies\.org/]
+         origin: [/https:\/\/*\.ourdailies\.org/, /https:\/\/ourdailies\.org/]
       }
    },
    serverDetails => {
