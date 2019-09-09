@@ -76,6 +76,7 @@ const Mutations = {
       }
 
       const token = jwt.sign({ memberId: member.id }, process.env.APP_SECRET);
+      console.log(token);
       ctx.response.cookie('token', token, {
          httpOnly: true,
          maxAge: 1000 * 60 * 60 * 24 * 365 * 4
