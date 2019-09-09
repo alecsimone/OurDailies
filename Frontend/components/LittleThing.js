@@ -186,6 +186,7 @@ class LittleThing extends Component {
                         ? data.featuredImage
                         : '/static/defaultPic.jpg'
                   }
+                  alt="featured image"
                />
                <p className="meta">
                   {convertISOtoAgo(data.createdAt)}

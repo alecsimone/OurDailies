@@ -259,11 +259,16 @@ class LinksBox extends Component {
                            }
                         >
                            {this.state.showForm ? (
-                              <img className="x" src="/static/red-x.png" />
+                              <img
+                                 className="x"
+                                 src="/static/red-x.png"
+                                 alt="button to hide add link form"
+                              />
                            ) : (
                               <img
                                  className="plus"
                                  src="/static/green-plus.png"
+                                 alt="button to open add link form"
                               />
                            )}
                         </button>

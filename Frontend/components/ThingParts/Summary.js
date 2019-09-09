@@ -141,6 +141,7 @@ class Summary extends Component {
                      ) => (
                         <img
                            src="/static/red-x.png"
+                           alt="delete summary line button"
                            className={loading ? 'loading' : ''}
                            onClick={() => {
                               removeSummaryLineFromThing().catch(err => {

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import { getYoutubeVideoIdFromLink } from '../../lib/utils';
-import { SINGLE_THING_QUERY } from "../../pages/thing";
+import { SINGLE_THING_QUERY } from '../../pages/thing';
 
 const SET_FEATURED_IMAGE_MUTATION = gql`
    mutation SET_FEATURED_IMAGE_MUTATION($imageUrl: String!, $thingID: ID!) {
@@ -213,8 +213,8 @@ class FeaturedImageCarousel extends Component {
    };
 
    watchForEnter = async (e, changeThingTitle) => {
-      if (e.key === "Enter") {
-         console.log("Submitting!");
+      if (e.key === 'Enter') {
+         console.log('Submitting!');
          await changeThingTitle();
          this.setState({ editingTitle: false });
       }
@@ -232,7 +232,7 @@ class FeaturedImageCarousel extends Component {
          link =>
             link !== thing.featuredImage &&
             (link.includes('jpg') ||
-               link.includes("jpeg") ||
+               link.includes('jpeg') ||
                link.includes('png') ||
                link.includes('gif') ||
                link.includes('youtube.com/watch?v=') ||
@@ -285,6 +285,7 @@ class FeaturedImageCarousel extends Component {
             )}
             <img
                src="/static/edit-this.png"
+               alt="edit headline button"
                className="editThis"
                onClick={this.makeTitleEditable}
             />
@@ -302,7 +303,10 @@ class FeaturedImageCarousel extends Component {
                   this.sliderPositionDown(mediaLinksArray);
                }}
             >
-               <img src="/static/grey-up-arrow.png" />
+               <img
+                  src="/static/grey-up-arrow.png"
+                  alt="previous image button"
+               />
             </button>
          );
          rightButton = (
@@ -312,7 +316,7 @@ class FeaturedImageCarousel extends Component {
                   this.sliderPositionUp(mediaLinksArray);
                }}
             >
-               <img src="/static/grey-up-arrow.png" />
+               <img src="/static/grey-up-arrow.png" alt="next image button" />
             </button>
          );
       }
@@ -323,23 +327,27 @@ class FeaturedImageCarousel extends Component {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
-                  <img src="/static/defaultPic.jpg" className="featured" />
+                  <img
+                     src="/static/defaultPic.jpg"
+                     className="featured"
+                     alt="empty featured image"
+                  />
                </div>
                {headline}
             </>
          );
       } else if (
-         currentLink.includes("jpg") ||
-         currentLink.includes("jpeg") ||
-         currentLink.includes("png") ||
-         currentLink.includes("gif")
+         currentLink.includes('jpg') ||
+         currentLink.includes('jpeg') ||
+         currentLink.includes('png') ||
+         currentLink.includes('gif')
       ) {
          featuredImage = (
             <>
                <div className="featuredImageWrapper">
                   {this.props.member != null &&
                      this.props.member.roles.some(role =>
-                        ["Admin", "Editor", "Moderator"].includes(role)
+                        ['Admin', 'Editor', 'Moderator'].includes(role)
                      ) && (
                         <Mutation
                            mutation={SET_FEATURED_IMAGE_MUTATION}
@@ -374,7 +382,11 @@ class FeaturedImageCarousel extends Component {
                            )}
                         </Mutation>
                      )}
-                  <img src={currentLink} className="featured" />
+                  <img
+                     src={currentLink}
+                     className="featured"
+                     alt="not featured image for post"
+                  />
                </div>
                {headline}
             </>

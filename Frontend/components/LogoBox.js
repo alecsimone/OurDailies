@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import Link from "next/link";
-import styled from "styled-components";
+import React, { Component } from 'react';
+import Link from 'next/link';
+import styled from 'styled-components';
 
 const StyledLogoBox = styled.div`
    display: inline-flex;
@@ -30,7 +30,7 @@ const StyledLogoBox = styled.div`
 const LogoBox = () => (
    <StyledLogoBox className="logoBox">
       <Link href="/">
-         <img src="/static/logo.png" />
+         <img src="/static/logo.png" alt="logo" />
       </Link>
       <Link href="/">
          <a>Our Dailies</a>

@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import ErrorMessage from "../ErrorMessage";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
-import { convertISOtoAgo } from "../../lib/utils";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import ErrorMessage from '../ErrorMessage';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
+import { convertISOtoAgo } from '../../lib/utils';
 
 const DELETE_COMMENT_MUTATION = gql`
    mutation DELETE_COMMENT_MUTATION($id: ID!) {
@@ -97,7 +97,7 @@ const StyledComment = styled.div`
 class Comment extends Component {
    render() {
       const { data } = this.props;
-      const paragraphsAndEmptyStrings = data.comment.split("\n");
+      const paragraphsAndEmptyStrings = data.comment.split('\n');
       const paragraphs = paragraphsAndEmptyStrings.filter(
          string => string != ''
       );
@@ -121,7 +121,11 @@ class Comment extends Component {
          <StyledComment>
             <div className="commentContent">
                <div className="commentLeft">
-                  <img className="avatar" src={data.author.avatar} />
+                  <img
+                     className="avatar"
+                     src={data.author.avatar}
+                     alt={`${data.author.displayName} avatar`}
+                  />
                   <div className="commentAndAuthorContainer">
                      {paragraphElements}
                   </div>
@@ -153,6 +157,7 @@ class Comment extends Component {
                                     : 'deleteCommentButton'
                               }
                               src="/static/red-x.png"
+                              alt="delete comment button"
                               onClick={() => {
                                  deleteComment().catch(err => {
                                     alert(err.message);

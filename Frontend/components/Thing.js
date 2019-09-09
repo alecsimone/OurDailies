@@ -193,6 +193,7 @@ class Thing extends Component {
                            ? data.featuredImage
                            : '/static/defaultPic.jpg'
                      }
+                     alt="featured image"
                   />
                </div>
             </div>
