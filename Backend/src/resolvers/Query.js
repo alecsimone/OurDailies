@@ -27,7 +27,7 @@ const Query = {
          {
             where: {
                finalistDate_not: null
-            }
+            },
             orderBy: 'finalistDate_DESC',
             first: 1
          },
