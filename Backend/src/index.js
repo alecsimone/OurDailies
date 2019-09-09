@@ -30,7 +30,7 @@ server.express.use(async (req, res, next) => {
 });
 
 // process.env.FRONTEND_URL,
-// "moz-extension://*",
+// /http*/,
 // "https://www.twitch.tv/popout/ourdailies/chat?popout="
 // subscriptions: '/subscriptions'
 server.start(
@@ -38,9 +38,9 @@ server.start(
       cors: {
          credentials: true,
          origin: [
-            'http://localhost:*',
-            'https://www.twitch.tv/popout/ourdailies/chat?popout=',
-            'http*://*ourdailies.org'
+            /http\:\/\/localhost:*/,
+            /http*\:\/\/*\.ourdailies\.org/,
+            /http*\:\/\/ourdailies\.org/
          ]
       }
    },
