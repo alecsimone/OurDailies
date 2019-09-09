@@ -76,7 +76,6 @@ const Mutations = {
          throw new Error('Wrong Password');
       }
 
-      console.log('We got this far');
       const token = jwt.sign({ memberId: member.id }, process.env.APP_SECRET);
       ctx.response.cookie('token', token, {
          httpOnly: true,
@@ -87,7 +86,7 @@ const Mutations = {
       return member;
    },
    logout(parent, args, ctx, info) {
-      ctx.response.clearCookie('token');
+      ctx.response.clearCookie('token', { domain: process.env.DOMAIN });
       return { message: 'Successfully logged out' };
    },
    async requestReset(parent, args, ctx, info) {
@@ -466,7 +465,6 @@ const Mutations = {
          },
          `{count}`
       );
-      console.log(deletedVotes);
       return deletedVotes.count + deletedPasses.count;
    },
    eliminateThing(parent, { thingID }, ctx, info) {
