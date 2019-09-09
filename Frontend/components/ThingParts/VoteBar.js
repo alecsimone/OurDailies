@@ -342,7 +342,6 @@ class VoteBar extends Component {
                }
                if (newPasses == null) newPasses = [];
                thing.passes = newPasses;
-               console.log(thing);
 
                cache.writeFragment({
                   id: `Thing:${this.props.thingID}`,

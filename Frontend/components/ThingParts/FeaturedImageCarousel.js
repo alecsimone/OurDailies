@@ -214,7 +214,6 @@ class FeaturedImageCarousel extends Component {
 
    watchForEnter = async (e, changeThingTitle) => {
       if (e.key === 'Enter') {
-         console.log('Submitting!');
          await changeThingTitle();
          this.setState({ editingTitle: false });
       }
