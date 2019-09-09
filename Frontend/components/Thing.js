@@ -98,6 +98,7 @@ const StyledThing = styled.article`
             position: absolute;
             left: 3rem;
             bottom: 6rem;
+            overflow-wrap: anywhere;
             h5 {
                 color: ${props => props.theme.primaryAccent};
                 font-size: ${props => props.theme.bigText};
@@ -105,7 +106,7 @@ const StyledThing = styled.article`
                 margin: 0 0 1rem;
             }
             span {
-                margin-right: .5rem;
+                /* margin-right: .5rem; */
             }
             a {
                 color: ${props => props.theme.highContrastGrey};
@@ -137,7 +138,7 @@ class Thing extends Component {
                   >
                      <a>{narrative.title}</a>
                   </Link>
-                  ,
+                  ,{' '}
                </span>
             );
          }
