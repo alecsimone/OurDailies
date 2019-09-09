@@ -33,16 +33,13 @@ server.express.use(async (req, res, next) => {
 // /http*/,
 // "https://www.twitch.tv/popout/ourdailies/chat?popout="
 // subscriptions: '/subscriptions'
+// /http\:\/\/localhost:*/,
+//    'https://www.ourdailies.org/'
 server.start(
    {
       cors: {
          credentials: true,
-         origin: [
-            /http\:\/\/localhost:*/,
-            /http*\:\/\/*\.ourdailies\.org/,
-            /http*\:\/\/ourdailies\.org/,
-            'https://www.ourdailies.org/'
-         ]
+         origin: [/http*/]
       }
    },
    serverDetails => {
