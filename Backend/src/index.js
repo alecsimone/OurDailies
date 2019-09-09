@@ -40,7 +40,8 @@ server.start(
          origin: [
             /http\:\/\/localhost:*/,
             /http*\:\/\/*\.ourdailies\.org/,
-            /http*\:\/\/ourdailies\.org/
+            /http*\:\/\/ourdailies\.org/,
+            'https://www.ourdailies.org/'
          ]
       }
    },
