@@ -25,6 +25,9 @@ const Query = {
    async thingsForMostRecentDay(parent, args, ctx, info) {
       const [mostRecentFinalist] = await ctx.db.query.things(
          {
+            where: {
+               finalistDate_not: null
+            }
             orderBy: 'finalistDate_DESC',
             first: 1
          },
