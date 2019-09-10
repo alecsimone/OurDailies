@@ -123,7 +123,11 @@ class Comment extends Component {
                <div className="commentLeft">
                   <img
                      className="avatar"
-                     src={data.author.avatar}
+                     src={
+                        data.author.avatar != null
+                           ? data.author.avatar
+                           : '/static/defaultAvatar.jpg'
+                     }
                      alt={`${data.author.displayName} avatar`}
                   />
                   <div className="commentAndAuthorContainer">

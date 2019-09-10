@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Mutation } from "react-apollo";
+import { Mutation } from 'react-apollo';
 import styled from 'styled-components';
 import Link from 'next/link';
 import Member from './Member';
@@ -30,15 +30,17 @@ const MemberBox = () => (
    <Member>
       {({ data: { me } }) => {
          if (me) {
-            let avatar;
-            me.avatar === null
-               ? (avatar =
-                    'https://dailies.gg/wp-content/uploads/2017/03/default_pic.jpg')
-               : (avatar = me.avatar);
             return (
                <StyledMemberBox>
                   <p>Your Rep: {me.rep}</p>
-                  <img src={avatar} alt="avatar" />
+                  <img
+                     src={
+                        me.avatar != null
+                           ? me.avatar
+                           : '/static/defaultAvatar.jpg'
+                     }
+                     alt="avatar"
+                  />
                </StyledMemberBox>
             );
          }

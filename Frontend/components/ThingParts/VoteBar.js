@@ -220,7 +220,11 @@ class VoteBar extends Component {
       }
       const voters = voteData.map(voteData => (
          <img
-            src={voteData.voter.avatar}
+            src={
+               voteData.voter.avatar != null
+                  ? voteData.voter.avatar
+                  : '/static/defaultAvatar.jpg'
+            }
             alt={`${voteData.voter.displayName}: ${voteData.value}`}
             title={`${voteData.voter.displayName}: ${voteData.value}`}
             key={voteData.voter.displayName}
