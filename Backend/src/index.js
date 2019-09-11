@@ -10,7 +10,7 @@ const server = createServer();
 server.express.enable('trust proxy');
 
 server.express.use((req, res, next) => {
-   if (req.secure || req.headers.host.includes('localhost')) {
+   if (req.protocol === 'https' || req.headers.host.includes('localhost')) {
       console.log('secure');
       next();
    } else {
