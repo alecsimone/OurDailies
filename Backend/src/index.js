@@ -11,7 +11,7 @@ server.express.enable('trust proxy');
 
 server.express.use((req, res, next) => {
    if (req.protocol === 'https' || req.headers.host.includes('localhost')) {
-      console.log('secure');
+      console.log(req.protocol);
       next();
    } else {
       console.log('insecure');
