@@ -7,18 +7,6 @@ const db = require('./db');
 
 const server = createServer();
 
-server.express.enable('trust proxy');
-
-server.express.use((req, res, next) => {
-   if (req.protocol === 'https' || req.headers.host.includes('localhost')) {
-      console.log(req.headers.host);
-      next();
-   } else {
-      console.log('insecure');
-      res.redirect(`https://${req.headers.host}${req.url}`);
-   }
-});
-
 server.express.use(cookieParser());
 // server.express.use(bodyParser.graphql());
 
