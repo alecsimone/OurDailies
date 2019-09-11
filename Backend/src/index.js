@@ -7,6 +7,16 @@ const db = require('./db');
 
 const server = createServer();
 
+server.express.enable('trust proxy');
+
+server.express.use((req, res, next) => {
+   if (req.secure || req.headers.host.includes('localhost')) {
+      next();
+   } else {
+      res.redirect(`https://${req.headers.host}${req.url}`);
+   }
+});
+
 server.express.use(cookieParser());
 // server.express.use(bodyParser.graphql());
 
@@ -39,7 +49,12 @@ server.start(
    {
       cors: {
          credentials: true,
-         origin: ['https://www.ourdailies.org', 'https://ourdailies.org', 'https://www.twitch.tv/popout/ourdailies/chat?popout=', 'http://localhost:7777']
+         origin: [
+            'https://www.ourdailies.org',
+            'https://ourdailies.org',
+            'https://www.twitch.tv/popout/ourdailies/chat?popout=',
+            'http://localhost:7777'
+         ]
       }
    },
    serverDetails => {

@@ -109,7 +109,7 @@ function processMessage(message) {
          sendVote(messageSender, 'yea');
       } else {
          printToChat(
-            `${messageSender}, you can't vote beacuse you're not a member. Sorry.`,
+            `${messageSender}, you can't vote because you're not a member. Sorry.`,
             'error'
          );
       }
@@ -121,7 +121,7 @@ function processMessage(message) {
          sendVote(messageSender, 'nay');
       } else {
          printToChat(
-            `${messageSender}, you can't vote beacuse you're not a member. Sorry.`,
+            `${messageSender}, you can't vote because you're not a member. Sorry.`,
             'error'
          );
       }
@@ -223,8 +223,11 @@ function showProfilePicture(messageSender, fullMsgHTML) {
    fullMsgHTML = jQuery(fullMsgHTML);
    const ourGuy = findOurGuy(messageSender);
    let senderPic;
-   if (ourGuy !== undefined) {
+   if (ourGuy != null) {
       senderPic = ourGuy.avatar;
+      if (senderPic == null) {
+         senderPic = defaultPic;
+      }
    } else {
       senderPic = defaultPic;
    }
@@ -416,7 +419,7 @@ function checkMessageForVotes(messageTextPieces, messageSender) {
                }
             } else {
                printToChat(
-                  `${messageSender}, you can't vote beacuse you're not a member. Sorry.`,
+                  `${messageSender}, you can't vote because you're not a member. Sorry.`,
                   'error'
                );
             }
