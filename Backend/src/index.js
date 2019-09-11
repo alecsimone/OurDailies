@@ -11,8 +11,10 @@ server.express.enable('trust proxy');
 
 server.express.use((req, res, next) => {
    if (req.secure || req.headers.host.includes('localhost')) {
+      console.log('secure');
       next();
    } else {
+      console.log('insecure');
       res.redirect(`https://${req.headers.host}${req.url}`);
    }
 });
