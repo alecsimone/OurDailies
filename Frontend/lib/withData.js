@@ -43,7 +43,7 @@ function createClient({ headers }) {
       credentials: 'same-origin'
    });
 
-   const subscriptionEndpoint = `ws://${
+   const subscriptionEndpoint = `wss://${
       process.env.NODE_ENV === 'development'
          ? endpointNoHTTP
          : prodEndpointNoHTTP
