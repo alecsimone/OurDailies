@@ -11,7 +11,7 @@ const {
    vote,
    pass,
    getFinalists,
-   requiredThingParts
+   fullThingFields
 } = require('../utils');
 
 const Mutations = {
@@ -179,7 +179,7 @@ const Mutations = {
                }
             }
          },
-         `{${requiredThingParts} partOfNarratives{title id}}`
+         `{${fullThingFields}}`
       );
 
       ctx.pubsub.publish('thing', {
@@ -222,7 +222,7 @@ const Mutations = {
                   }
                }
             },
-            `{${requiredThingParts} includedThings{${requiredThingParts}}}`
+            `{${fullThingFields}}`
          );
 
          ctx.pubsub.publish('thing', {
@@ -244,7 +244,7 @@ const Mutations = {
                }
             }
          },
-         `{${requiredThingParts} includedLinks{title id url}}`
+         `{${fullThingFields}}`
       );
 
       ctx.pubsub.publish('thing', {
@@ -279,7 +279,7 @@ const Mutations = {
                }
             }
          },
-         `{${requiredThingParts} summary}`
+         `{${fullThingFields}}`
       );
 
       ctx.pubsub.publish('thing', {
@@ -321,7 +321,7 @@ const Mutations = {
                }
             }
          },
-         `{${requiredThingParts} summary}`
+         `{${fullThingFields}}`
       );
 
       ctx.pubsub.publish('thing', {
@@ -345,7 +345,7 @@ const Mutations = {
                featuredImage: imageUrl
             }
          },
-         `{${requiredThingParts} featuredImage}`
+         `{${fullThingFields}}`
       );
 
       ctx.pubsub.publish('thing', {
@@ -369,7 +369,7 @@ const Mutations = {
                title
             }
          },
-         `{${requiredThingParts}}`
+         `{${fullThingFields}}`
       );
 
       ctx.pubsub.publish('thing', {
@@ -400,6 +400,21 @@ const Mutations = {
          }
       });
 
+      const updatedThing = await ctx.db.query.thing(
+         {
+            where: {
+               id: thingID
+            }
+         },
+         `{${fullThingFields}}`
+      );
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
+
       return addedComment;
    },
    async deleteComment(parent, { id }, ctx, info) {
@@ -407,8 +422,10 @@ const Mutations = {
 
       const comment = await ctx.db.query.comment(
          { where: { id } },
-         `{id author {id}}`
+         `{id author {id} onThing {id}}`
       );
+
+      const thingID = comment.onThing.id;
 
       if (
          !ctx.request.member.roles.some(role =>
@@ -423,6 +440,22 @@ const Mutations = {
             id
          }
       });
+
+      const updatedThing = await ctx.db.query.thing(
+         {
+            where: {
+               id: thingID
+            }
+         },
+         `{${fullThingFields}}`
+      );
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
+
       return deletedComment;
    },
    async voteOnThing(parent, { thingID }, ctx, info) {
@@ -430,6 +463,21 @@ const Mutations = {
       fullMemberGate(ctx.request.member);
 
       const newVote = await vote(thingID, ctx.request.member, ctx);
+
+      const updatedThing = await ctx.db.query.thing(
+         {
+            where: {
+               id: thingID
+            }
+         },
+         `{${fullThingFields}}`
+      );
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
 
       return newVote.newVote;
    },
@@ -455,6 +503,21 @@ const Mutations = {
       fullMemberGate(ctx.request.member);
 
       const newPass = await pass(thingID, ctx.request.member, ctx);
+
+      const updatedThing = await ctx.db.query.thing(
+         {
+            where: {
+               id: thingID
+            }
+         },
+         `{${fullThingFields}}`
+      );
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
 
       return newPass.newPass;
    },

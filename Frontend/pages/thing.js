@@ -161,100 +161,121 @@ const SingleThingContainer = styled.div`
 //       : 999999999910000
 // }
 
-const SingleThing = props => (
-   <Member>
-      {({ data: memberData }) => (
-         <Query
-            query={SINGLE_THING_QUERY}
-            variables={{
-               id: props.query.id
-            }}
-         >
-            {({ error, loading, data, subscribeToMore }) => {
-               if (error) return <Error error={error} />;
-               if (loading) return <p>Loading...</p>;
-               let title;
-               if (!data.thing) {
-                  return <p>No thing found</p>;
-               }
+const SingleThing = props => {
+   const addSubscription = (subscribeToMore, data) =>
+      subscribeToMore({
+         document: THING_SUBSCRIPTION,
+         updateQuery: (prev, { subscriptionData }) => {
+            const oldThing = data.thing;
+            const updates = subscriptionData.data.thing.node;
 
-               let windowWidth = 800;
-               try {
-                  windowWidth = window.innerWidth;
-               } catch (windowError) {}
+            if (oldThing.id != updates.id) return data;
 
-               let thingComponent;
-               if (windowWidth < 800) {
-                  thingComponent = (
-                     <FullThing thing={data.thing} member={memberData} />
-                  );
+            const newThingData = {
+               thing: {}
+            };
+            Object.keys(oldThing).forEach(key => {
+               if (updates[key] == null) {
+                  newThingData.thing[key] = oldThing[key];
                } else {
-                  thingComponent = (
-                     <FullThingEmbed thing={data.thing} member={memberData} />
-                  );
+                  newThingData.thing[key] = updates[key];
                }
-               if (data.thing.includedLinks != null) {
-                  data.thing.includedLinks.forEach(link => {
-                     if (
-                        link.url.includes('jpg') ||
-                        link.url.includes('jpeg') ||
-                        link.url.includes('png') ||
-                        link.url.includes('gif')
-                     ) {
-                        thingComponent = (
-                           <FullThing thing={data.thing} member={memberData} />
-                        );
-                     }
-                  });
-               }
+            });
 
-               if (data.thing.featuredImage) {
-                  thingComponent = (
-                     <FullThing
-                        thing={data.thing}
-                        member={memberData}
-                        subscribeToUpdates={() =>
-                           subscribeToMore({
-                              document: THING_SUBSCRIPTION,
-                              updateQuery: (prev, { subscriptionData }) => {
-                                 const oldThing = data.thing;
-                                 const updates =
-                                    subscriptionData.data.thing.node;
-                                 console.log(updates);
+            return newThingData;
+         }
+      });
+   return (
+      <Member>
+         {({ data: memberData }) => (
+            <Query
+               query={SINGLE_THING_QUERY}
+               variables={{
+                  id: props.query.id
+               }}
+            >
+               {({ error, loading, data, subscribeToMore }) => {
+                  console.log(data);
+                  if (error) return <Error error={error} />;
+                  if (loading) return <p>Loading...</p>;
+                  let title;
+                  if (!data.thing) {
+                     return <p>No thing found</p>;
+                  }
 
-                                 if (oldThing.id != updates.id) return data;
+                  let windowWidth = 800;
+                  try {
+                     windowWidth = window.innerWidth;
+                  } catch (windowError) {}
 
-                                 const newThingData = {
-                                    thing: {}
-                                 };
-                                 Object.keys(oldThing).forEach(key => {
-                                    if (updates[key] == null) {
-                                       newThingData.thing[key] = oldThing[key];
-                                    } else {
-                                       newThingData.thing[key] = updates[key];
-                                    }
-                                 });
-
-                                 return newThingData;
-                              }
-                           })
+                  let thingComponent;
+                  if (windowWidth < 800) {
+                     thingComponent = (
+                        <FullThing
+                           thing={data.thing}
+                           member={memberData}
+                           subscribeToUpdates={() =>
+                              addSubscription(subscribeToMore, data)
+                           }
+                        />
+                     );
+                  } else {
+                     thingComponent = (
+                        <FullThingEmbed
+                           thing={data.thing}
+                           member={memberData}
+                           subscribeToUpdates={() =>
+                              addSubscription(subscribeToMore, data)
+                           }
+                        />
+                     );
+                  }
+                  if (data.thing.includedLinks != null) {
+                     data.thing.includedLinks.forEach(link => {
+                        if (
+                           link.url.includes('jpg') ||
+                           link.url.includes('jpeg') ||
+                           link.url.includes('png') ||
+                           link.url.includes('gif')
+                        ) {
+                           thingComponent = (
+                              <FullThing
+                                 thing={data.thing}
+                                 member={memberData}
+                                 subscribeToUpdates={() =>
+                                    addSubscription(subscribeToMore, data)
+                                 }
+                              />
+                           );
                         }
-                     />
-                  );
-               }
+                     });
+                  }
 
-               return (
-                  <SingleThingContainer>
-                     <Head>
-                        <title>{data.thing.title} - Our Dailies</title>
-                     </Head>
-                     {thingComponent}
-                  </SingleThingContainer>
-               );
-            }}
-         </Query>
-      )}
-   </Member>
-);
+                  if (data.thing.featuredImage) {
+                     thingComponent = (
+                        <FullThing
+                           thing={data.thing}
+                           member={memberData}
+                           subscribeToUpdates={() =>
+                              addSubscription(subscribeToMore, data)
+                           }
+                        />
+                     );
+                  }
+
+                  return (
+                     <SingleThingContainer>
+                        <Head>
+                           <title>{data.thing.title} - Our Dailies</title>
+                        </Head>
+                        {thingComponent}
+                     </SingleThingContainer>
+                  );
+               }}
+            </Query>
+         )}
+      </Member>
+   );
+};
 export default SingleThing;
 export { SINGLE_THING_QUERY };

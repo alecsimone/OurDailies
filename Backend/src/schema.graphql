@@ -70,7 +70,6 @@ type ThingSubscriptionPayload {
    node: Thing
    updatedFields: [String!]
    previousValues: ThingPreviousValues
-   bullshit: String
 }
 
 type Member {
