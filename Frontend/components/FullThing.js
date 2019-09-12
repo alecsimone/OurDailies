@@ -86,7 +86,9 @@ const StyledFullThing = styled.article`
 
 class FullThing extends Component {
    componentDidMount() {
-      this.props.subscribeToUpdates();
+      if (this.props.subscribeToUpdates != null) {
+         this.props.subscribeToUpdates();
+      }
    }
 
    render() {
