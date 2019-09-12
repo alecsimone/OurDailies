@@ -6,7 +6,10 @@ import { onError } from 'apollo-link-error';
 import { withClientState } from 'apollo-link-state';
 import { ApolloLink, Observable, split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
+import ws from 'ws';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { getMainDefinition } from 'apollo-utilities';
+import { Subscription } from 'react-apollo';
 import {
    endpoint,
    endpointNoHTTP,
@@ -40,27 +43,46 @@ function createClient({ headers }) {
       credentials: 'same-origin'
    });
 
-   // const wsLink = process.browser
-   //    ? new WebSocketLink({
-   //         uri: `ws://${
-   //            process.env.NODE_ENV === 'development'
-   //               ? endpointNoHTTP
-   //               : prodEndpointNoHTTP
-   //         }/subscriptions`,
-   //         options: {
-   //            reconnect: true
-   //         }
+   const subscriptionEndpoint = `ws://${
+      process.env.NODE_ENV === 'development'
+         ? endpointNoHTTP
+         : prodEndpointNoHTTP
+   }/subscriptions`;
+
+   // const wsClient = process.browser
+   //    ? new SubscriptionClient(subscriptionEndpoint, {
+   //         reconnect: true
    //      })
+   //    : new SubscriptionClient(
+   //         subscriptionEndpoint,
+   //         {
+   //            reconnect: true
+   //         },
+   //         ws
+   //      );
+
+   // const wsLink = process.browser
+   //    ? new WebSocketLink(wsClient)
    //    : () => console.log('SSR');
 
-   // const link = split(
-   //    ({ query }) => {
-   //       const { kind, operation } = getMainDefinition(query);
-   //       return kind === 'operationDefinition' && operation === 'subscription';
-   //    },
-   //    wsLink,
-   //    httpLink
-   // );
+   const wsLink = process.browser
+      ? new WebSocketLink({
+           uri: subscriptionEndpoint,
+           options: {
+              reconnect: true
+           },
+           webSocketImpl: ws.client
+        })
+      : () => console.log('SSR');
+
+   const link = split(
+      ({ query }) => {
+         const { kind, operation } = getMainDefinition(query);
+         return kind === 'OperationDefinition' && operation === 'subscription';
+      },
+      wsLink,
+      httpLink
+   );
 
    const requestLink = new ApolloLink(
       (operation, forward) =>
@@ -95,7 +117,7 @@ function createClient({ headers }) {
             if (networkError) console.log(`[Network error]: ${networkError}`);
          }),
          requestLink,
-         httpLink
+         link
       ]),
       cache,
       resolvers: {

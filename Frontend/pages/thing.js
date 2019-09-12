@@ -10,6 +10,7 @@ import Member from '../components/Member';
 const SINGLE_THING_QUERY = gql`
    query SINGLE_THING_QUERY($id: ID!) {
       thing(where: { id: $id }) {
+         __typename
          id
          title
          author {
@@ -75,6 +76,77 @@ const SINGLE_THING_QUERY = gql`
    }
 `;
 
+const THING_SUBSCRIPTION = gql`
+   subscription THING_SUBSCRIPTION {
+      thing {
+         node {
+            __typename
+            id
+            title
+            author {
+               displayName
+            }
+            featuredImage
+            originalSource
+            summary
+            includedLinks {
+               title
+               url
+               id
+            }
+            includedThings {
+               id
+               title
+               originalSource
+               author {
+                  displayName
+               }
+               votes {
+                  value
+               }
+               createdAt
+            }
+            partOfNarratives {
+               id
+               title
+            }
+            comments {
+               id
+               author {
+                  id
+                  displayName
+                  avatar
+                  rep
+               }
+               comment
+               createdAt
+               updatedAt
+            }
+            votes {
+               voter {
+                  id
+                  displayName
+                  avatar
+                  roles
+               }
+               value
+            }
+            passes {
+               passer {
+                  id
+                  displayName
+                  avatar
+                  roles
+               }
+            }
+            finalistDate
+            createdAt
+            updatedAt
+         }
+      }
+   }
+`;
+
 const SingleThingContainer = styled.div`
    display: flex;
    justify-content: center;
@@ -98,7 +170,7 @@ const SingleThing = props => (
                id: props.query.id
             }}
          >
-            {({ error, loading, data }) => {
+            {({ error, loading, data, subscribeToMore }) => {
                if (error) return <Error error={error} />;
                if (loading) return <p>Loading...</p>;
                let title;
@@ -121,22 +193,53 @@ const SingleThing = props => (
                      <FullThingEmbed thing={data.thing} member={memberData} />
                   );
                }
-               data.thing.includedLinks.forEach(link => {
-                  if (
-                     link.url.includes('jpg') ||
-                     link.url.includes('jpeg') ||
-                     link.url.includes('png') ||
-                     link.url.includes('gif')
-                  ) {
-                     thingComponent = (
-                        <FullThing thing={data.thing} member={memberData} />
-                     );
-                  }
-               });
+               if (data.thing.includedLinks != null) {
+                  data.thing.includedLinks.forEach(link => {
+                     if (
+                        link.url.includes('jpg') ||
+                        link.url.includes('jpeg') ||
+                        link.url.includes('png') ||
+                        link.url.includes('gif')
+                     ) {
+                        thingComponent = (
+                           <FullThing thing={data.thing} member={memberData} />
+                        );
+                     }
+                  });
+               }
 
                if (data.thing.featuredImage) {
                   thingComponent = (
-                     <FullThing thing={data.thing} member={memberData} />
+                     <FullThing
+                        thing={data.thing}
+                        member={memberData}
+                        subscribeToUpdates={() =>
+                           subscribeToMore({
+                              document: THING_SUBSCRIPTION,
+                              updateQuery: (prev, { subscriptionData }) => {
+                                 const oldThing = data.thing;
+                                 const updates =
+                                    subscriptionData.data.thing.node;
+                                 console.log(updates);
+
+                                 if (oldThing.id != updates.id) return data;
+
+                                 const newThingData = {
+                                    thing: {}
+                                 };
+                                 Object.keys(oldThing).forEach(key => {
+                                    if (updates[key] == null) {
+                                       newThingData.thing[key] = oldThing[key];
+                                    } else {
+                                       newThingData.thing[key] = updates[key];
+                                    }
+                                 });
+
+                                 return newThingData;
+                              }
+                           })
+                        }
+                     />
                   );
                }
 

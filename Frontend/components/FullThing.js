@@ -85,6 +85,10 @@ const StyledFullThing = styled.article`
 `;
 
 class FullThing extends Component {
+   componentDidMount() {
+      this.props.subscribeToUpdates();
+   }
+
    render() {
       const { thing, member } = this.props;
 
@@ -99,7 +103,7 @@ class FullThing extends Component {
                   headline={thing.title}
                   thingID={thing.id}
                   member={member.me}
-                  key={`FeaturedImageCarousel-${  thing.id}`}
+                  key={`FeaturedImageCarousel-${thing.id}`}
                />
             </div>
             <div className="meta">
@@ -115,13 +119,13 @@ class FullThing extends Component {
                summary={thing.summary}
                thingID={thing.id}
                member={member.me}
-               key={`Summary-${  thing.id}`}
+               key={`Summary-${thing.id}`}
             />
             <NarrativesBoxEditable
                partOfNarratives={thing.partOfNarratives}
                thingID={thing.id}
                member={member.me}
-               key={`NarrativesBoxEditable-${  thing.id}`}
+               key={`NarrativesBoxEditable-${thing.id}`}
             />
             <VoteBar
                key={thing.id}
@@ -136,13 +140,13 @@ class FullThing extends Component {
                links={thing.includedLinks}
                thingID={thing.id}
                member={member.me}
-               key={`LinksBox-${  thing.id}`}
+               key={`LinksBox-${thing.id}`}
             />
             <Comments
                comments={thing.comments}
                thingID={thing.id}
                member={member.me}
-               key={`Comments-${  thing.id}`}
+               key={`Comments-${thing.id}`}
             />
          </StyledFullThing>
       );

@@ -285,3 +285,6 @@ async function getFinalists(ctx) {
    return finalists;
 }
 exports.getFinalists = getFinalists;
+
+const requiredThingParts = `id title author{displayName} originalSource summary eliminated createdAt`;
+exports.requiredThingParts = requiredThingParts;

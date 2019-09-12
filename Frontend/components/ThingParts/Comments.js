@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import Link from "next/link";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import ErrorMessage from "../ErrorMessage";
-import Comment from "./Comment";
-import { SINGLE_THING_QUERY } from "../../pages/thing";
-import MustSignIn from "../MustSignIn";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import ErrorMessage from '../ErrorMessage';
+import Comment from './Comment';
+import { SINGLE_THING_QUERY } from '../../pages/thing';
+import MustSignIn from '../MustSignIn';
 
 const ADD_COMMENT_TO_THING_MUTATION = gql`
    mutation ADD_COMMENT_TO_THING_MUTATION($comment: String!, $thingID: ID!) {
@@ -36,7 +36,7 @@ const StyledComments = styled.section`
       line-height: 1.6;
       height: calc(${props => props.theme.smallText} * 1.6 + 2rem);
       transition: height 0.25s;
-      &[aria-disabled="true"] {
+      &[aria-disabled='true'] {
          background: ${props => props.theme.lowContrastCoolGrey};
       }
       &:focus {
@@ -57,7 +57,7 @@ class Comments extends Component {
    handleKeyDown = (e, addCommentToThing) => {
       if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
-         this.setState({ commentToAdd: "" });
+         this.setState({ commentToAdd: '' });
          addCommentToThing().catch(err => {
             alert(err.message);
          });
@@ -69,14 +69,17 @@ class Comments extends Component {
    };
 
    render() {
-      const commentItems = this.props.comments.map(comment => (
-         <Comment
-            data={comment}
-            thingID={this.props.thingID}
-            member={this.props.member}
-            key={comment.id}
-         />
-      ));
+      const commentItems =
+         this.props.comments != null
+            ? this.props.comments.map(comment => (
+                 <Comment
+                    data={comment}
+                    thingID={this.props.thingID}
+                    member={this.props.member}
+                    key={comment.id}
+                 />
+              ))
+            : '';
 
       return (
          <StyledComments>

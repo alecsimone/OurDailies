@@ -62,7 +62,15 @@ type Query {
 }
 
 type Subscription {
-   thing(where: ThingSubscriptionWhereInput): ThingSubscriptionPayload
+   thing: ThingSubscriptionPayload
+}
+
+type ThingSubscriptionPayload {
+   mutation: MutationType!
+   node: Thing
+   updatedFields: [String!]
+   previousValues: ThingPreviousValues
+   bullshit: String
 }
 
 type Member {

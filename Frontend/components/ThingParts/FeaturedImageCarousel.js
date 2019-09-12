@@ -223,9 +223,10 @@ class FeaturedImageCarousel extends Component {
       const { thing } = this.props;
       const featuredImageButItsAnArrayNow = [thing.featuredImage];
 
-      const justTheLinks = thing.includedLinks.map(
-         linkObject => linkObject.url
-      );
+      const justTheLinks =
+         thing.includedLinks != null
+            ? thing.includedLinks.map(linkObject => linkObject.url)
+            : [];
 
       const mediaLinksArray = justTheLinks.filter(
          link =>

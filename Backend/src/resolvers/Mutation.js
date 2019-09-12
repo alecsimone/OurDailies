@@ -10,7 +10,8 @@ const {
    liveThingID,
    vote,
    pass,
-   getFinalists
+   getFinalists,
+   requiredThingParts
 } = require('../utils');
 
 const Mutations = {
@@ -155,8 +156,8 @@ const Mutations = {
       return updatedMember;
    },
    async addNarrativeToThing(parent, { title, thingID }, ctx, info) {
-      loggedInGate(ctx);
-      fullMemberGate(ctx.request.member);
+      // loggedInGate(ctx);
+      // fullMemberGate(ctx.request.member);
 
       const narrative = await ctx.db.query.narrative({
          where: { title }
@@ -167,16 +168,26 @@ const Mutations = {
       } else {
          narrativeConnectionMethod = 'connect';
       }
-      const updatedThing = await ctx.db.mutation.updateThing({
-         where: { id: thingID },
-         data: {
-            partOfNarratives: {
-               [narrativeConnectionMethod]: {
-                  title
+      const updatedThing = await ctx.db.mutation.updateThing(
+         {
+            where: { id: thingID },
+            data: {
+               partOfNarratives: {
+                  [narrativeConnectionMethod]: {
+                     title
+                  }
                }
             }
+         },
+         `{${requiredThingParts} partOfNarratives{title id}}`
+      );
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
          }
       });
+
       return updatedThing;
    },
    async addLinkToThing(parent, { title, url, thingID }, ctx, info) {
@@ -200,29 +211,49 @@ const Mutations = {
             thingToLinkID = url.substring(startPos);
          }
 
-         const updatedThing = await ctx.db.mutation.updateThing({
-            where: { id: thingID },
-            data: {
-               includedThings: {
-                  connect: {
-                     id: thingToLinkID
+         const updatedThing = await ctx.db.mutation.updateThing(
+            {
+               where: { id: thingID },
+               data: {
+                  includedThings: {
+                     connect: {
+                        id: thingToLinkID
+                     }
                   }
                }
+            },
+            `{${requiredThingParts} includedThings{${requiredThingParts}}}`
+         );
+
+         ctx.pubsub.publish('thing', {
+            thing: {
+               node: updatedThing
             }
          });
          return updatedThing;
       }
-      const updatedThing = await ctx.db.mutation.updateThing({
-         where: { id: thingID },
-         data: {
-            includedLinks: {
-               create: {
-                  title,
-                  url
+      const updatedThing = await ctx.db.mutation.updateThing(
+         {
+            where: { id: thingID },
+            data: {
+               includedLinks: {
+                  create: {
+                     title,
+                     url
+                  }
                }
             }
+         },
+         `{${requiredThingParts} includedLinks{title id url}}`
+      );
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
          }
       });
+      return updatedThing;
+
       return updatedThing;
    },
    async addSummaryLineToThing(parent, { summaryLine, thingID }, ctx, info) {
@@ -239,7 +270,7 @@ const Mutations = {
       );
       currentSummary.summary.push(summaryLine);
 
-      const newThing = await ctx.db.mutation.updateThing(
+      const updatedThing = await ctx.db.mutation.updateThing(
          {
             where: { id: thingID },
             data: {
@@ -248,10 +279,16 @@ const Mutations = {
                }
             }
          },
-         info
+         `{${requiredThingParts} summary}`
       );
 
-      return newThing;
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
+
+      return updatedThing;
    },
    async removeSummaryLineFromThing(
       parent,
@@ -275,7 +312,7 @@ const Mutations = {
          line => line !== summaryLine
       );
 
-      const newThing = await ctx.db.mutation.updateThing(
+      const updatedThing = await ctx.db.mutation.updateThing(
          {
             where: { id: thingID },
             data: {
@@ -284,16 +321,22 @@ const Mutations = {
                }
             }
          },
-         info
+         `{${requiredThingParts} summary}`
       );
 
-      return newThing;
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
+
+      return updatedThing;
    },
    async setFeaturedImage(parent, { imageUrl, thingID }, ctx, info) {
       loggedInGate(ctx);
       modGate(ctx.request.member);
 
-      const newThing = await ctx.db.mutation.updateThing(
+      const updatedThing = await ctx.db.mutation.updateThing(
          {
             where: {
                id: thingID
@@ -302,15 +345,22 @@ const Mutations = {
                featuredImage: imageUrl
             }
          },
-         info
+         `{${requiredThingParts} featuredImage}`
       );
-      return newThing;
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
+
+      return updatedThing;
    },
    async changeThingTitle(parent, { title, thingID }, ctx, info) {
       loggedInGate(ctx);
       modGate(ctx.request.member);
 
-      const newThing = await ctx.db.mutation.updateThing(
+      const updatedThing = await ctx.db.mutation.updateThing(
          {
             where: {
                id: thingID
@@ -319,9 +369,16 @@ const Mutations = {
                title
             }
          },
-         info
+         `{${requiredThingParts}}`
       );
-      return newThing;
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
+
+      return updatedThing;
    },
    async addCommentToThing(parent, { comment, thingID }, ctx, info) {
       loggedInGate(ctx);

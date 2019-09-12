@@ -8,7 +8,6 @@ const db = require('./db');
 const server = createServer();
 
 server.express.use(cookieParser());
-// server.express.use(bodyParser.graphql());
 
 server.express.use((req, res, next) => {
    const { token } = req.cookies;
@@ -32,7 +31,6 @@ server.express.use(async (req, res, next) => {
 // process.env.FRONTEND_URL,
 // /http*/,
 // "https://www.twitch.tv/popout/ourdailies/chat?popout="
-// subscriptions: '/subscriptions'
 // /http\:\/\/localhost:*/,
 //    'https://www.ourdailies.org/'
 server.start(
@@ -45,6 +43,9 @@ server.start(
             'https://www.twitch.tv/popout/ourdailies/chat?popout=',
             'http://localhost:7777'
          ]
+      },
+      subscriptions: {
+         path: '/subscriptions'
       }
    },
    serverDetails => {

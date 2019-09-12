@@ -232,15 +232,18 @@ class VoteBar extends Component {
          />
       ));
 
-      const passers = passData.map(passData => (
-         <img
-            src={passData.passer.avatar}
-            alt={`${passData.passer.displayName}: Pass`}
-            title={`${passData.passer.displayName}: Pass`}
-            key={passData.passer.displayName}
-            className="passerBubble"
-         />
-      ));
+      const passers =
+         passData != null
+            ? passData.map(passData => (
+                 <img
+                    src={passData.passer.avatar}
+                    alt={`${passData.passer.displayName}: Pass`}
+                    title={`${passData.passer.displayName}: Pass`}
+                    key={passData.passer.displayName}
+                    className="passerBubble"
+                 />
+              ))
+            : '';
 
       const totalScore = voteData.reduce(
          (score, voteObject) => score + voteObject.value,
