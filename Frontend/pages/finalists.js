@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Head from 'next/head';
 import Member from '../components/Member';
 import Finalists from '../components/Finalists';
+import { THING_SUBSCRIPTION } from './thing';
 
 const FINALIST_THINGS_QUERY = gql`
    query FINALIST_THINGS_QUERY {
@@ -83,6 +84,24 @@ const StyledFinalistsPage = styled.div`
 `;
 
 class finalists extends Component {
+   addSubscription = (subscribeToMore, data) =>
+      subscribeToMore({
+         document: THING_SUBSCRIPTION,
+         updateQuery: (prev, { subscriptionData }) => {
+            const newThingData = subscriptionData.data.thing.node;
+            console.log(newThingData);
+            const changedThingID = newThingData.id;
+            const changedThingIndex = prev.thingsForFinalists.findIndex(
+               thing => thing.id === changedThingID
+            );
+            if (changedThingIndex === -1) return prev;
+
+            prev.thingsForFinalists[changedThingIndex] = newThingData;
+            console.log(prev);
+            return prev;
+         }
+      });
+
    render() {
       return (
          <StyledFinalistsPage>
@@ -91,19 +110,14 @@ class finalists extends Component {
             </Head>
             <Member>
                {({ data: memberData }) => (
-                  <Query
-                     query={FINALIST_THINGS_QUERY}
-                     pollInterval={
-                        memberData.me != null &&
-                        memberData.me.roles.includes('Admin')
-                           ? 3000
-                           : 10000
-                     }
-                  >
-                     {({ error, loading, data }) => (
+                  <Query query={FINALIST_THINGS_QUERY}>
+                     {({ error, loading, data, subscribeToMore }) => (
                         <Finalists
                            things={data.thingsForFinalists}
                            member={memberData}
+                           subscribeToUpdates={() =>
+                              this.addSubscription(subscribeToMore, data)
+                           }
                         />
                      )}
                   </Query>

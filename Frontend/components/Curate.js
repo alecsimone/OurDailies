@@ -48,8 +48,14 @@ class Curate extends Component {
       const { things, member } = this.props;
 
       let mainThingData;
-      things.forEach(thing => {
+      const thingsToRemove = [];
+      things.forEach((thing, index) => {
          if (thing.id === this.props.mainThingId) mainThingData = thing;
+         if (thing.eliminated === true || thing.finalistDate != null)
+            thingsToRemove.push(index);
+      });
+      thingsToRemove.forEach(indexToEliminate => {
+         things.splice(indexToEliminate, 1);
       });
       if (mainThingData == null) mainThingData = this.sortedThings[0];
       const mainThing = (
@@ -57,6 +63,7 @@ class Curate extends Component {
             thing={mainThingData}
             member={member}
             key={mainThingData.id}
+            subscribeToUpdates={this.props.subscribeToUpdates}
          />
       );
 

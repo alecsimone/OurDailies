@@ -139,6 +139,7 @@ const THING_SUBSCRIPTION = gql`
                   roles
                }
             }
+            eliminated
             finalistDate
             createdAt
             updatedAt
@@ -279,3 +280,4 @@ const SingleThing = props => {
 };
 export default SingleThing;
 export { SINGLE_THING_QUERY };
+export { THING_SUBSCRIPTION };

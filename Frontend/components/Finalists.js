@@ -157,6 +157,12 @@ const StyledFinalists = styled.div`
 `;
 
 class Finalists extends Component {
+   componentDidMount() {
+      if (this.props.subscribeToUpdates != null) {
+         this.props.subscribeToUpdates();
+      }
+   }
+
    render() {
       const littleThingsArray = this.props.things.map((thing, index) => (
          <article

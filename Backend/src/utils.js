@@ -350,6 +350,7 @@ const fullThingFields = `
             }
          }
          finalistDate
+         eliminated
          createdAt
          updatedAt
       `;

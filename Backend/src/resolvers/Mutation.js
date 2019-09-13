@@ -587,11 +587,11 @@ const Mutations = {
       );
       return deletedVotes.count + deletedPasses.count;
    },
-   eliminateThing(parent, { thingID }, ctx, info) {
+   async eliminateThing(parent, { thingID }, ctx, info) {
       loggedInGate(ctx);
       modGate(ctx.request.member);
 
-      const updatedThing = ctx.db.mutation.updateThing(
+      const updatedThing = await ctx.db.mutation.updateThing(
          {
             where: {
                id: thingID
@@ -600,18 +600,24 @@ const Mutations = {
                eliminated: true
             }
          },
-         info
+         `{${fullThingFields}}`
       );
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
 
       return updatedThing;
    },
-   promoteThing(parent, { thingID }, ctx, info) {
+   async promoteThing(parent, { thingID }, ctx, info) {
       loggedInGate(ctx);
       modGate(ctx.request.member);
 
       // Set now back in time 4 hours so that the finalistDate will have the day it was on east coast time, not zulu time
       const now = new Date(Date.now() - 1000 * 60 * 60 * 4);
-      const promotedThing = ctx.db.mutation.updateThing(
+      const updatedThing = await ctx.db.mutation.updateThing(
          {
             where: {
                id: thingID
@@ -620,9 +626,16 @@ const Mutations = {
                finalistDate: now
             }
          },
-         info
+         `{${fullThingFields}}`
       );
-      return promotedThing;
+
+      ctx.pubsub.publish('thing', {
+         thing: {
+            node: updatedThing
+         }
+      });
+
+      return updatedThing;
    }
 };
 

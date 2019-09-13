@@ -6,6 +6,7 @@ import Head from 'next/head';
 import FullThing from '../components/FullThing';
 import Member from '../components/Member';
 import Curate from '../components/Curate';
+import { THING_SUBSCRIPTION } from './thing';
 
 const CURATE_THINGS_QUERY = gql`
    query CURATE_THINGS_QUERY {
@@ -94,6 +95,23 @@ class CuratePage extends Component {
       this.setState({ mainThingId: id });
    };
 
+   addSubscription = (subscribeToMore, data) =>
+      subscribeToMore({
+         document: THING_SUBSCRIPTION,
+         updateQuery: (prev, { subscriptionData }) => {
+            // console.log(prev.thingsForCurate[0]);
+            const newThingData = subscriptionData.data.thing.node;
+            const changedThingID = newThingData.id;
+            const changedThingIndex = prev.thingsForCurate.findIndex(
+               thing => thing.id === changedThingID
+            );
+            if (changedThingIndex === -1) return prev;
+
+            prev.thingsForCurate[changedThingIndex] = newThingData;
+            return prev;
+         }
+      });
+
    render() {
       return (
          <StyledCuratePage>
@@ -102,17 +120,15 @@ class CuratePage extends Component {
             </Head>
             <Member>
                {({ data: memberData }) => (
-                  <Query
-                     query={CURATE_THINGS_QUERY}
-                     fetchPolicy="cache-and-network"
-                     pollInterval={
-                        memberData.me != null &&
-                        memberData.me.roles.includes('Admin')
-                           ? 3000
-                           : 10000
-                     }
-                  >
-                     {({ error, loading, data, fetchMore, networkStatus }) => {
+                  <Query query={CURATE_THINGS_QUERY}>
+                     {({
+                        error,
+                        loading,
+                        data,
+                        fetchMore,
+                        networkStatus,
+                        subscribeToMore
+                     }) => {
                         if (networkStatus === 1) return <div>Loading...</div>;
                         if (data.thingsForCurate.length > 0) {
                            return (
@@ -122,6 +138,9 @@ class CuratePage extends Component {
                                  makeMain={this.makeMain}
                                  mainThingId={this.state.mainThingId}
                                  key={networkStatus}
+                                 subscribeToUpdates={() =>
+                                    this.addSubscription(subscribeToMore, data)
+                                 }
                               />
                            );
                         }
