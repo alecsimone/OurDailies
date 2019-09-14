@@ -73,7 +73,7 @@ const StyledSummary = styled.div`
       width: 100%;
       font-size: ${props => props.theme.smallText};
       line-height: 1.5;
-      height: 4rem;
+      height: 7rem;
       background: none;
       margin: 0 0 3rem 0;
       padding: 0.5rem 1rem calc(0.5rem - 1px) 1rem;

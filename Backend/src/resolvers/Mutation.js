@@ -13,7 +13,8 @@ const {
    getFinalists,
    fullThingFields,
    getThing,
-   publishThingUpdate
+   publishThingUpdate,
+   addNarrative
 } = require('../utils');
 
 const Mutations = {
@@ -171,29 +172,16 @@ const Mutations = {
       // loggedInGate(ctx);
       // fullMemberGate(ctx.request.member);
 
-      const narrative = await ctx.db.query.narrative({
-         where: { title }
-      });
-      let narrativeConnectionMethod;
-      if (!narrative) {
-         narrativeConnectionMethod = 'create';
+      if (title.indexOf(',') > -1) {
+         const titlesArray = title.split(',');
+         titlesArray.forEach(async title => {
+            await addNarrative(title.trim(), thingID, ctx);
+         });
       } else {
-         narrativeConnectionMethod = 'connect';
+         await addNarrative(title, thingID, ctx);
       }
-      const updatedThing = await ctx.db.mutation.updateThing(
-         {
-            where: { id: thingID },
-            data: {
-               partOfNarratives: {
-                  [narrativeConnectionMethod]: {
-                     title
-                  }
-               }
-            }
-         },
-         `{${fullThingFields}}`
-      );
 
+      const updatedThing = await getThing(thingID, ctx.db);
       publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;

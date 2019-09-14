@@ -378,3 +378,30 @@ function publishThingUpdate(thing, ctx) {
    });
 }
 exports.publishThingUpdate = publishThingUpdate;
+
+async function addNarrative(title, thingID, ctx) {
+   const narrative = await ctx.db.query.narrative({
+      where: { title }
+   });
+   let narrativeConnectionMethod;
+   if (!narrative) {
+      narrativeConnectionMethod = 'create';
+   } else {
+      narrativeConnectionMethod = 'connect';
+   }
+   const updatedThing = await ctx.db.mutation.updateThing(
+      {
+         where: { id: thingID },
+         data: {
+            partOfNarratives: {
+               [narrativeConnectionMethod]: {
+                  title
+               }
+            }
+         }
+      },
+      `{${fullThingFields}}`
+   );
+   return updatedThing;
+}
+exports.addNarrative = addNarrative;

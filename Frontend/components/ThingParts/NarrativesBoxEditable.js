@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import Link from "next/link";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
 import { Mutation, ApolloConsumer } from 'react-apollo';
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 import Downshift, { resetIdCounter } from 'downshift';
 import debounce from 'lodash.debounce';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
@@ -92,7 +92,7 @@ const StyledNarratives = styled.div`
 
 class NarrativesBox extends Component {
    state = {
-      addNarrative: "",
+      addNarrative: '',
       narratives: [],
       loading: false
    };
@@ -106,13 +106,23 @@ class NarrativesBox extends Component {
       const res = await addNarrativeToThing().catch(err => {
          alert(err.message);
       });
-      this.setState({ addNarrative: "" });
+      this.setState({ addNarrative: '' });
    };
 
    generateAutocomplete = debounce(async (e, client) => {
+      let searchTerm;
+      if (e.target.value.includes(',')) {
+         const finalCommaLocation = e.target.value.lastIndexOf(',');
+         const finalSearchTermRaw = e.target.value.substring(
+            finalCommaLocation + 1
+         );
+         searchTerm = finalSearchTermRaw.trim();
+      } else {
+         searchTerm = e.target.value;
+      }
       const allNarratives = await client.query({
          query: NARRATIVES_SEARCH_QUERY,
-         variables: { searchTerm: e.target.value }
+         variables: { searchTerm }
       });
       const usedNarratives = this.props.partOfNarratives.map(
          narrativeObject => narrativeObject.title
@@ -136,7 +146,7 @@ class NarrativesBox extends Component {
                      <span key={narrative.id}>
                         <Link
                            href={{
-                              pathname: "/narrative",
+                              pathname: '/narrative',
                               query: {
                                  id: narrative.id
                               }
@@ -152,7 +162,7 @@ class NarrativesBox extends Component {
                   <span key={narrative.id}>
                      <Link
                         href={{
-                           pathname: "/narrative",
+                           pathname: '/narrative',
                            query: {
                               id: narrative.id
                            }
@@ -181,7 +191,7 @@ class NarrativesBox extends Component {
          >
             {(addNarrativeToThing, { loading, error, called, data }) => (
                <StyledNarratives>
-                  <h5 className="narratives">PART OF:</h5> {narrativeLinks}{" "}
+                  <h5 className="narratives">PART OF:</h5> {narrativeLinks}{' '}
                   {this.props.member != null && (
                      <ApolloConsumer>
                         {client => (
@@ -213,7 +223,7 @@ class NarrativesBox extends Component {
                                  this.setState({ loading: false });
                               }}
                               itemToString={item =>
-                                 item === null ? "" : item.title
+                                 item === null ? '' : item.title
                               }
                            >
                               {({
@@ -231,16 +241,16 @@ class NarrativesBox extends Component {
                                              alert(err.message);
                                           }
                                        );
-                                       this.setState({ addNarrative: "" });
+                                       this.setState({ addNarrative: '' });
                                     }}
                                  >
                                     <input
                                        {...getInputProps({
-                                          type: "text",
+                                          type: 'text',
                                           id: 'addNarrative',
                                           name: 'addNarrative',
                                           placeholder: this.state.loading
-                                             ? "Adding..."
+                                             ? 'Adding...'
                                              : '+ Add a Narrative',
                                           value: this.state.addNarrative,
                                           disabled: this.state.loading,
@@ -259,8 +269,8 @@ class NarrativesBox extends Component {
                                                       className={
                                                          index ===
                                                          highlightedIndex
-                                                            ? "autocompleteSuggestionItem highlighted"
-                                                            : "autoCompleteSuggestionItem"
+                                                            ? 'autocompleteSuggestionItem highlighted'
+                                                            : 'autoCompleteSuggestionItem'
                                                       }
                                                       {...getItemProps({
                                                          item
