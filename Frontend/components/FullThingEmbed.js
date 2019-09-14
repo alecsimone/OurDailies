@@ -81,6 +81,12 @@ const StyledFullThing = styled.article`
 `;
 
 class FullThingEmbed extends Component {
+   componentDidMount() {
+      if (this.props.subscribeToUpdates != null) {
+         this.props.subscribeToUpdates();
+      }
+   }
+
    render() {
       const { thing, member } = this.props;
 

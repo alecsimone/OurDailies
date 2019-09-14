@@ -4,7 +4,7 @@ type Thing {
   author: Member!
   featuredImage: String
   originalSource: String! @unique
-  summary: [String!]! @scalarList(strategy:RELATION)
+  summary: [String!] @scalarList(strategy:RELATION)
   includedLinks: [Link]
   includedThings: [Thing]
   partOfNarratives: [Narrative]

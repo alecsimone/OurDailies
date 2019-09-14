@@ -355,3 +355,26 @@ const fullThingFields = `
          updatedAt
       `;
 exports.fullThingFields = fullThingFields;
+
+async function getThing(id, db) {
+   const updatedThing = await db.query.thing(
+      {
+         where: {
+            id
+         }
+      },
+      `{${fullThingFields}}`
+   );
+
+   return updatedThing;
+}
+exports.getThing = getThing;
+
+function publishThingUpdate(thing, ctx) {
+   ctx.pubsub.publish('thing', {
+      thing: {
+         node: thing
+      }
+   });
+}
+exports.publishThingUpdate = publishThingUpdate;

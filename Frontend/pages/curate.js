@@ -95,22 +95,24 @@ class CuratePage extends Component {
       this.setState({ mainThingId: id });
    };
 
-   addSubscription = (subscribeToMore, data) =>
-      subscribeToMore({
+   addSubscription = (subscribeToMore, data) => {
+      const IDsToSubscribe = data.thingsForCurate.map(thing => thing.id);
+      return subscribeToMore({
          document: THING_SUBSCRIPTION,
+         variables: { IDs: IDsToSubscribe },
          updateQuery: (prev, { subscriptionData }) => {
-            // console.log(prev.thingsForCurate[0]);
             const newThingData = subscriptionData.data.thing.node;
             const changedThingID = newThingData.id;
-            const changedThingIndex = prev.thingsForCurate.findIndex(
+            const changedThingIndex = data.thingsForCurate.findIndex(
                thing => thing.id === changedThingID
             );
-            if (changedThingIndex === -1) return prev;
+            if (changedThingIndex === -1) return data;
 
-            prev.thingsForCurate[changedThingIndex] = newThingData;
-            return prev;
+            data.thingsForCurate[changedThingIndex] = newThingData;
+            return data;
          }
       });
+   };
 
    render() {
       return (

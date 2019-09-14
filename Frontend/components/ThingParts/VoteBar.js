@@ -213,6 +213,12 @@ const StyledVoteBar = styled.div`
 `;
 
 class VoteBar extends Component {
+   componentDidMount() {
+      if (this.props.subscribeToUpdates != null) {
+         this.props.subscribeToUpdates();
+      }
+   }
+
    render() {
       let { voteData, passData, member } = this.props;
       if (voteData == null) {

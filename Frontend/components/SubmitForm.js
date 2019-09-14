@@ -1,9 +1,10 @@
-import React, { Component } from "react";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import Router from "next/router";
-import styled from "styled-components";
-import Error from "./ErrorMessage.js";
+import React, { Component } from 'react';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import Router from 'next/router';
+import styled from 'styled-components';
+import Error from './ErrorMessage.js';
+import Member from './Member';
 
 const CREATE_THING_MUTATION = gql`
    mutation CREATE_THING_MUTATION(
@@ -41,7 +42,7 @@ const StyledSubmitForm = styled.form`
       border: 1px solid ${props => props.theme.lowContrastGrey};
    }
    textarea {
-      font-family: "Proxima Nova", sans-serif;
+      font-family: 'Proxima Nova', sans-serif;
    }
    button {
       background: ${props => props.theme.majorColor};
@@ -60,10 +61,10 @@ const StyledSubmitForm = styled.form`
 
 class SubmitForm extends Component {
    state = {
-      title: "",
-      originalSource: "",
+      title: '',
+      originalSource: '',
       summary: {
-         set: [""]
+         set: ['']
       }
    };
 
@@ -84,60 +85,64 @@ class SubmitForm extends Component {
       return (
          <Mutation mutation={CREATE_THING_MUTATION} variables={this.state}>
             {(createThing, { loading, error, called, data }) => (
-               <StyledSubmitForm
-                  onSubmit={async e => {
-                     e.preventDefault();
-                     const res = await createThing();
-                     Router.push({
-                        pathname: "/thing",
-                        query: {
-                           id: res.data.createThing.id
-                        }
-                     });
-                     if (this.props.callBack) {
-                        this.props.callBack();
-                     }
-                  }}
-               >
-                  <h2>Share a Thing</h2>
-                  <Error error={error} />
-                  <fieldset disabled={loading} aria-busy={loading}>
-                     <label htmlFor="title">
-                        <input
-                           type="text"
-                           id="title"
-                           name="title"
-                           placeholder="Title"
-                           required
-                           value={this.state.title}
-                           onChange={this.handleChange}
-                        />
-                     </label>
-                     <label htmlFor="originalSource">
-                        <input
-                           type="text"
-                           id="originalSource"
-                           name="originalSource"
-                           placeholder="URL"
-                           required
-                           value={this.state.originalSource}
-                           onChange={this.handleChange}
-                        />
-                     </label>
-                     <label htmlFor="summary">
-                        <textarea
-                           type="textarea"
-                           id="summary"
-                           name="summary"
-                           placeholder="Why should anyone care?"
-                           required
-                           value={this.state.summary.set[0]}
-                           onChange={this.handleSummaryChange}
-                        />
-                     </label>
-                     <button type="submit">Submit</button>
-                  </fieldset>
-               </StyledSubmitForm>
+               <Member>
+                  {({ data: memberData }) => (
+                     <StyledSubmitForm
+                        onSubmit={async e => {
+                           e.preventDefault();
+                           const res = await createThing();
+                           Router.push({
+                              pathname: '/thing',
+                              query: {
+                                 id: res.data.createThing.id
+                              }
+                           });
+                           if (this.props.callBack) {
+                              this.props.callBack();
+                           }
+                        }}
+                     >
+                        <h2>Share a Thing</h2>
+                        <Error error={error} />
+                        <fieldset disabled={loading} aria-busy={loading}>
+                           <label htmlFor="title">
+                              <input
+                                 type="text"
+                                 id="title"
+                                 name="title"
+                                 placeholder="Title"
+                                 required
+                                 value={this.state.title}
+                                 onChange={this.handleChange}
+                              />
+                           </label>
+                           <label htmlFor="originalSource">
+                              <input
+                                 type="text"
+                                 id="originalSource"
+                                 name="originalSource"
+                                 placeholder="URL"
+                                 required
+                                 value={this.state.originalSource}
+                                 onChange={this.handleChange}
+                              />
+                           </label>
+                           <label htmlFor="summary">
+                              <textarea
+                                 type="textarea"
+                                 id="summary"
+                                 name="summary"
+                                 placeholder="Why should anyone care?"
+                                 required={memberData.me.rep < 10}
+                                 value={this.state.summary.set[0]}
+                                 onChange={this.handleSummaryChange}
+                              />
+                           </label>
+                           <button type="submit">Submit</button>
+                        </fieldset>
+                     </StyledSubmitForm>
+                  )}
+               </Member>
             )}
          </Mutation>
       );

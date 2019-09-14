@@ -20,7 +20,7 @@ const StyledCurate = styled.div`
 `;
 
 class Curate extends Component {
-   sortedThings = this.props.things.sort((a, b) => {
+   sortThings = (a, b) => {
       const aScore = getScoreForThing(a);
       const bScore = getScoreForThing(b);
       if (aScore === bScore) {
@@ -29,7 +29,13 @@ class Curate extends Component {
          return bCreatedAt - aCreatedAt;
       }
       return bScore - aScore;
-   });
+   };
+
+   componentDidMount() {
+      if (this.props.subscribeToUpdates != null) {
+         this.props.subscribeToUpdates();
+      }
+   }
 
    // state = {
    //    mainThingId: this.sortedThings[0].id
@@ -57,17 +63,17 @@ class Curate extends Component {
       thingsToRemove.forEach(indexToEliminate => {
          things.splice(indexToEliminate, 1);
       });
-      if (mainThingData == null) mainThingData = this.sortedThings[0];
+      const sortedThings = things.sort(this.sortThings);
+      if (mainThingData == null) mainThingData = sortedThings[0];
       const mainThing = (
          <FullThing
             thing={mainThingData}
             member={member}
             key={mainThingData.id}
-            subscribeToUpdates={this.props.subscribeToUpdates}
          />
       );
 
-      const tinyThingsData = this.sortedThings.filter(
+      const tinyThingsData = sortedThings.filter(
          thing => thing.id !== mainThingData.id
       );
 

@@ -77,8 +77,8 @@ const SINGLE_THING_QUERY = gql`
 `;
 
 const THING_SUBSCRIPTION = gql`
-   subscription THING_SUBSCRIPTION {
-      thing {
+   subscription THING_SUBSCRIPTION($IDs: [ID!]) {
+      thing(IDs: $IDs) {
          node {
             __typename
             id
@@ -166,6 +166,7 @@ const SingleThing = props => {
    const addSubscription = (subscribeToMore, data) =>
       subscribeToMore({
          document: THING_SUBSCRIPTION,
+         variables: { IDs: [props.query.id] },
          updateQuery: (prev, { subscriptionData }) => {
             const oldThing = data.thing;
             const updates = subscriptionData.data.thing.node;
@@ -196,10 +197,8 @@ const SingleThing = props => {
                }}
             >
                {({ error, loading, data, subscribeToMore }) => {
-                  console.log(data);
                   if (error) return <Error error={error} />;
                   if (loading) return <p>Loading...</p>;
-                  let title;
                   if (!data.thing) {
                      return <p>No thing found</p>;
                   }

@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import ErrorMessage from '../ErrorMessage';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
 import TinyThing from '../TinyThing';
-import { homeNoHTTP } from '../../config';
+import { homeNoHTTP, prodHomeNoHTTP } from '../../config';
 
 const ADD_LINK_TO_THING_MUTATION = gql`
    mutation ADD_LINK_TO_THING_MUTATION(
@@ -206,7 +206,11 @@ class LinksBox extends Component {
                               if (
                                  this.state.linkTitle == '' &&
                                  !this.state.linkURL.includes(
-                                    `${homeNoHTTP}/thing?id=`
+                                    `${
+                                       process.env.NODE_ENV === 'development'
+                                          ? homeNoHTTP
+                                          : prodHomeNoHTTP
+                                    }/thing?id=`
                                  )
                               ) {
                                  alert('You need to give that link a  title');

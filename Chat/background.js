@@ -1,5 +1,5 @@
-// const ajaxURL = 'http://localhost:4444';
-const ajaxURL = 'https://playground.ourdailies.org';
+const ajaxURL = 'http://localhost:4444';
+// const ajaxURL = 'https://playground.ourdailies.org';
 
 let urls;
 

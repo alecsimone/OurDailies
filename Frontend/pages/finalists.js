@@ -84,12 +84,13 @@ const StyledFinalistsPage = styled.div`
 `;
 
 class finalists extends Component {
-   addSubscription = (subscribeToMore, data) =>
-      subscribeToMore({
+   addSubscription = (subscribeToMore, data) => {
+      const IDsToSubscribe = data.thingsForFinalists.map(thing => thing.id);
+      return subscribeToMore({
          document: THING_SUBSCRIPTION,
+         variables: { IDs: IDsToSubscribe },
          updateQuery: (prev, { subscriptionData }) => {
             const newThingData = subscriptionData.data.thing.node;
-            console.log(newThingData);
             const changedThingID = newThingData.id;
             const changedThingIndex = prev.thingsForFinalists.findIndex(
                thing => thing.id === changedThingID
@@ -97,10 +98,10 @@ class finalists extends Component {
             if (changedThingIndex === -1) return prev;
 
             prev.thingsForFinalists[changedThingIndex] = newThingData;
-            console.log(prev);
             return prev;
          }
       });
+   };
 
    render() {
       return (

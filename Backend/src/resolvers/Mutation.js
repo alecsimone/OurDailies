@@ -11,13 +11,25 @@ const {
    vote,
    pass,
    getFinalists,
-   fullThingFields
+   fullThingFields,
+   getThing,
+   publishThingUpdate
 } = require('../utils');
 
 const Mutations = {
    async createThing(parent, args, ctx, info) {
       loggedInGate(ctx);
       fullMemberGate(ctx.request.member);
+
+      if (args.summary.set[0] == '') {
+         if (ctx.request.member.rep < 10) {
+            throw new Error(
+               'Members with less than 10 rep must give a summary when submitting things'
+            );
+         } else {
+            delete args.summary;
+         }
+      }
 
       const thing = await ctx.db.mutation.createThing(
          {
@@ -182,11 +194,7 @@ const Mutations = {
          `{${fullThingFields}}`
       );
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
    },
@@ -225,11 +233,7 @@ const Mutations = {
             `{${fullThingFields}}`
          );
 
-         ctx.pubsub.publish('thing', {
-            thing: {
-               node: updatedThing
-            }
-         });
+         publishThingUpdate(updatedThing, ctx);
          return updatedThing;
       }
       const updatedThing = await ctx.db.mutation.updateThing(
@@ -247,11 +251,7 @@ const Mutations = {
          `{${fullThingFields}}`
       );
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
       return updatedThing;
 
       return updatedThing;
@@ -282,11 +282,7 @@ const Mutations = {
          `{${fullThingFields}}`
       );
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
    },
@@ -324,11 +320,7 @@ const Mutations = {
          `{${fullThingFields}}`
       );
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
    },
@@ -348,11 +340,7 @@ const Mutations = {
          `{${fullThingFields}}`
       );
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
    },
@@ -372,11 +360,7 @@ const Mutations = {
          `{${fullThingFields}}`
       );
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
    },
@@ -400,20 +384,9 @@ const Mutations = {
          }
       });
 
-      const updatedThing = await ctx.db.query.thing(
-         {
-            where: {
-               id: thingID
-            }
-         },
-         `{${fullThingFields}}`
-      );
+      const updatedThing = await getThing(thingID, ctx.db);
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return addedComment;
    },
@@ -441,20 +414,9 @@ const Mutations = {
          }
       });
 
-      const updatedThing = await ctx.db.query.thing(
-         {
-            where: {
-               id: thingID
-            }
-         },
-         `{${fullThingFields}}`
-      );
+      const updatedThing = await getThing(thingID, ctx.db);
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return deletedComment;
    },
@@ -464,20 +426,9 @@ const Mutations = {
 
       const newVote = await vote(thingID, ctx.request.member, ctx);
 
-      const updatedThing = await ctx.db.query.thing(
-         {
-            where: {
-               id: thingID
-            }
-         },
-         `{${fullThingFields}}`
-      );
+      const updatedThing = await getThing(thingID, ctx.db);
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return newVote.newVote;
    },
@@ -496,6 +447,10 @@ const Mutations = {
 
       const newVote = await vote(liveThingID, member, ctx);
 
+      const updatedThing = await getThing(liveThingID, ctx.db);
+
+      publishThingUpdate(updatedThing, ctx);
+
       return newVote.newVote;
    },
    async passOnThing(parent, { thingID }, ctx, info) {
@@ -504,20 +459,9 @@ const Mutations = {
 
       const newPass = await pass(thingID, ctx.request.member, ctx);
 
-      const updatedThing = await ctx.db.query.thing(
-         {
-            where: {
-               id: thingID
-            }
-         },
-         `{${fullThingFields}}`
-      );
+      const updatedThing = await getThing(thingID, ctx.db);
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return newPass.newPass;
    },
@@ -529,6 +473,10 @@ const Mutations = {
       const member = { id: voter };
 
       const newPass = await pass(liveThingID, member, ctx);
+
+      const updatedThing = await getThing(liveThingID, ctx.db);
+
+      publishThingUpdate(updatedThing, ctx);
 
       return newPass.newPass;
    },
@@ -546,23 +494,24 @@ const Mutations = {
          },
          `{id, rep}`
       );
+      let message;
       if (direction === 'yea') {
          const newVote = await vote(finalists[thingIndex].id, member, ctx);
-         return {
-            message: `${newVote.deletedVote ? 'un' : ''}voted on ${
-               finalists[thingIndex].title
-            }`
-         };
+         message = `${newVote.deletedVote ? 'un' : ''}voted on ${
+            finalists[thingIndex].title
+         }`;
       }
       if (direction === 'nay') {
          const newPass = await pass(finalists[thingIndex].id, member, ctx);
-         return {
-            message: `${newPass.deletedPass ? 'un' : ''}passed on ${
-               finalists[thingIndex].title
-            }`
-         };
+         message = `${newPass.deletedPass ? 'un' : ''}passed on ${
+            finalists[thingIndex].title
+         }`;
       }
-      return { message: 'Success!' };
+
+      const updatedThing = await getThing(finalists[thingIndex].id, ctx.db);
+      publishThingUpdate(updatedThing, ctx);
+
+      return { message };
    },
    async resetLiveThing(parent, args, ctx, info) {
       const deletedVotes = await ctx.db.mutation.deleteManyVotes(
@@ -585,6 +534,10 @@ const Mutations = {
          },
          `{count}`
       );
+
+      const updatedThing = await getThing(liveThingID, ctx.db);
+      publishThingUpdate(updatedThing, ctx);
+
       return deletedVotes.count + deletedPasses.count;
    },
    async eliminateThing(parent, { thingID }, ctx, info) {
@@ -603,11 +556,7 @@ const Mutations = {
          `{${fullThingFields}}`
       );
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
    },
@@ -629,11 +578,7 @@ const Mutations = {
          `{${fullThingFields}}`
       );
 
-      ctx.pubsub.publish('thing', {
-         thing: {
-            node: updatedThing
-         }
-      });
+      publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
    }

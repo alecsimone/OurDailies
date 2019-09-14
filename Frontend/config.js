@@ -4,4 +4,6 @@ export const endpointNoHTTP = `localhost:4444`;
 export const prodEndpointNoHTTP = `playground.ourdailies.org`;
 export const home = 'http://localhost:7777';
 export const homeNoHTTP = 'localhost:7777';
+export const prodHome = 'https://ourdailies.org';
+export const prodHomeNoHTTP = 'ourdailies.org';
 export const perPage = 4;
