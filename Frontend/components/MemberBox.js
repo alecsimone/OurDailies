@@ -32,7 +32,9 @@ const MemberBox = () => (
          if (me) {
             return (
                <StyledMemberBox>
-                  <p>Your Rep: {me.rep}</p>
+                  <p>
+                     [{me.rep}] {me.displayName}
+                  </p>
                   <img
                      src={
                         me.avatar != null
