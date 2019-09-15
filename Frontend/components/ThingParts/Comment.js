@@ -117,7 +117,7 @@ class Comment extends Component {
                   {beginning}
                   <a target="_blank" href={match}>
                      {match.length > 20
-                        ? `${match.substring(0, 36)}...`
+                        ? `${match.substring(0, 60)}...`
                         : match}
                   </a>
                   {end}
