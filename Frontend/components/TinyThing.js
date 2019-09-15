@@ -13,6 +13,8 @@ import {
 } from '../lib/utils';
 
 const StyledTinyThing = styled.article`
+   display: flex;
+   align-items: center;
    position: relative;
    margin: 0.5rem;
    background: ${props => props.theme.veryLowContrastCoolGrey};
@@ -36,6 +38,16 @@ const StyledTinyThing = styled.article`
       top: 0;
       opacity: 0.8;
    }
+   .featuredImage {
+      width: 5rem;
+      height: 5rem;
+      margin-right: 1rem;
+      img {
+         height: 100%;
+         width: 100%;
+         object-fit: cover;
+      }
+   }
    h3 {
       font-size: ${props => props.theme.bigText};
       cursor: pointer;
@@ -48,7 +60,7 @@ const StyledTinyThing = styled.article`
    .metaContainer {
       display: flex;
       align-items: center;
-      margin-top: 0.4rem;
+      margin: 0.5rem 0;
       /* position: relative; */
       p.meta,
       a.SubTitleLink {
@@ -90,47 +102,62 @@ class TinyThing extends Component {
 
       return (
          <StyledTinyThing className="tinyThing">
-            <Link
-               href={{
-                  pathname: '/thing',
-                  query: {
-                     id: thing.id
+            <div className="featuredImage">
+               <img
+                  src={
+                     thing.featuredImage != null
+                        ? thing.featuredImage
+                        : '/static/defaultPic.jpg'
                   }
-               }}
-            >
-               <a>
-                  <h3>{thing.title}</h3>
-               </a>
-            </Link>
-            <div className="metaContainer">
-               <p className="meta">
-                  {thing.votes != null && (
-                     <span className="score">+{getScoreForThing(thing)} </span>
-                  )}
-                  {convertISOtoAgo(thing.createdAt)}
-                  {' AGO '}
-                  <span className="via">via</span>
-               </p>
-               <a
-                  className="SubTitleLink"
-                  href={thing.originalSource ? thing.originalSource : ''}
-                  target="_blank"
+                  alt="tinyFeaturedImage"
+                  className="tinyFeaturedImage"
+               />
+            </div>
+            <div className="thingInfo">
+               <Link
+                  href={{
+                     pathname: '/thing',
+                     query: {
+                        id: thing.id
+                     }
+                  }}
                >
-                  {thing.originalSource
-                     ? psl
-                          .parse(extractHostname(thing.originalSource))
-                          .sld.toUpperCase()
-                     : ''}
-               </a>
-               {this.props.checkbox && (
-                  <input
-                     type="checkbox"
-                     onChange={e => {
-                        e.preventDefault();
-                        this.props.checkbox(thing.id);
-                     }}
-                  />
-               )}
+                  <a>
+                     <h3>{thing.title}</h3>
+                  </a>
+               </Link>
+               <div className="metaContainer">
+                  <p className="meta">
+                     {thing.votes != null && (
+                        <span className="score">
+                           +{getScoreForThing(thing)}{' '}
+                        </span>
+                     )}
+                     {convertISOtoAgo(thing.createdAt)}
+                     {' AGO '}
+                     <span className="via">via</span>
+                  </p>
+                  <a
+                     className="SubTitleLink"
+                     href={thing.originalSource ? thing.originalSource : ''}
+                     target="_blank"
+                  >
+                     {thing.originalSource
+                        ? psl
+                             .parse(extractHostname(thing.originalSource))
+                             .sld.toUpperCase()
+                        : ''}
+                  </a>
+                  {this.props.checkbox && (
+                     <input
+                        type="checkbox"
+                        onChange={e => {
+                           e.preventDefault();
+                           this.props.checkbox(thing.id);
+                        }}
+                     />
+                  )}
+               </div>
             </div>
          </StyledTinyThing>
       );
