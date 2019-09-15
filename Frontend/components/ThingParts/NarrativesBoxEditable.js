@@ -133,7 +133,7 @@ class NarrativesBox extends Component {
       this.setState({
          narratives: e.target.value === '' ? [] : unusedNarratives
       });
-   }, 350);
+   }, 250);
 
    render() {
       resetIdCounter();
