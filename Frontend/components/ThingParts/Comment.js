@@ -4,7 +4,7 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import ErrorMessage from '../ErrorMessage';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
-import { convertISOtoAgo } from '../../lib/utils';
+import { convertISOtoAgo, urlFinder } from '../../lib/utils';
 
 const DELETE_COMMENT_MUTATION = gql`
    mutation DELETE_COMMENT_MUTATION($id: ID!) {
@@ -45,12 +45,17 @@ const StyledComment = styled.div`
             }
             display: inline-block;
             margin: 0;
-            max-width: 800px;
+            /* max-width: 800px; */
             p.commentParagraph {
                margin: 0 0 1.5rem 0;
                display: inline-block;
                &:last-of-type {
                   margin: 0 0 0.5rem 0;
+               }
+               a,
+               a:visited {
+                  color: ${props => props.theme.highContrastSecondaryAccent};
+                  text-decoration: underline;
                }
             }
          }
@@ -101,6 +106,36 @@ class Comment extends Component {
       const paragraphs = paragraphsAndEmptyStrings.filter(
          string => string != ''
       );
+
+      paragraphs.forEach((graph, index) => {
+         console.log(graph);
+         const graphWithLinks = graph.replace(
+            urlFinder,
+            (match, offset, string) => {
+               // console.log(match);
+               // console.log(offset);
+               const beginning = string.substring(0, offset);
+               const end = string.substring(beginning.length + match.length);
+               const jsxGraph = (
+                  <>
+                     {beginning}
+                     <a target="_blank" href={match}>
+                        {match.length > 20
+                           ? `${match.substring(0, 36)}...`
+                           : match}
+                     </a>
+                     {end}
+                  </>
+               );
+               // console.log(string);
+               paragraphs[index] = jsxGraph;
+            }
+         );
+         // console.log(graphWithLinks);
+      });
+      // const result = paragraphs.search();
+      // console.log(result);
+
       const paragraphElements = paragraphs.map((commentString, index) => (
          <p className="commentParagraph" key={index}>
             {index === 0 ? (

@@ -22,8 +22,7 @@ const StyledFullThing = styled.article`
       margin-bottom: 60vh;
       padding: 2rem;
       background: ${props => props.theme.veryLowContrastCoolGrey};
-      box-shadow: 0 0.1rem 0.4rem
-         ${props => props.theme.highContrastSecondaryAccent};
+      box-shadow: 0 0.1rem 0.4rem ${props => props.theme.secondaryAccentGlow};
    }
    border-radius: 2px 2px;
    width: 100%;

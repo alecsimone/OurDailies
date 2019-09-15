@@ -31,7 +31,7 @@ const StyledThing = styled.article`
     grid-column: 1 / -1;
     background: ${props => props.theme.veryLowContrastCoolGrey};
     padding: 2rem;
-    box-shadow: 0 0 .4rem ${props => props.theme.highContrastSecondaryAccent};
+    box-shadow: 0 0 .4rem ${props => props.theme.secondaryAccentGlow};
     div.body {
         position: relative;
         height: calc(720px + 2rem);

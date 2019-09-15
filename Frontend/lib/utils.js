@@ -82,3 +82,6 @@ const getScoreForThing = function(thingObject) {
    return score;
 };
 export { getScoreForThing };
+
+const urlFinder = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gim;
+export { urlFinder };

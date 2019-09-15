@@ -23,7 +23,7 @@ const StyledLittleThing = styled.article`
    align-items: flex-start;
    background: ${props => props.theme.veryLowContrastCoolGrey};
    border-radius: 2px;
-   box-shadow: 0 0 0.25rem ${props => props.theme.highContrastSecondaryAccent};
+   box-shadow: 0 0 0.25rem ${props => props.theme.secondaryAccentGlow};
    :before {
       content: '';
       background: ${props => props.theme.majorColor};

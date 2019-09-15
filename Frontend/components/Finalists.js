@@ -110,8 +110,7 @@ const StyledFinalists = styled.div`
       line-height: 1.75;
       overflow: hidden;
       transition: all 0.5s;
-      box-shadow: 0 0.1rem 0.4rem
-         ${props => props.theme.highContrastSecondaryAccent};
+      box-shadow: 0 0.1rem 0.4rem ${props => props.theme.secondaryAccentGlow};
       &.eliminated {
          display: none;
       }
