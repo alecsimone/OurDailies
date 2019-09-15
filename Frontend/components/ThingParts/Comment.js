@@ -48,7 +48,7 @@ const StyledComment = styled.div`
             /* max-width: 800px; */
             p.commentParagraph {
                margin: 0 0 1.5rem 0;
-               display: inline-block;
+               /* display: inline-block; */
                &:last-of-type {
                   margin: 0 0 0.5rem 0;
                }
