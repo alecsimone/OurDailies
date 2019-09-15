@@ -6,42 +6,12 @@ import DayContainer from './DayContainer';
 import Thing from './Thing';
 import LittleThing from './LittleThing';
 import TinyThing from './TinyThing';
+import { littleThingFields } from '../lib/utils';
 
 const THINGS_FOR_GIVEN_DAY_QUERY = gql`
    query THINGS_FOR_GIVEN_DAY_QUERY($day: String!) {
       thingsForGivenDay(day: $day) {
-         __typename
-         id
-         title
-         author {
-            displayName
-         }
-         featuredImage
-         originalSource
-         summary
-         partOfNarratives {
-            id
-            title
-         }
-         finalistDate
-         votes {
-            voter {
-               id
-               displayName
-               avatar
-               roles
-            }
-            value
-         }
-         passes {
-            passer {
-               id
-               displayName
-               avatar
-               roles
-            }
-         }
-         createdAt
+         ${littleThingFields}
       }
    }
 `;

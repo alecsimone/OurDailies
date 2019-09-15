@@ -8,68 +8,12 @@ import FullThingEmbed from '../components/FullThingEmbed';
 import Error from '../components/ErrorMessage';
 import Member from '../components/Member';
 import MustSignIn from '../components/MustSignIn';
+import { fullThingFields } from '../lib/utils';
 
 const NEW_THINGS_QUERY = gql`
    query NEW_THINGS_QUERY {
       thingsForNew {
-         __typename
-         id
-         title
-         author {
-            displayName
-         }
-         featuredImage
-         originalSource
-         summary
-         includedLinks {
-            title
-            url
-            id
-         }
-         includedThings {
-            id
-            title
-            originalSource
-            author {
-               displayName
-            }
-            createdAt
-         }
-         partOfNarratives {
-            id
-            title
-         }
-         comments {
-            id
-            author {
-               id
-               displayName
-               avatar
-               rep
-            }
-            comment
-            createdAt
-            updatedAt
-         }
-         votes {
-            voter {
-               id
-               displayName
-               avatar
-               roles
-            }
-            value
-         }
-         passes {
-            passer {
-               id
-               displayName
-               avatar
-               roles
-            }
-         }
-         createdAt
-         updatedAt
+         ${fullThingFields}
       }
    }
 `;

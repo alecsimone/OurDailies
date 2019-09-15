@@ -85,3 +85,105 @@ export { getScoreForThing };
 
 const urlFinder = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gim;
 export { urlFinder };
+
+const tinyThingFields = `
+   __typename
+   id
+   title
+   featuredImage
+   originalSource
+   votes {
+      value
+   }
+   createdAt
+`;
+export { tinyThingFields };
+
+const littleThingFields = `
+   __typename
+   id
+   title
+   featuredImage
+   partOfNarratives {
+      id
+      title
+   }
+   votes {
+      voter {
+         id
+         displayName
+         avatar
+         roles
+      }
+      value
+   }
+   passes {
+      passer {
+         id
+         displayName
+         avatar
+         roles
+      }
+   }
+   finalistDate
+   createdAt
+   updatedAt
+`;
+export { littleThingFields };
+
+const fullThingFields = `
+   __typename
+   id
+   title
+   author {
+      displayName
+   }
+   featuredImage
+   originalSource
+   summary
+   includedLinks {
+      title
+      url
+      id
+   }
+   includedThings {
+      ${tinyThingFields}
+   }
+   partOfNarratives {
+      id
+      title
+   }
+   comments {
+      id
+      author {
+         id
+         displayName
+         avatar
+         rep
+      }
+      comment
+      createdAt
+      updatedAt
+   }
+   votes {
+      voter {
+         id
+         displayName
+         avatar
+         roles
+      }
+      value
+   }
+   passes {
+      passer {
+         id
+         displayName
+         avatar
+         roles
+      }
+   }
+   finalistDate
+   createdAt
+   updatedAt
+`;
+export { fullThingFields };

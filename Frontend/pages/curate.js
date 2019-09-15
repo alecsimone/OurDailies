@@ -7,71 +7,12 @@ import FullThing from '../components/FullThing';
 import Member from '../components/Member';
 import Curate from '../components/Curate';
 import { THING_SUBSCRIPTION } from './thing';
+import { fullThingFields } from '../lib/utils';
 
 const CURATE_THINGS_QUERY = gql`
    query CURATE_THINGS_QUERY {
       thingsForCurate {
-         __typename
-         id
-         title
-         author {
-            displayName
-         }
-         featuredImage
-         originalSource
-         summary
-         includedLinks {
-            title
-            url
-            id
-         }
-         includedThings {
-            id
-            title
-            originalSource
-            author {
-               displayName
-            }
-            votes {
-               value
-            }
-            createdAt
-         }
-         partOfNarratives {
-            id
-            title
-         }
-         comments {
-            id
-            author {
-               id
-               displayName
-               avatar
-               rep
-            }
-            comment
-            createdAt
-            updatedAt
-         }
-         votes {
-            voter {
-               id
-               displayName
-               avatar
-               roles
-            }
-            value
-         }
-         passes {
-            passer {
-               id
-               displayName
-               avatar
-               roles
-            }
-         }
-         createdAt
-         updatedAt
+         ${fullThingFields}
       }
    }
 `;

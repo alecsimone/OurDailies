@@ -6,70 +6,14 @@ import Error from '../components/ErrorMessage';
 import Thing from '../components/Thing';
 import LittleThing from '../components/LittleThing';
 import TinyThing from '../components/TinyThing';
+import { littleThingFields } from '../lib/utils';
 
 const NARRATIVE_THINGS_QUERY = gql`
    query NARRATIVE_THINGS_QUERY($id: ID!) {
       narrative(where: { id: $id }) {
          title
          connectedThings {
-            id
-            title
-            author {
-               displayName
-            }
-            featuredImage
-            originalSource
-            summary
-            includedLinks {
-               title
-               url
-               id
-            }
-            includedThings {
-               id
-               title
-               originalSource
-               author {
-                  displayName
-               }
-               createdAt
-            }
-            partOfNarratives {
-               id
-               title
-            }
-            comments {
-               id
-               author {
-                  id
-                  displayName
-                  avatar
-                  rep
-               }
-               comment
-               createdAt
-               updatedAt
-            }
-            votes {
-               voter {
-                  id
-                  displayName
-                  avatar
-                  roles
-               }
-               value
-            }
-            passes {
-               passer {
-                  id
-                  displayName
-                  avatar
-                  roles
-               }
-            }
-            finalistDate
-            createdAt
-            updatedAt
+            ${littleThingFields}
          }
       }
    }

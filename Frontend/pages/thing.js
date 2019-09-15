@@ -6,72 +6,12 @@ import FullThing from '../components/FullThing';
 import FullThingEmbed from '../components/FullThingEmbed';
 import Error from '../components/ErrorMessage';
 import Member from '../components/Member';
+import { fullThingFields } from '../lib/utils';
 
 const SINGLE_THING_QUERY = gql`
    query SINGLE_THING_QUERY($id: ID!) {
       thing(where: { id: $id }) {
-         __typename
-         id
-         title
-         author {
-            displayName
-         }
-         featuredImage
-         originalSource
-         summary
-         includedLinks {
-            title
-            url
-            id
-         }
-         includedThings {
-            id
-            title
-            originalSource
-            author {
-               displayName
-            }
-            votes {
-               value
-            }
-            createdAt
-         }
-         partOfNarratives {
-            id
-            title
-         }
-         comments {
-            id
-            author {
-               id
-               displayName
-               avatar
-               rep
-            }
-            comment
-            createdAt
-            updatedAt
-         }
-         votes {
-            voter {
-               id
-               displayName
-               avatar
-               roles
-            }
-            value
-         }
-         passes {
-            passer {
-               id
-               displayName
-               avatar
-               roles
-            }
-         }
-         finalistDate
-         createdAt
-         updatedAt
+         ${fullThingFields}
       }
    }
 `;
@@ -80,69 +20,7 @@ const THING_SUBSCRIPTION = gql`
    subscription THING_SUBSCRIPTION($IDs: [ID!]) {
       thing(IDs: $IDs) {
          node {
-            __typename
-            id
-            title
-            author {
-               displayName
-            }
-            featuredImage
-            originalSource
-            summary
-            includedLinks {
-               title
-               url
-               id
-            }
-            includedThings {
-               id
-               title
-               originalSource
-               author {
-                  displayName
-               }
-               votes {
-                  value
-               }
-               createdAt
-            }
-            partOfNarratives {
-               id
-               title
-            }
-            comments {
-               id
-               author {
-                  id
-                  displayName
-                  avatar
-                  rep
-               }
-               comment
-               createdAt
-               updatedAt
-            }
-            votes {
-               voter {
-                  id
-                  displayName
-                  avatar
-                  roles
-               }
-               value
-            }
-            passes {
-               passer {
-                  id
-                  displayName
-                  avatar
-                  roles
-               }
-            }
-            eliminated
-            finalistDate
-            createdAt
-            updatedAt
+            ${fullThingFields}
          }
       }
    }

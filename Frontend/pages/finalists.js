@@ -6,70 +6,12 @@ import Head from 'next/head';
 import Member from '../components/Member';
 import Finalists from '../components/Finalists';
 import { THING_SUBSCRIPTION } from './thing';
+import { littleThingFields } from '../lib/utils';
 
 const FINALIST_THINGS_QUERY = gql`
    query FINALIST_THINGS_QUERY {
       thingsForFinalists {
-         __typename
-         id
-         title
-         author {
-            displayName
-         }
-         featuredImage
-         originalSource
-         summary
-         includedLinks {
-            title
-            url
-            id
-         }
-         includedThings {
-            id
-            title
-            originalSource
-            author {
-               displayName
-            }
-            createdAt
-         }
-         partOfNarratives {
-            id
-            title
-         }
-         comments {
-            id
-            author {
-               id
-               displayName
-               avatar
-               rep
-            }
-            comment
-            createdAt
-            updatedAt
-         }
-         votes {
-            voter {
-               id
-               displayName
-               avatar
-               roles
-            }
-            value
-         }
-         passes {
-            passer {
-               id
-               displayName
-               avatar
-               roles
-            }
-         }
-         finalistDate
-         eliminated
-         createdAt
-         updatedAt
+         ${littleThingFields}
       }
    }
 `;

@@ -4,62 +4,12 @@ import gql from 'graphql-tag';
 import styled from 'styled-components';
 import Things from '../components/Things';
 import NarrativesBar from '../components/NarrativesBar';
+import { littleThingFields } from '../lib/utils';
 
 const THINGS_FOR_MOST_RECENT_DAY_QUERY = gql`
    query THINGS_FOR_MOST_RECENT_DAY_QUERY {
       thingsForMostRecentDay {
-         __typename
-         id
-         title
-         author {
-            displayName
-         }
-         featuredImage
-         originalSource
-         summary
-         partOfNarratives {
-            id
-            title
-         }
-         finalistDate
-         createdAt
-         votes {
-            voter {
-               id
-               displayName
-               avatar
-               roles
-            }
-            value
-         }
-         passes {
-            passer {
-               id
-               displayName
-               avatar
-               roles
-            }
-         }
-      }
-   }
-`;
-
-const ALL_THINGS_QUERY = gql`
-   query ALL_THINGS_QUERY {
-      things(orderBy: createdAt_DESC, first: 5) {
-         id
-         title
-         author {
-            displayName
-         }
-         featuredImage
-         originalSource
-         summary
-         partOfNarratives {
-            id
-            title
-         }
-         createdAt
+         ${littleThingFields}
       }
    }
 `;
@@ -90,5 +40,5 @@ class Home extends Component {
    }
 }
 
-export { ALL_THINGS_QUERY, THINGS_FOR_MOST_RECENT_DAY_QUERY };
+export { THINGS_FOR_MOST_RECENT_DAY_QUERY };
 export default Home;
