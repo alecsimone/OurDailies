@@ -289,6 +289,19 @@ exports.getFinalists = getFinalists;
 const requiredThingParts = `id title author{displayName} originalSource summary eliminated createdAt`;
 exports.requiredThingParts = requiredThingParts;
 
+const tinyThingFields = `
+   __typename
+   id
+   title
+   featuredImage
+   originalSource
+   votes {
+      value
+   }
+   createdAt
+`;
+exports.tinyThingFields = tinyThingFields;
+
 const fullThingFields = `
          __typename
          id
@@ -305,16 +318,7 @@ const fullThingFields = `
             id
          }
          includedThings {
-            id
-            title
-            originalSource
-            author {
-               displayName
-            }
-            votes {
-               value
-            }
-            createdAt
+            ${tinyThingFields}
          }
          partOfNarratives {
             id
