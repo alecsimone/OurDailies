@@ -1,10 +1,10 @@
-#endpoint: ${env:PRISMA_ENDPOINT}
-endpoint: https://ourdailies-676b9a4267.herokuapp.com/OurDailies/prod
+endpoint: ${env:PRISMA_ENDPOINT}
+# endpoint: https://ourdailies-676b9a4267.herokuapp.com/OurDailies/prod
 datamodel: datamodel.prisma
 secret: ${env:PRISMA_SECRET}
 generate:
   - generator: graphql-schema
-    output: ./src/generated/
+    output: ./src/generated/prisma.graphql
 
 hooks:
   post-deploy:

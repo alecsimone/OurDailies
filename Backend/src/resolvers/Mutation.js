@@ -50,7 +50,8 @@ const Mutations = {
                      },
                      value: ctx.request.member.rep
                   }
-               }
+               },
+               score: ctx.request.member.rep
             }
          },
          info
@@ -523,7 +524,18 @@ const Mutations = {
          `{count}`
       );
 
-      const updatedThing = await getThing(liveThingID, ctx.db);
+      const updatedThing = await ctx.db.mutation.updateThing(
+         {
+            where: {
+               id: liveThingID
+            },
+            data: {
+               score: 0
+            }
+         },
+         `{${fullThingFields}}`
+      );
+
       publishThingUpdate(updatedThing, ctx);
 
       return deletedVotes.count + deletedPasses.count;

@@ -46,6 +46,7 @@ async function vote(thingID, voter, ctx) {
       },
       `{id}`
    );
+   const oldThing = await getThing(thingID, ctx.db);
    if (oldVote.length > 0) {
       const deletedVote = await ctx.db.mutation.deleteVote(
          {
@@ -64,6 +65,19 @@ async function vote(thingID, voter, ctx) {
                id
             }`
       );
+      ctx.db.mutation
+         .updateThing(
+            {
+               where: {
+                  id: thingID
+               },
+               data: {
+                  score: oldThing.score - voter.rep
+               }
+            },
+            `{id score}`
+         )
+         .catch(err => console.log(err));
       return { newVote: deletedVote, deletedVote: true };
       // return deletedVote;
    }
@@ -117,6 +131,19 @@ async function vote(thingID, voter, ctx) {
          id
          value}`
    );
+   ctx.db.mutation
+      .updateThing(
+         {
+            where: {
+               id: thingID
+            },
+            data: {
+               score: oldThing.score + voter.rep
+            }
+         },
+         `{id score}`
+      )
+      .catch(err => console.log(err));
 
    return { newVote, deletedVote: false };
    // return newVote;
@@ -353,6 +380,8 @@ const fullThingFields = `
                roles
             }
          }
+         score
+         winner
          finalistDate
          eliminated
          createdAt

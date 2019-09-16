@@ -1,0 +1,5 @@
+git subtree push --prefix Backend heroku-backend master
+git subtree push --prefix Frontend heroku-frontend master
+
+To update datamodel:
+Make sure variables.env and prisma.yml both show the prisma endpoint you wish to deploy to (dev or prod), then npm run deploy

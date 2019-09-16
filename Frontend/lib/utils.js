@@ -125,6 +125,8 @@ const littleThingFields = `
          roles
       }
    }
+   score
+   winner
    finalistDate
    createdAt
    updatedAt
@@ -182,6 +184,8 @@ const fullThingFields = `
          roles
       }
    }
+   score
+   winner
    finalistDate
    createdAt
    updatedAt
