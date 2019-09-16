@@ -54,6 +54,7 @@ const StyledTinyThing = styled.article`
       margin: 0rem;
       line-height: 1.25;
       white-space: normal;
+      text-align: left;
    }
    div.meta {
    }

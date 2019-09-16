@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Mutation } from 'react-apollo';
+import { Mutation, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
+import Downshift, { resetIdCounter } from 'downshift';
+import debounce from 'lodash.debounce';
 import ErrorMessage from '../ErrorMessage';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
 import TinyThing from '../TinyThing';
 import { homeNoHTTP, prodHomeNoHTTP } from '../../config';
+import { tinyThingFields } from '../../lib/utils';
+import { home, prodHome } from '../../config';
 
 const ADD_LINK_TO_THING_MUTATION = gql`
    mutation ADD_LINK_TO_THING_MUTATION(
@@ -15,6 +19,14 @@ const ADD_LINK_TO_THING_MUTATION = gql`
    ) {
       addLinkToThing(title: $title, url: $url, thingID: $thingID) {
          id
+      }
+   }
+`;
+
+const THINGS_SEARCH_QUERY = gql`
+   query THINGS_SEARCH_QUERY($searchTerm: String!) {
+      things(where: {title_contains: $searchTerm }, first: 20) {
+         ${tinyThingFields}
       }
    }
 `;
@@ -109,6 +121,9 @@ const StyledLinksBox = styled.div`
          width: 100%;
       }
    }
+   .autoCompleteSuggestionItem.highlighted {
+      background: hsla(0, 0%, 100%, 0.1);
+   }
 `;
 
 class LinksBox extends Component {
@@ -116,13 +131,37 @@ class LinksBox extends Component {
       showForm: false,
       linkTitle: '',
       linkURL: '',
-      loading: false
+      loading: false,
+      things: []
    };
 
-   handleChange = e => {
+   handleTitleChange = (e, client) => {
+      const { name, value } = e.target;
+      this.setState({ [name]: value });
+      this.generateAutocomplete(e, client);
+   };
+
+   handleURLChange = e => {
       const { name, value } = e.target;
       this.setState({ [name]: value });
    };
+
+   generateAutocomplete = debounce(async (e, client) => {
+      const allThings = await client.query({
+         query: THINGS_SEARCH_QUERY,
+         variables: { searchTerm: e.target.value }
+      });
+      const connectedThings = this.props.things.map(
+         thingObject => thingObject.id
+      );
+      const unConnectedThings = allThings.data.things.filter(
+         thingObject => !connectedThings.includes(thingObject.id)
+      );
+      unConnectedThings.splice(6);
+      this.setState({
+         things: e.target.value === '' ? [] : unConnectedThings
+      });
+   }, 250);
 
    render() {
       let things;
@@ -200,60 +239,156 @@ class LinksBox extends Component {
                         <ErrorMessage error={error} />
                      </div>
                      {this.state.showForm && (
-                        <form
-                           onSubmit={async e => {
-                              e.preventDefault();
-                              if (
-                                 this.state.linkTitle == '' &&
-                                 !this.state.linkURL.includes(
-                                    `${
-                                       process.env.NODE_ENV === 'development'
-                                          ? homeNoHTTP
-                                          : prodHomeNoHTTP
-                                    }/thing?id=`
-                                 )
-                              ) {
-                                 alert('You need to give that link a  title');
-                                 return;
-                              }
-                              if (this.state.linkURL == '') {
-                                 alert("You didn't give a URL, dummy");
-                                 return;
-                              }
-                              this.setState({ loading: true });
-                              const res = await addLinkToThing();
-                              this.setState({
-                                 linkTitle: '',
-                                 linkURL: '',
-                                 loading: false
-                              });
-                           }}
-                        >
-                           <fieldset
-                              disabled={this.state.loading}
-                              aria-busy={this.state.loading}
-                           >
-                              <div className="inputWrapper">
-                                 <input
-                                    type="text"
-                                    id="linkTitle"
-                                    name="linkTitle"
-                                    placeholder="Title"
-                                    value={this.state.linkTitle}
-                                    onChange={this.handleChange}
-                                 />
-                                 <input
-                                    type="url"
-                                    id="linkURL"
-                                    name="linkURL"
-                                    placeholder="URL"
-                                    value={this.state.linkURL}
-                                    onChange={this.handleChange}
-                                 />
-                              </div>
-                           </fieldset>
-                           <button type="submit">Submit</button>
-                        </form>
+                        <ApolloConsumer>
+                           {client => (
+                              <Downshift
+                                 onChange={async item => {
+                                    this.setState({
+                                       loading: true,
+                                       linkTitle: '',
+                                       linkURL: ''
+                                    });
+                                    const res = await client
+                                       .mutate({
+                                          mutation: ADD_LINK_TO_THING_MUTATION,
+                                          variables: {
+                                             title: item.title,
+                                             url: `${
+                                                process.env.NODE_ENV ===
+                                                'development'
+                                                   ? home
+                                                   : prodHome
+                                             }/thing?id=${item.id}`,
+                                             thingID: this.props.thingID
+                                          },
+                                          refetchQueries: [
+                                             {
+                                                query: SINGLE_THING_QUERY,
+                                                variables: {
+                                                   id: this.props.thingID
+                                                }
+                                             }
+                                          ]
+                                       })
+                                       .catch(err => {
+                                          alert(err.message);
+                                       });
+                                    this.setState({ loading: false });
+                                 }}
+                                 itemToString={item =>
+                                    item === null ? '' : item.title
+                                 }
+                              >
+                                 {({
+                                    getInputProps,
+                                    getItemProps,
+                                    isOpen,
+                                    inputValue,
+                                    highlightedIndex
+                                 }) => (
+                                    <form
+                                       onSubmit={async e => {
+                                          e.preventDefault();
+                                          if (
+                                             this.state.linkTitle == '' &&
+                                             !this.state.linkURL.includes(
+                                                `${
+                                                   process.env.NODE_ENV ===
+                                                   'development'
+                                                      ? homeNoHTTP
+                                                      : prodHomeNoHTTP
+                                                }/thing?id=`
+                                             )
+                                          ) {
+                                             alert(
+                                                'You need to give that link a  title'
+                                             );
+                                             return;
+                                          }
+                                          if (this.state.linkURL == '') {
+                                             alert(
+                                                "You didn't give a URL, dummy"
+                                             );
+                                             return;
+                                          }
+                                          this.setState({ loading: true });
+                                          const res = await addLinkToThing();
+                                          this.setState({
+                                             linkTitle: '',
+                                             linkURL: '',
+                                             loading: false
+                                          });
+                                       }}
+                                    >
+                                       <fieldset
+                                          disabled={this.state.loading}
+                                          aria-busy={this.state.loading}
+                                       >
+                                          <div className="inputWrapper">
+                                             <input
+                                                {...getInputProps({
+                                                   type: 'text',
+                                                   id: 'linkTitle',
+                                                   name: 'linkTitle',
+                                                   placeholder: this.state
+                                                      .loading
+                                                      ? 'Adding...'
+                                                      : 'Title',
+                                                   value: this.state.linkTitle,
+                                                   disabled: this.state.loading,
+                                                   onChange: e => {
+                                                      e.persist();
+                                                      this.handleTitleChange(
+                                                         e,
+                                                         client
+                                                      );
+                                                   }
+                                                })}
+                                             />
+                                             <input
+                                                type="url"
+                                                id="linkURL"
+                                                name="linkURL"
+                                                placeholder="URL"
+                                                value={this.state.linkURL}
+                                                onChange={this.handleURLChange}
+                                             />
+                                             {this.state.things.length > 0 &&
+                                                isOpen && (
+                                                   <div className="autocompleteSuggestions">
+                                                      {this.state.things.map(
+                                                         (item, index) => (
+                                                            <div
+                                                               className={
+                                                                  index ===
+                                                                  highlightedIndex
+                                                                     ? 'autoCompleteSuggestionItem highlighted'
+                                                                     : 'autoCompleteSuggestionItem'
+                                                               }
+                                                               {...getItemProps(
+                                                                  {
+                                                                     item
+                                                                  }
+                                                               )}
+                                                               key={item.title}
+                                                            >
+                                                               <TinyThing
+                                                                  thing={item}
+                                                                  key={item.id}
+                                                               />
+                                                            </div>
+                                                         )
+                                                      )}
+                                                   </div>
+                                                )}
+                                          </div>
+                                       </fieldset>
+                                       <button type="submit">Submit</button>
+                                    </form>
+                                 )}
+                              </Downshift>
+                           )}
+                        </ApolloConsumer>
                      )}
                      {this.props.member != null && (
                         <button

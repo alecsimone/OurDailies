@@ -269,7 +269,7 @@ class NarrativesBox extends Component {
                                                       className={
                                                          index ===
                                                          highlightedIndex
-                                                            ? 'autocompleteSuggestionItem highlighted'
+                                                            ? 'autoCompleteSuggestionItem highlighted'
                                                             : 'autoCompleteSuggestionItem'
                                                       }
                                                       {...getItemProps({

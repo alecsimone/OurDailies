@@ -45,7 +45,7 @@ type Mutation {
 
 type Query {
   thing(where: ThingWhereUniqueInput!): Thing
-  things(orderBy: ThingOrderByInput, first: Int, last: Int): [Thing]!
+  things(where: ThingWhereInput, orderBy: ThingOrderByInput, first: Int, last: Int): [Thing]!
   narratives(where: NarrativeWhereInput, last: Int, first: Int, orderBy: NarrativeOrderByInput): [Narrative]!
   narrative(where: NarrativeWhereUniqueInput!): Narrative
   members(where: MemberWhereInput): [Member]!
