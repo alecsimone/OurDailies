@@ -41,6 +41,7 @@ type Mutation {
   resetLiveThing: Int
   eliminateThing(thingID: ID!): Thing
   promoteThing(thingID: ID!): Thing
+  makeThingWinner(thingID: ID!): Thing
 }
 
 type Query {

@@ -206,6 +206,7 @@ class Thing extends Component {
                         voteData={data.votes}
                         passData={data.passes}
                         finalistDate={data.finalistDate}
+                        winner={data.winner}
                         thingID={data.id}
                         member={memberData.me}
                      />

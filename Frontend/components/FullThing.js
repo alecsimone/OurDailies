@@ -133,6 +133,7 @@ class FullThing extends Component {
                voteData={thing.votes}
                passData={thing.passes}
                finalistDate={thing.finalistDate}
+               winner={thing.winner}
                thingID={thing.id}
                member={member.me}
             />

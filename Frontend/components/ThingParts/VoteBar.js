@@ -50,6 +50,14 @@ const PROMOTE_THING_MUTATION = gql`
    }
 `;
 
+const MAKE_THING_WINNER_MUTATION = gql`
+   mutation MAKE_THING_WINNER_MUTATION($thingID: ID!) {
+      makeThingWinner(thingID: $thingID) {
+         id
+      }
+   }
+`;
+
 const StyledVoteBar = styled.div`
    .votebar {
       background: ${props => props.theme.veryLowContrastCoolGrey};
@@ -175,7 +183,8 @@ const StyledVoteBar = styled.div`
          }
       }
       button.eliminate,
-      button.promote {
+      button.promote,
+      button.makeWinner {
          border: none;
          height: 2rem;
          padding: 1px 0 0 0;
@@ -204,7 +213,8 @@ const StyledVoteBar = styled.div`
             height: 2rem;
          }
       }
-      .promoteContainer {
+      .promoteContainer,
+      .makeWinnerContainer {
          flex-grow: 1;
          text-align: left;
          margin: 0 0 0 1rem;
@@ -630,6 +640,46 @@ class VoteBar extends Component {
          </Mutation>
       );
 
+      const makeWinnerButton = (
+         <Mutation
+            mutation={MAKE_THING_WINNER_MUTATION}
+            variables={{ thingID: this.props.thingID }}
+            refetchQueries={[
+               {
+                  query: SINGLE_THING_QUERY,
+                  variables: { id: this.props.thingID }
+               }
+            ]}
+         >
+            {(makeThingWinner, { loading, error }) => (
+               <div className="makeWinnerContainer">
+                  <button
+                     onClick={() => {
+                        if (confirm('Make this thing a winner?'))
+                           makeThingWinner();
+                     }}
+                     className="makeWinner"
+                  >
+                     <img
+                        src="/static/star-outline.png"
+                        className={loading ? 'loading' : 'makeWinnerimg'}
+                     />
+                  </button>
+               </div>
+            )}
+         </Mutation>
+      );
+
+      const winnerIcon = (
+         <div className="makeWinnerContainer">
+            <button className="makeWinner">
+               <img src="/static/star-full.png" className="makeWinnerimg" />
+            </button>
+         </div>
+      );
+
+      const winnerButton = this.props.winner ? winnerIcon : makeWinnerButton;
+
       return (
          <StyledVoteBar className="voteAndPassBars">
             <div className="votebar">
@@ -643,6 +693,10 @@ class VoteBar extends Component {
                   this.props.member.roles.includes('Admin') &&
                   this.props.finalistDate == null &&
                   promoteButton}
+               {this.props.member &&
+                  this.props.member.roles.includes('Admin') &&
+                  this.props.finalistDate != null &&
+                  winnerButton}
                {this.props.member &&
                   this.props.member.roles.includes('Admin') &&
                   eliminateButton}

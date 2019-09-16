@@ -581,6 +581,26 @@ const Mutations = {
       publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
+   },
+   async makeThingWinner(parent, { thingID }, ctx, info) {
+      loggedInGate(ctx);
+      modGate(ctx.request.member);
+
+      const updatedThing = await ctx.db.mutation.updateThing(
+         {
+            where: {
+               id: thingID
+            },
+            data: {
+               winner: true
+            }
+         },
+         `{${fullThingFields}}`
+      );
+
+      publishThingUpdate(updatedThing, ctx);
+
+      return updatedThing;
    }
 };
 

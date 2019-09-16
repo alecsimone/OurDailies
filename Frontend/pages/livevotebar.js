@@ -26,6 +26,7 @@ const LIVE_VOTEBAR_QUERY = gql`
             }
          }
          finalistDate
+         winner
       }
    }
 `;
@@ -75,6 +76,7 @@ const LiveVoteBar = props => {
                      voteData={data.thing.votes}
                      passData={data.thing.passes}
                      finalistDate={data.thing.finalistDate}
+                     winner={data.thing.winner}
                      thingID={data.thing.id}
                      member={memberData.me}
                      subscribeToUpdates={() =>
