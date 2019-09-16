@@ -40,6 +40,7 @@ const StyledTinyThing = styled.article`
    }
    .featuredImage {
       width: 5rem;
+      min-width: 5rem;
       height: 5rem;
       margin-right: 1rem;
       img {
