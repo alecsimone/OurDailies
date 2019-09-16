@@ -42,7 +42,7 @@ const StyledComment = styled.div`
             span.commenter {
                color: ${props => props.theme.majorColor};
                margin-right: 0.5rem;
-               font-weight: 600;
+               font-weight: 700;
             }
             display: inline-block;
             margin: 0;
