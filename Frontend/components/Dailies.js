@@ -7,15 +7,8 @@ import Thing from './Thing';
 import LittleThing from './LittleThing';
 import TinyThing from './TinyThing';
 import LoadingRing from './LoadingRing';
+import { THINGS_FOR_GIVEN_DAY_QUERY } from '../pages/index';
 import { littleThingFields } from '../lib/utils';
-
-const THINGS_FOR_GIVEN_DAY_QUERY = gql`
-   query THINGS_FOR_GIVEN_DAY_QUERY($winnerOffset: Int) {
-      thingsForGivenDay(winnerOffset: $winnerOffset) {
-         ${littleThingFields}
-      }
-   }
-`;
 
 const ThingContainer = styled.div`
    width: 100%;

@@ -169,6 +169,15 @@ const FeaturedImageContainer = styled.div`
          }
       }
    }
+   .videoFeatured h3.headline {
+      @media screen and (min-width: 800px) {
+         position: relative;
+         padding: 1rem;
+         text-shadow: none;
+         background: none;
+         filter: none; /* IE6-9 */
+      }
+   }
 `;
 
 class FeaturedImageCarousel extends Component {
@@ -239,7 +248,8 @@ class FeaturedImageCarousel extends Component {
                link.includes('youtu.be/'))
       );
       const allMedia =
-         thing.featuredImage != null
+         thing.featuredImage != null &&
+         thing.featuredImage !== '/static/defaultPic.jpg'
             ? featuredImageButItsAnArrayNow.concat(mediaLinksArray)
             : mediaLinksArray;
 
@@ -294,7 +304,9 @@ class FeaturedImageCarousel extends Component {
 
       if (
          mediaLinksArray.length > 1 ||
-         (mediaLinksArray.length > 0 && thing.featuredImage != null)
+         (mediaLinksArray.length > 0 &&
+            thing.featuredImage != null &&
+            thing.featuredImage !== '/static/defaultPic.jpg')
       ) {
          leftButton = (
             <button
@@ -397,7 +409,7 @@ class FeaturedImageCarousel extends Component {
       ) {
          const videoID = getYoutubeVideoIdFromLink(currentLink);
          featuredImage = (
-            <>
+            <div className="videoFeatured">
                <div className="embed-container">
                   <iframe
                      src={`https://www.youtube.com/embed/${videoID}?autoplay=0&loop=1&playlist=${videoID}`}
@@ -407,7 +419,7 @@ class FeaturedImageCarousel extends Component {
                   />
                </div>
                {headline}
-            </>
+            </div>
          );
       }
 

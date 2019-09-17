@@ -32,6 +32,31 @@ const Mutations = {
          }
       }
 
+      const link = args.originalSource;
+      let featuredImage = null;
+      let includedLinks = [];
+      if (
+         link.includes('jpg') ||
+         link.includes('jpeg') ||
+         link.includes('png') ||
+         link.includes('gif')
+      ) {
+         featuredImage = link;
+      } else if (
+         link.includes('youtube.com/watch?v=') ||
+         link.includes('youtu.be/')
+      ) {
+         featuredImage = '/static/defaultPic.jpg';
+         includedLinks = {
+            create: {
+               title: args.title,
+               url: link
+            }
+         };
+      }
+
+      console.log(featuredImage);
+
       const thing = await ctx.db.mutation.createThing(
          {
             data: {
@@ -51,7 +76,9 @@ const Mutations = {
                      value: ctx.request.member.rep
                   }
                },
-               score: ctx.request.member.rep
+               score: ctx.request.member.rep,
+               featuredImage,
+               includedLinks
             }
          },
          info
