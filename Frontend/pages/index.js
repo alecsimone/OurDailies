@@ -7,9 +7,9 @@ import NarrativesBar from '../components/NarrativesBar';
 import LoadingRing from '../components/LoadingRing';
 import { littleThingFields } from '../lib/utils';
 
-const THINGS_FOR_MOST_RECENT_DAY_QUERY = gql`
-   query THINGS_FOR_MOST_RECENT_DAY_QUERY {
-      thingsForMostRecentDay {
+const THINGS_FOR_GIVEN_DAY_QUERY = gql`
+   query THINGS_FOR_GIVEN_DAY_QUERY($winnerOffset: Int) {
+      thingsForGivenDay(winnerOffset: $winnerOffset) {
          ${littleThingFields}
       }
    }
@@ -20,19 +20,21 @@ class Home extends Component {
       return (
          <div>
             <NarrativesBar />
-            <Query query={THINGS_FOR_MOST_RECENT_DAY_QUERY}>
+            <Query
+               query={THINGS_FOR_GIVEN_DAY_QUERY}
+               variables={{ winnerOffset: 0 }}
+            >
                {({ data, error, loading }) => {
                   if (loading) return <LoadingRing />;
                   if (error) return <p>Error: {error.message}</p>;
-                  const [winner] = data.thingsForMostRecentDay.filter(
+                  const [winner] = data.thingsForGivenDay.filter(
                      thing => thing.winner
                   );
                   return (
                      <ApolloConsumer>
                         {client => (
                            <Dailies
-                              things={data.thingsForMostRecentDay}
-                              startDate={winner.finalistDate}
+                              things={data.thingsForGivenDay}
                               client={client}
                            />
                         )}
@@ -45,5 +47,5 @@ class Home extends Component {
    }
 }
 
-export { THINGS_FOR_MOST_RECENT_DAY_QUERY };
+export { THINGS_FOR_GIVEN_DAY_QUERY };
 export default Home;

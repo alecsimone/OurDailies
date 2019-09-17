@@ -55,7 +55,6 @@ type Query {
   votesConnection(where: VoteWhereInput!): VoteConnection
   thingsConnection(where: ThingWhereInput): ThingConnection
   me: Member
-  thingsForMostRecentDay: [Thing]!
   thingsForGivenDay(day: String, winnerOffset: Int): [Thing]!
   thingsForNew: [Thing]!
   thingsForCurate: [Thing]!

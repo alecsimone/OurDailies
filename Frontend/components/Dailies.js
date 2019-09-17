@@ -34,8 +34,7 @@ const ThingContainer = styled.div`
 class Dailies extends Component {
    state = {
       thingDays: [],
-      lastDayQueried: this.props.startDate,
-      winnerOffset: 0,
+      winnerOffset: 1,
       pullingMore: false
    };
 

@@ -22,45 +22,6 @@ const Query = {
          info
       );
    },
-   async thingsForMostRecentDay(parent, args, ctx, info) {
-      const [mostRecentWinner] = await ctx.db.query.things(
-         {
-            where: {
-               winner: true
-            },
-            orderBy: 'finalistDate_DESC',
-            first: 1
-         },
-         `{finalistDate}`
-      );
-      const tPos = mostRecentWinner.finalistDate.indexOf('T');
-      const mostRecentWinnerDate = new Date(
-         mostRecentWinner.finalistDate.substring(0, tPos)
-      );
-      const startingUnixTime =
-         mostRecentWinnerDate.getTime() + 1000 * 60 * 60 * 4;
-      const endingUnixTime = startingUnixTime + 1000 * 60 * 60 * 24;
-      const endingDate = new Date(endingUnixTime);
-      const mostRecentDayThings = await ctx.db.query.things(
-         {
-            where: {
-               OR: [
-                  {
-                     finalistDate_gte: mostRecentWinnerDate,
-                     finalistDate_lt: endingDate
-                  },
-                  {
-                     finalistDate: null,
-                     createdAt_gte: mostRecentWinnerDate,
-                     createdAt_lt: endingDate
-                  }
-               ]
-            }
-         },
-         info
-      );
-      return mostRecentDayThings;
-   },
    async thingsForGivenDay(parent, { winnerOffset }, ctx, info) {
       const offsetWinners = await ctx.db.query.things(
          {
@@ -75,18 +36,43 @@ const Query = {
       );
       if (offsetWinners.length === 1) return [];
 
+      const newerWinnerDate = new Date(offsetWinners[0].finalistDate);
+      const newestUnixTime = newerWinnerDate.getTime() + 1000 * 60 * 60 * 4;
+
+      const olderWinnerDate = new Date(offsetWinners[1].finalistDate);
+      let oldestUnixTime = olderWinnerDate.getTime() + 1000 * 60 * 60 * 4;
+
+      if (newestUnixTime - oldestUnixTime < 1000 * 60 * 60 * 4) {
+         const [evenOlderWinner] = await ctx.db.query.things(
+            {
+               where: {
+                  winner: true
+               },
+               orderBy: 'finalistDate_DESC',
+               first: 1,
+               skip: winnerOffset + 2
+            },
+            `{finalistDate}`
+         );
+         const evenOlderWinnerDate = new Date(evenOlderWinner.finalistDate);
+         oldestUnixTime = evenOlderWinnerDate.getTime() + 1000 * 60 * 60 * 4;
+      }
+
+      const newestDate = new Date(newestUnixTime);
+      const oldestDate = new Date(oldestUnixTime);
+
       const thingsForDay = await ctx.db.query.things(
          {
             where: {
                OR: [
                   {
-                     finalistDate_gte: offsetWinners[1].finalistDate,
-                     finalistDate_lt: offsetWinners[0].finalistDate
+                     finalistDate_gte: oldestDate,
+                     finalistDate_lt: newestDate
                   },
                   {
                      finalistDate: null,
-                     createdAt_gte: offsetWinners[1].finalistDate,
-                     createdAt_lt: offsetWinners[0].finalistDate
+                     createdAt_gte: oldestDate,
+                     createdAt_lt: newestDate
                   }
                ]
             }
