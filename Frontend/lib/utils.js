@@ -74,6 +74,36 @@ const getYoutubeVideoIdFromLink = function(url) {
 
 export { getYoutubeVideoIdFromLink };
 
+const getGfycatSlugFromLink = function(url) {
+   let gfyCode;
+   if (url.indexOf('/detail/') > -1) {
+      const gfyCodePosition = url.indexOf('/detail/') + 8;
+      if (url.indexOf('?') > -1) {
+         const gfyCodeEndPosition = url.indexOf('?');
+         gfyCode = url.substring(gfyCodePosition, gfyCodeEndPosition);
+      } else {
+         gfyCode = url.substring(gfyCodePosition);
+      }
+   } else {
+      const gfyCodePosition = url.indexOf('gfycat.com/') + 11;
+      if (url.indexOf('?') > -1) {
+         const gfyCodeEndPosition = url.indexOf('?');
+         gfyCode = url.substring(gfyCodePosition, gfyCodeEndPosition);
+      } else if (url.indexOf('.mp4') > -1) {
+         const gfyCodeEndPosition = url.indexOf('.mp4');
+         gfyCode = url.substring(gfyCodePosition, gfyCodeEndPosition);
+      } else if (url.indexOf('-') > -1) {
+         const gfyCodeEndPosition = url.indexOf('-');
+         gfyCode = url.substring(gfyCodePosition, gfyCodeEndPosition);
+      } else {
+         gfyCode = url.substring(gfyCodePosition);
+      }
+   }
+   return gfyCode;
+};
+
+export { getGfycatSlugFromLink };
+
 const getScoreForThing = function(thingObject) {
    const score = thingObject.votes.reduce(
       (thingScore, voteObject) => thingScore + voteObject.value,

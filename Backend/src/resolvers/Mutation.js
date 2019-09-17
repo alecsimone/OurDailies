@@ -44,7 +44,8 @@ const Mutations = {
          featuredImage = link;
       } else if (
          link.includes('youtube.com/watch?v=') ||
-         link.includes('youtu.be/')
+         link.includes('youtu.be/') ||
+         link.includes('gfycat.com/')
       ) {
          featuredImage = '/static/defaultPic.jpg';
          includedLinks = {

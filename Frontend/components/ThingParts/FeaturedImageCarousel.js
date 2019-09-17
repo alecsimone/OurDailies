@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import { getYoutubeVideoIdFromLink } from '../../lib/utils';
+import {
+   getYoutubeVideoIdFromLink,
+   getGfycatSlugFromLink
+} from '../../lib/utils';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
 
 const SET_FEATURED_IMAGE_MUTATION = gql`
@@ -245,7 +248,8 @@ class FeaturedImageCarousel extends Component {
                link.includes('png') ||
                link.includes('gif') ||
                link.includes('youtube.com/watch?v=') ||
-               link.includes('youtu.be/'))
+               link.includes('youtu.be/') ||
+               link.includes('gfycat.com/'))
       );
       const allMedia =
          thing.featuredImage != null &&
@@ -413,6 +417,21 @@ class FeaturedImageCarousel extends Component {
                <div className="embed-container">
                   <iframe
                      src={`https://www.youtube.com/embed/${videoID}?autoplay=0&loop=1&playlist=${videoID}`}
+                     frameBorder="0"
+                     scrolling="no"
+                     allowFullScreen
+                  />
+               </div>
+               {headline}
+            </div>
+         );
+      } else if (currentLink.includes('gfycat.com/')) {
+         const videoID = getGfycatSlugFromLink(currentLink);
+         featuredImage = (
+            <div className="videoFeatured">
+               <div className="embed-container">
+                  <iframe
+                     src={`https://gfycat.com/ifr/${videoID}`}
                      frameBorder="0"
                      scrolling="no"
                      allowFullScreen
