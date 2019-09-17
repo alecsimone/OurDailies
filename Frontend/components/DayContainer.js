@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import Thing from './Thing';
-import LittleThing from './LittleThing';
-import { getScoreForThing } from '../lib/utils';
+import Things from './Things';
 
 const StyledDayContainer = styled.div`
    .dateBar {
@@ -30,17 +28,14 @@ const StyledDayContainer = styled.div`
          z-index: -1;
       }
    }
-   .littleThings {
-      margin-top: 4rem;
-      display: flex;
-      align-items: stretch;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-   }
 `;
 
 const DayContainer = props => {
-   const date = new Date(props.things[0].finalistDate);
+   const startingTime =
+      props.things[0].finalistDate != null
+         ? props.things[0].finalistDate
+         : props.things[0].createdAt;
+   const date = new Date(startingTime);
    const month = date.getMonth();
    const monthsArray = [
       'JANUARY',
@@ -70,24 +65,6 @@ const DayContainer = props => {
    }
    const year = date.getFullYear();
 
-   let windowWidth = 800;
-   try {
-      windowWidth = window.innerWidth;
-   } catch (windowError) {}
-
-   props.things.sort((a, b) => {
-      const scoreA = getScoreForThing(a);
-      const scoreB = getScoreForThing(b);
-      return scoreB - scoreA;
-   });
-
-   const littleThingsArray = [];
-   props.things.forEach((thing, index) => {
-      if (index !== 0 || windowWidth < 800) {
-         littleThingsArray.push(<LittleThing thing={thing} key={thing.id} />);
-      }
-   });
-
    return (
       <StyledDayContainer>
          <div className="dateBar">
@@ -95,14 +72,7 @@ const DayContainer = props => {
                {monthString} {dayString}, {year}
             </h2>
          </div>
-         {windowWidth >= 800 && (
-            <Thing
-               thing={props.things[0]}
-               key={props.things[0].id}
-               client={props.client}
-            />
-         )}
-         <div className="littleThings">{littleThingsArray}</div>
+         <Things things={props.things} />
       </StyledDayContainer>
    );
 };

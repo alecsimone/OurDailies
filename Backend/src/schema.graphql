@@ -46,7 +46,7 @@ type Mutation {
 
 type Query {
   thing(where: ThingWhereUniqueInput!): Thing
-  things(where: ThingWhereInput, orderBy: ThingOrderByInput, first: Int, last: Int): [Thing]!
+  things(where: ThingWhereInput, orderBy: ThingOrderByInput, first: Int, last: Int, skip: Int): [Thing]!
   narratives(where: NarrativeWhereInput, last: Int, first: Int, orderBy: NarrativeOrderByInput): [Narrative]!
   narrative(where: NarrativeWhereUniqueInput!): Narrative
   members(where: MemberWhereInput): [Member]!
@@ -56,7 +56,7 @@ type Query {
   thingsConnection(where: ThingWhereInput): ThingConnection
   me: Member
   thingsForMostRecentDay: [Thing]!
-  thingsForGivenDay(day: String!): [Thing]!
+  thingsForGivenDay(day: String, winnerOffset: Int): [Thing]!
   thingsForNew: [Thing]!
   thingsForCurate: [Thing]!
   thingsForFinalists: [Thing]!

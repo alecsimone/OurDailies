@@ -23,58 +23,76 @@ const Query = {
       );
    },
    async thingsForMostRecentDay(parent, args, ctx, info) {
-      const [mostRecentFinalist] = await ctx.db.query.things(
+      const [mostRecentWinner] = await ctx.db.query.things(
          {
             where: {
-               finalistDate_not: null
+               winner: true
             },
             orderBy: 'finalistDate_DESC',
             first: 1
          },
          `{finalistDate}`
       );
-      const tPos = mostRecentFinalist.finalistDate.indexOf('T');
-      const mostRecentFinalistDate = new Date(
-         mostRecentFinalist.finalistDate.substring(0, tPos)
+      const tPos = mostRecentWinner.finalistDate.indexOf('T');
+      const mostRecentWinnerDate = new Date(
+         mostRecentWinner.finalistDate.substring(0, tPos)
       );
       const startingUnixTime =
-         mostRecentFinalistDate.getTime() + 1000 * 60 * 60 * 4;
+         mostRecentWinnerDate.getTime() + 1000 * 60 * 60 * 4;
       const endingUnixTime = startingUnixTime + 1000 * 60 * 60 * 24;
       const endingDate = new Date(endingUnixTime);
       const mostRecentDayThings = await ctx.db.query.things(
          {
             where: {
-               finalistDate_gte: mostRecentFinalistDate,
-               finalistDate_lt: endingDate
+               OR: [
+                  {
+                     finalistDate_gte: mostRecentWinnerDate,
+                     finalistDate_lt: endingDate
+                  },
+                  {
+                     finalistDate: null,
+                     createdAt_gte: mostRecentWinnerDate,
+                     createdAt_lt: endingDate
+                  }
+               ]
             }
          },
          info
       );
       return mostRecentDayThings;
    },
-   async thingsForGivenDay(parent, { day }, ctx, info) {
-      let thingsForDay = [];
-      let i = -1;
-      const tPos = day.indexOf('T');
-      const initialDate = new Date(day.substring(0, tPos));
-      while (thingsForDay.length === 0 && i < 30) {
-         const startDate = new Date(
-            initialDate.getTime() - 1000 * 60 * 60 * 24 * (i + 1)
-         );
-         const endingDate = new Date(
-            initialDate.getTime() - 1000 * 60 * 60 * 24 * i
-         );
-         thingsForDay = await ctx.db.query.things(
-            {
-               where: {
-                  finalistDate_gte: startDate,
-                  finalistDate_lt: endingDate
-               }
+   async thingsForGivenDay(parent, { winnerOffset }, ctx, info) {
+      const offsetWinners = await ctx.db.query.things(
+         {
+            where: {
+               winner: true
             },
-            info
-         );
-         i++;
-      }
+            orderBy: 'finalistDate_DESC',
+            first: 2,
+            skip: winnerOffset
+         },
+         `{finalistDate}`
+      );
+      if (offsetWinners.length === 1) return [];
+
+      const thingsForDay = await ctx.db.query.things(
+         {
+            where: {
+               OR: [
+                  {
+                     finalistDate_gte: offsetWinners[1].finalistDate,
+                     finalistDate_lt: offsetWinners[0].finalistDate
+                  },
+                  {
+                     finalistDate: null,
+                     createdAt_gte: offsetWinners[1].finalistDate,
+                     createdAt_lt: offsetWinners[0].finalistDate
+                  }
+               ]
+            }
+         },
+         info
+      );
       return thingsForDay;
    },
    async thingsForNew(parent, args, ctx, info) {

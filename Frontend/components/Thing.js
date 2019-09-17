@@ -165,7 +165,7 @@ class Thing extends Component {
       );
 
       return (
-         <StyledThing>
+         <StyledThing className="thing">
             <div className="body">
                <div className="TopInfo">
                   <h3>

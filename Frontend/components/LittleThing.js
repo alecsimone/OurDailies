@@ -12,14 +12,14 @@ const StyledLittleThing = styled.article`
    display: flex;
    flex-direction: column;
    justify-content: space-between;
-   width: 35rem;
+   /* width: 35rem; */
    min-width: 35rem;
    flex-grow: 1;
    max-width: 60rem;
    position: relative;
    padding: 1.25rem 1rem 0 1rem;
    margin: 0 1.5rem 4rem;
-   justify-self: center;
+   /* justify-self: center; */
    align-items: flex-start;
    background: ${props => props.theme.veryLowContrastCoolGrey};
    border-radius: 2px;

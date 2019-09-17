@@ -1,0 +1,16 @@
+From a technical standpoint, what we have here is a public database and some tools for interacting with it.
+
+The database is hosted on Heroku as a Prisma endpoint for a MYSQL database.
+
+The public must become members in order to use the database, but once they do they have two tools
+-The OurDailies.org app
+-The Twitch chat extension
+
+Both of these tools interface with the database through a graphql-yoga server, also running on heroku. Although it can be found at playground.ourdailies.org, it's important to note that it is an entirely separate app, only sharing a domain.
+
+So the full stack is
+-A MYSQL database
+-A Prisma endpoint for that database
+-A graphql-yoga managed Express server to resolve requests on that endpoint
+--A Next.js app that runs React-with-Apollo
+--A Chrome extension that processes Twitch chat
