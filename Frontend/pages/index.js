@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import styled from 'styled-components';
 import Dailies from '../components/Dailies';
 import NarrativesBar from '../components/NarrativesBar';
+import LoadingRing from '../components/LoadingRing';
 import { littleThingFields } from '../lib/utils';
 
 const THINGS_FOR_MOST_RECENT_DAY_QUERY = gql`
@@ -21,7 +22,7 @@ class Home extends Component {
             <NarrativesBar />
             <Query query={THINGS_FOR_MOST_RECENT_DAY_QUERY}>
                {({ data, error, loading }) => {
-                  if (loading) return <p>Loading...</p>;
+                  if (loading) return <LoadingRing />;
                   if (error) return <p>Error: {error.message}</p>;
                   const [winner] = data.thingsForMostRecentDay.filter(
                      thing => thing.winner

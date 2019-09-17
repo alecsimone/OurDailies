@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Things from './Things';
+import LoadingRing from './LoadingRing';
 
 const StyledDayContainer = styled.div`
    .dateBar {

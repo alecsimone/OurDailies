@@ -6,6 +6,7 @@ import DayContainer from './DayContainer';
 import Thing from './Thing';
 import LittleThing from './LittleThing';
 import TinyThing from './TinyThing';
+import LoadingRing from './LoadingRing';
 import { littleThingFields } from '../lib/utils';
 
 const THINGS_FOR_GIVEN_DAY_QUERY = gql`
@@ -27,47 +28,6 @@ const ThingContainer = styled.div`
       font-size: ${props => props.theme.smallHead};
       font-weight: 600;
       color: ${props => props.theme.majorColor};
-   }
-   .lds-container {
-      width: 100%;
-      text-align: center;
-   }
-   .lds-ring {
-      display: inline-block;
-      position: relative;
-      margin: auto;
-      width: 64px;
-      height: 64px;
-   }
-   .lds-ring div {
-      box-sizing: border-box;
-      display: block;
-      position: absolute;
-      width: 51px;
-      height: 51px;
-      margin: 6px;
-      border: 6px solid ${props => props.theme.majorColor};
-      border-radius: 50%;
-      animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-      border-color: ${props => props.theme.majorColor} transparent transparent
-         transparent;
-   }
-   .lds-ring div:nth-child(1) {
-      animation-delay: -0.45s;
-   }
-   .lds-ring div:nth-child(2) {
-      animation-delay: -0.3s;
-   }
-   .lds-ring div:nth-child(3) {
-      animation-delay: -0.15s;
-   }
-   @keyframes lds-ring {
-      0% {
-         transform: rotate(0deg);
-      }
-      100% {
-         transform: rotate(360deg);
-      }
    }
 `;
 
@@ -135,18 +95,7 @@ class Dailies extends Component {
          <ThingContainer id="thingContainer">
             <DayContainer things={this.props.things} />
             {dayContainersArray}
-            {this.state.pullingMore ? (
-               <div className="lds-container">
-                  <div className="lds-ring">
-                     <div />
-                     <div />
-                     <div />
-                     <div />
-                  </div>
-               </div>
-            ) : (
-               ''
-            )}
+            {this.state.pullingMore ? <LoadingRing /> : ''}
             {this.state.noMorePosts ? (
                <p className="nextDayStatus">NO MORE POSTS</p>
             ) : (

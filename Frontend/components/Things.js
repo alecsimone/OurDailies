@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Thing from './Thing';
 import LittleThing from './LittleThing';
 import TinyThing from './TinyThing';
+import LoadingRing from './LoadingRing';
 import { getScoreForThing } from '../lib/utils';
 
 const ThingContainer = styled.div`
@@ -16,11 +17,10 @@ const ThingContainer = styled.div`
    margin: 0 auto 8rem;
    display: grid;
    grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
-   grid-template-rows: fit-content(max-content);
-   grid-auto-rows: fit-content(max-content);
+   grid-template-rows: max-content;
+   grid-auto-rows: max-content;
    grid-gap: 4rem 2rem;
    grid-auto-flow: dense;
-   align-items: flex-start;
    justify-items: stretch;
    .thing {
       grid-column: 1 / -1;
@@ -29,6 +29,7 @@ const ThingContainer = styled.div`
    .littleThing {
       grid-row: span 8;
       margin: auto;
+      min-height: 40rem;
    }
    .tinyThing {
       grid-row: span 1;
@@ -38,9 +39,6 @@ const ThingContainer = styled.div`
 
 class Things extends Component {
    render() {
-      if (!process.browser) {
-         return <div />;
-      }
       let windowWidth = 800;
       try {
          windowWidth = window.innerWidth;
@@ -73,6 +71,9 @@ class Things extends Component {
       //    }
       // });
       const thingsArray = this.props.things.map(thing => {
+         if (!process.browser) {
+            return <LoadingRing />;
+         }
          if (thing.winner && windowWidth > 800) {
             return <Thing thing={thing} key={thing.id} />;
          }
