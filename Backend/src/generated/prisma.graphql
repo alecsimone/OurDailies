@@ -1722,7 +1722,7 @@ type Thing {
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
   passes(where: PassWhereInput, orderBy: PassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Pass!]
   score: Int!
-  winner: Boolean
+  winner: DateTime
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   eliminated: Boolean!
   finalistDate: DateTime
@@ -1749,7 +1749,7 @@ input ThingCreateInput {
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentCreateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -1806,7 +1806,7 @@ input ThingCreateWithoutAuthorInput {
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentCreateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -1825,7 +1825,7 @@ input ThingCreateWithoutCommentsInput {
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   eliminated: Boolean
   finalistDate: DateTime
 }
@@ -1842,7 +1842,7 @@ input ThingCreateWithoutIncludedLinksInput {
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentCreateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -1860,7 +1860,7 @@ input ThingCreateWithoutPartOfNarrativesInput {
   votes: VoteCreateManyWithoutOnThingInput
   passes: PassCreateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentCreateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -1878,7 +1878,7 @@ input ThingCreateWithoutPassesInput {
   partOfNarratives: NarrativeCreateManyWithoutConnectedThingsInput
   votes: VoteCreateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentCreateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -1896,7 +1896,7 @@ input ThingCreateWithoutVotesInput {
   partOfNarratives: NarrativeCreateManyWithoutConnectedThingsInput
   passes: PassCreateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentCreateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -1937,7 +1937,7 @@ type ThingPreviousValues {
   originalSource: String!
   summary: [String!]!
   score: Int!
-  winner: Boolean
+  winner: DateTime
   eliminated: Boolean!
   finalistDate: DateTime
   createdAt: DateTime!
@@ -2009,8 +2009,14 @@ input ThingScalarWhereInput {
   score_lte: Int
   score_gt: Int
   score_gte: Int
-  winner: Boolean
-  winner_not: Boolean
+  winner: DateTime
+  winner_not: DateTime
+  winner_in: [DateTime!]
+  winner_not_in: [DateTime!]
+  winner_lt: DateTime
+  winner_lte: DateTime
+  winner_gt: DateTime
+  winner_gte: DateTime
   eliminated: Boolean
   eliminated_not: Boolean
   finalistDate: DateTime
@@ -2072,7 +2078,7 @@ input ThingUpdateDataInput {
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -2090,7 +2096,7 @@ input ThingUpdateInput {
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -2102,7 +2108,7 @@ input ThingUpdateManyDataInput {
   originalSource: String
   summary: ThingUpdatesummaryInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   eliminated: Boolean
   finalistDate: DateTime
 }
@@ -2125,7 +2131,7 @@ input ThingUpdateManyMutationInput {
   originalSource: String
   summary: ThingUpdatesummaryInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   eliminated: Boolean
   finalistDate: DateTime
 }
@@ -2210,7 +2216,7 @@ input ThingUpdateWithoutAuthorDataInput {
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -2228,7 +2234,7 @@ input ThingUpdateWithoutCommentsDataInput {
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   eliminated: Boolean
   finalistDate: DateTime
 }
@@ -2244,7 +2250,7 @@ input ThingUpdateWithoutIncludedLinksDataInput {
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -2261,7 +2267,7 @@ input ThingUpdateWithoutPartOfNarrativesDataInput {
   votes: VoteUpdateManyWithoutOnThingInput
   passes: PassUpdateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -2278,7 +2284,7 @@ input ThingUpdateWithoutPassesDataInput {
   partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
   votes: VoteUpdateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -2295,7 +2301,7 @@ input ThingUpdateWithoutVotesDataInput {
   partOfNarratives: NarrativeUpdateManyWithoutConnectedThingsInput
   passes: PassUpdateManyWithoutOnThingInput
   score: Int
-  winner: Boolean
+  winner: DateTime
   comments: CommentUpdateManyWithoutOnThingInput
   eliminated: Boolean
   finalistDate: DateTime
@@ -2435,8 +2441,14 @@ input ThingWhereInput {
   score_lte: Int
   score_gt: Int
   score_gte: Int
-  winner: Boolean
-  winner_not: Boolean
+  winner: DateTime
+  winner_not: DateTime
+  winner_in: [DateTime!]
+  winner_not_in: [DateTime!]
+  winner_lt: DateTime
+  winner_lte: DateTime
+  winner_gt: DateTime
+  winner_gte: DateTime
   comments_every: CommentWhereInput
   comments_some: CommentWhereInput
   comments_none: CommentWhereInput

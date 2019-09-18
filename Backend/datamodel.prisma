@@ -11,7 +11,7 @@ type Thing {
   votes: [Vote]
   passes: [Pass]
   score: Int! @default(value: 0)
-  winner: Boolean @default(value: false)
+  winner: DateTime
   comments: [Comment]
   eliminated: Boolean! @default(value: false)
   finalistDate: DateTime

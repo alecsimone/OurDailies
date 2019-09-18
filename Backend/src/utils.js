@@ -238,15 +238,64 @@ async function pass(thingID, passer, ctx) {
 }
 exports.pass = pass;
 
+async function getWinnersFromDifferentDays(winnerOffset, ctx) {
+   const offsetWinners = await ctx.db.query.things(
+      {
+         where: {
+            winner_not: null
+         },
+         orderBy: 'finalistDate_DESC',
+         first: 2,
+         skip: winnerOffset
+      },
+      `{winner}`
+   );
+   if (offsetWinners.length <= 1) return offsetWinners;
+
+   const newerWinnerDate = new Date(offsetWinners[0].winner);
+   let olderWinnerDate = new Date(offsetWinners[1].winner);
+
+   let i = 0;
+   while (
+      newerWinnerDate.getDate() == olderWinnerDate.getDate() &&
+      newerWinnerDate.getMonth() == olderWinnerDate.getMonth() &&
+      i < 10
+   ) {
+      const [evenOlderWinner] = await ctx.db.query.things(
+         {
+            where: {
+               winner_not: null
+            },
+            orderBy: 'finalistDate_DESC',
+            first: 1,
+            skip: winnerOffset + 2 + i
+         },
+         `{winner}`
+      );
+      olderWinnerDate = new Date(evenOlderWinner.winner);
+      offsetWinners[1] = evenOlderWinner;
+      i++;
+   }
+   return offsetWinners;
+}
+exports.getWinnersFromDifferentDays = getWinnersFromDifferentDays;
+
 async function getFinalists(ctx) {
-   const now = new Date();
-   const yesterday = new Date(now.getTime() - 1000 * 60 * 60 * 24);
+   const [mostRecentWinner] = await ctx.db.query.things(
+      {
+         where: {
+            winner_not: null
+         },
+         orderBy: 'finalistDate_DESC',
+         first: 1
+      },
+      `{winner}`
+   );
+   const lastWinnerDate = new Date(mostRecentWinner.winner);
    const finalists = await ctx.db.query.things(
       {
          where: {
-            AND: {
-               finalistDate_gte: yesterday.toISOString()
-            }
+            finalistDate_gt: lastWinnerDate
          }
       },
       `{${fullThingFields}}`

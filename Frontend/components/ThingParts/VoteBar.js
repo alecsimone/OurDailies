@@ -678,7 +678,8 @@ class VoteBar extends Component {
          </div>
       );
 
-      const winnerButton = this.props.winner ? winnerIcon : makeWinnerButton;
+      const winnerButton =
+         this.props.winner != null ? winnerIcon : makeWinnerButton;
 
       return (
          <StyledVoteBar className="voteAndPassBars">

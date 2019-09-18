@@ -620,7 +620,7 @@ const Mutations = {
                id: thingID
             },
             data: {
-               winner: true
+               winner: new Date()
             }
          },
          `{${fullThingFields}}`

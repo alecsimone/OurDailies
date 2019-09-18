@@ -3,37 +3,15 @@ import gql from 'graphql-tag';
 import Member from '../components/Member';
 import VoteBar from '../components/ThingParts/VoteBar';
 import { THING_SUBSCRIPTION } from './thing';
+import { littleThingFields } from '../lib/utils';
 
 const LIVE_VOTEBAR_QUERY = gql`
    query LIVE_VOTEBAR_QUERY($id: ID!) {
       thing(where: { id: $id }) {
-         id
-         votes {
-            voter {
-               id
-               displayName
-               avatar
-               roles
-            }
-            value
-         }
-         passes {
-            passer {
-               id
-               displayName
-               avatar
-               roles
-            }
-         }
-         finalistDate
-         winner
+         ${littleThingFields}
       }
    }
 `;
-
-{
-   /*  */
-}
 
 const LiveVoteBar = props => {
    const liveThingID = 'ck0660isb7fnt0b09rh569iu0';

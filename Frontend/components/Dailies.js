@@ -57,11 +57,11 @@ class Dailies extends Component {
 
    getNextDaysThings = async () => {
       const { client } = this.props;
-      const thingsForDay = await client.query({
+      const { data } = await client.query({
          query: THINGS_FOR_GIVEN_DAY_QUERY,
          variables: { winnerOffset: this.state.winnerOffset }
       });
-      if (thingsForDay.data.thingsForGivenDay.length === 0) {
+      if (data.thingsForGivenDay.length === 0) {
          this.setState({
             pullingMore: false,
             noMorePosts: true
@@ -70,11 +70,15 @@ class Dailies extends Component {
          return;
       }
       const { thingDays } = this.state;
-      thingDays.push(thingsForDay.data.thingsForGivenDay);
-      const { thingsForGivenDay } = thingsForDay.data;
+      thingDays.push(data.thingsForGivenDay);
+      const { thingsForGivenDay } = data;
+      const winners = data.thingsForGivenDay.filter(
+         thing => thing.winner != null
+      );
+      console.log(winners);
       this.setState({
          thingDays,
-         winnerOffset: this.state.winnerOffset + 1,
+         winnerOffset: this.state.winnerOffset + winners.length,
          pullingMore: false
       });
    };

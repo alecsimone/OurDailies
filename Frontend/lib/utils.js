@@ -157,6 +157,7 @@ const littleThingFields = `
    }
    score
    winner
+   eliminated
    finalistDate
    createdAt
    updatedAt

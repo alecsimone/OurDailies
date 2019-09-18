@@ -1,5 +1,5 @@
 const { forwardTo } = require('prisma-binding');
-const { getFinalists } = require('../utils');
+const { getWinnersFromDifferentDays, getFinalists } = require('../utils');
 
 const Query = {
    thing: forwardTo('db'),
@@ -23,56 +23,28 @@ const Query = {
       );
    },
    async thingsForGivenDay(parent, { winnerOffset }, ctx, info) {
-      const offsetWinners = await ctx.db.query.things(
-         {
-            where: {
-               winner: true
-            },
-            orderBy: 'finalistDate_DESC',
-            first: 2,
-            skip: winnerOffset
-         },
-         `{finalistDate}`
-      );
-      if (offsetWinners.length === 1) return [];
+      const winners = await getWinnersFromDifferentDays(winnerOffset, ctx);
 
-      const newerWinnerDate = new Date(offsetWinners[0].finalistDate);
-      const newestUnixTime = newerWinnerDate.getTime() + 1000 * 60 * 60 * 4;
-
-      const olderWinnerDate = new Date(offsetWinners[1].finalistDate);
-      let oldestUnixTime = olderWinnerDate.getTime() + 1000 * 60 * 60 * 4;
-
-      if (newestUnixTime - oldestUnixTime < 1000 * 60 * 60 * 4) {
-         const [evenOlderWinner] = await ctx.db.query.things(
-            {
-               where: {
-                  winner: true
-               },
-               orderBy: 'finalistDate_DESC',
-               first: 1,
-               skip: winnerOffset + 2
-            },
-            `{finalistDate}`
-         );
-         const evenOlderWinnerDate = new Date(evenOlderWinner.finalistDate);
-         oldestUnixTime = evenOlderWinnerDate.getTime() + 1000 * 60 * 60 * 4;
+      if (winners.length === 0) {
+         return [];
       }
 
-      const newestDate = new Date(newestUnixTime);
-      const oldestDate = new Date(oldestUnixTime);
+      const newerWinnerDate = new Date(winners[0].winner);
+      const olderWinnerDate =
+         winners.length === 1 ? new Date(0) : new Date(winners[1].winner);
 
       const thingsForDay = await ctx.db.query.things(
          {
             where: {
                OR: [
                   {
-                     finalistDate_gte: oldestDate,
-                     finalistDate_lt: newestDate
+                     finalistDate_gt: olderWinnerDate,
+                     finalistDate_lte: newerWinnerDate
                   },
                   {
                      finalistDate: null,
-                     createdAt_gte: oldestDate,
-                     createdAt_lt: newestDate
+                     createdAt_gt: olderWinnerDate,
+                     createdAt_lte: newerWinnerDate
                   }
                ]
             }

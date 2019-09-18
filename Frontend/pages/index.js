@@ -28,7 +28,7 @@ class Home extends Component {
                   if (loading) return <LoadingRing />;
                   if (error) return <p>Error: {error.message}</p>;
                   const [winner] = data.thingsForGivenDay.filter(
-                     thing => thing.winner
+                     thing => thing.winner != null
                   );
                   return (
                      <ApolloConsumer>

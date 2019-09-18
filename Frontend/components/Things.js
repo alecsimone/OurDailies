@@ -45,10 +45,10 @@ class Things extends Component {
       } catch (windowError) {}
 
       this.props.things.sort((a, b) => {
-         if (a.winner && !b.winner) {
+         if (a.winner != null && b.winner == null) {
             return -1;
          }
-         if (!a.winner && b.winner) {
+         if (a.winner == null && b.winner != null) {
             return 1;
          }
          if (a.finalistDate != null && b.finalistDate == null) {
@@ -74,7 +74,7 @@ class Things extends Component {
          if (!process.browser) {
             return <LoadingRing />;
          }
-         if (thing.winner && windowWidth > 800) {
+         if (thing.winner != null && windowWidth > 800) {
             return <Thing thing={thing} key={thing.id} />;
          }
          if (thing.finalistDate != null) {
