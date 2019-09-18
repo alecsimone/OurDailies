@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import Things from './Things';
+import Thing from './Thing';
+import LittleThing from './LittleThing';
+import TinyThing from './TinyThing';
 import LoadingRing from './LoadingRing';
+import { getScoreForThing } from '../lib/utils';
 
 const StyledDayContainer = styled.div`
    .dateBar {
@@ -66,6 +70,43 @@ const DayContainer = props => {
    }
    const year = date.getFullYear();
 
+   let windowWidth = 800;
+   try {
+      windowWidth = window.innerWidth;
+   } catch (windowError) {}
+
+   props.things.sort((a, b) => {
+      if (a.winner != null && b.winner == null) {
+         return -1;
+      }
+      if (a.winner == null && b.winner != null) {
+         return 1;
+      }
+      if (a.finalistDate != null && b.finalistDate == null) {
+         return -1;
+      }
+      if (a.finalistDate == null && b.finalistDate != null) {
+         return 1;
+      }
+      const scoreA = getScoreForThing(a);
+      const scoreB = getScoreForThing(b);
+      return scoreB - scoreA;
+   });
+
+   props.things.splice(10);
+   const thingsArray = props.things.map(thing => {
+      if (!process.browser) {
+         return <LoadingRing />;
+      }
+      if (thing.winner != null && windowWidth > 800) {
+         return <Thing thing={thing} key={thing.id} />;
+      }
+      if (thing.finalistDate != null) {
+         return <LittleThing thing={thing} key={thing.id} />;
+      }
+      return <TinyThing thing={thing} key={thing.id} />;
+   });
+
    return (
       <StyledDayContainer>
          <div className="dateBar">
@@ -73,7 +114,7 @@ const DayContainer = props => {
                {monthString} {dayString}, {year}
             </h2>
          </div>
-         <Things things={props.things} />
+         <Things things={thingsArray} />
       </StyledDayContainer>
    );
 };

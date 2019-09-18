@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
-import Thing from './Thing';
-import LittleThing from './LittleThing';
-import TinyThing from './TinyThing';
 import LoadingRing from './LoadingRing';
-import { getScoreForThing } from '../lib/utils';
 
 const ThingContainer = styled.div`
    width: 100%;
@@ -39,51 +35,11 @@ const ThingContainer = styled.div`
 
 class Things extends Component {
    render() {
-      let windowWidth = 800;
-      try {
-         windowWidth = window.innerWidth;
-      } catch (windowError) {}
-
-      this.props.things.sort((a, b) => {
-         if (a.winner != null && b.winner == null) {
-            return -1;
-         }
-         if (a.winner == null && b.winner != null) {
-            return 1;
-         }
-         if (a.finalistDate != null && b.finalistDate == null) {
-            return -1;
-         }
-         if (a.finalistDate == null && b.finalistDate != null) {
-            return 1;
-         }
-         const scoreA = getScoreForThing(a);
-         const scoreB = getScoreForThing(b);
-         return scoreB - scoreA;
-      });
-
-      // const thingsArray = [];
-      // this.props.things.forEach((thing, index) => {
-      //    if (index !== 0 || windowWidth < 800) {
-      //       littleThingsArray.push(
-      //          <LittleThing thing={thing} key={thing.id} />
-      //       );
-      //    }
-      // });
-      const thingsArray = this.props.things.map(thing => {
-         if (!process.browser) {
-            return <LoadingRing />;
-         }
-         if (thing.winner != null && windowWidth > 800) {
-            return <Thing thing={thing} key={thing.id} />;
-         }
-         if (thing.finalistDate != null) {
-            return <LittleThing thing={thing} key={thing.id} />;
-         }
-         return <TinyThing thing={thing} key={thing.id} />;
-      });
-
-      return <ThingContainer id="thingContainer">{thingsArray}</ThingContainer>;
+      return (
+         <ThingContainer id="thingContainer">
+            {this.props.things}
+         </ThingContainer>
+      );
    }
 }
 
