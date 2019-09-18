@@ -33,6 +33,15 @@ const Query = {
       const olderWinnerDate =
          winners.length === 1 ? new Date(0) : new Date(winners[1].winner);
 
+      // We bump finalist and winner times back 4 hours so they'll be east coast time instead of zulu time, and thus they'll show up on the day we actually had the discussion. Because we declare winners right around midnight zulu time, it's easier to do a day-based thing on east coast time instead. However, createdAt is set by default, so it's on normal Zulu time, so we have to adjust here. Sorry.
+
+      const newerWinnerZuluDate = new Date(
+         newerWinnerDate.getTime() + 1000 * 60 * 60 * 4
+      );
+      const olderWinnerZuluDate = new Date(
+         olderWinnerDate.getTime() + 1000 * 60 * 60 * 4
+      );
+
       const thingsForDay = await ctx.db.query.things(
          {
             where: {
@@ -43,8 +52,8 @@ const Query = {
                   },
                   {
                      finalistDate: null,
-                     createdAt_gt: olderWinnerDate,
-                     createdAt_lte: newerWinnerDate
+                     createdAt_gt: olderWinnerZuluDate,
+                     createdAt_lte: newerWinnerZuluDate
                   }
                ]
             }

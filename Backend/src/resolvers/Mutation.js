@@ -614,13 +614,15 @@ const Mutations = {
       loggedInGate(ctx);
       modGate(ctx.request.member);
 
+      // Set now back in time 4 hours so that the winner will have the day it was on east coast time, not zulu time
+      const now = new Date(Date.now() - 1000 * 60 * 60 * 4);
       const updatedThing = await ctx.db.mutation.updateThing(
          {
             where: {
                id: thingID
             },
             data: {
-               winner: new Date()
+               winner: now
             }
          },
          `{${fullThingFields}}`
