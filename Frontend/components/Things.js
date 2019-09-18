@@ -13,23 +13,23 @@ const ThingContainer = styled.div`
    margin: 0 auto 8rem;
    display: grid;
    grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
-   grid-template-rows: max-content;
-   grid-auto-rows: max-content;
-   grid-gap: 4rem 2rem;
-   grid-auto-flow: dense;
+   grid-template-rows: 8rem;
+   grid-auto-rows: 8rem;
+   grid-gap: 3rem;
    justify-items: stretch;
+   align-items: stretch;
    .thing {
       grid-column: 1 / -1;
-      grid-row: span 10;
+      grid-row: span 6;
+      @media screen and (min-width: 1921px) {
+         grid-row: span 8;
+      }
    }
    .littleThing {
-      grid-row: span 8;
-      margin: auto;
-      min-height: 40rem;
+      grid-row: span 6;
    }
    .tinyThing {
       grid-row: span 1;
-      align-self: stretch;
    }
 `;
 

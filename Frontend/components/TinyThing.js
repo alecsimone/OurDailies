@@ -16,7 +16,6 @@ const StyledTinyThing = styled.article`
    display: flex;
    align-items: center;
    position: relative;
-   margin: 0.5rem;
    background: ${props => props.theme.veryLowContrastCoolGrey};
    padding: 0.75rem 1.25rem;
    border-radius: 0 2px 2px 0;
@@ -49,13 +48,21 @@ const StyledTinyThing = styled.article`
          object-fit: cover;
       }
    }
-   h3 {
-      font-size: ${props => props.theme.bigText};
-      cursor: pointer;
-      margin: 0rem;
-      line-height: 1.25;
-      white-space: normal;
-      text-align: left;
+   .thingInfo {
+      max-width: 100%;
+      overflow: hidden;
+      h3 {
+         font-size: ${props => props.theme.smallText};
+         height: calc(1.25 * ${props => props.theme.smallText});
+         cursor: pointer;
+         margin: 0rem;
+         line-height: 1.25;
+         white-space: nowrap;
+         max-width: 100%;
+         text-align: left;
+         overflow: hidden;
+         text-overflow: ellipsis;
+      }
    }
    div.meta {
    }
@@ -87,13 +94,6 @@ const StyledTinyThing = styled.article`
             margin-right: 0.25rem;
             font-weight: 600;
          }
-      }
-      input {
-         position: absolute;
-         height: 100%;
-         right: 0.75rem;
-         top: 0;
-         margin: 0;
       }
    }
 `;
@@ -150,17 +150,17 @@ class TinyThing extends Component {
                              .sld.toUpperCase()
                         : ''}
                   </a>
-                  {this.props.checkbox && (
-                     <input
-                        type="checkbox"
-                        onChange={e => {
-                           e.preventDefault();
-                           this.props.checkbox(thing.id);
-                        }}
-                     />
-                  )}
                </div>
             </div>
+            {this.props.checkbox && (
+               <input
+                  type="checkbox"
+                  onChange={e => {
+                     e.preventDefault();
+                     this.props.checkbox(thing.id);
+                  }}
+               />
+            )}
          </StyledTinyThing>
       );
    }

@@ -26,6 +26,8 @@ const GET_VOTES = gql`
 `;
 
 const StyledThing = styled.article`
+   display: flex;
+   flex-direction: column;
     position: relative;
     padding: 0 1rem;
     grid-column: 1 / -1;
@@ -34,7 +36,7 @@ const StyledThing = styled.article`
     box-shadow: 0 0 .4rem ${props => props.theme.secondaryAccentGlow};
     div.body {
         position: relative;
-        height: calc(720px + 2rem);
+        flex-grow: 1;
         :before {
             content: '';
             background: ${props => props.theme.majorColor};
@@ -48,9 +50,9 @@ const StyledThing = styled.article`
             border-radius; 2px;
         }
         .imageWrapper {
-            width: 1280px;
+            width: 100%;
             max-width: 77%;
-            height: 720px;
+            height: calc(100% - 2rem);
             position: absolute;
             right: 2rem;
             top: 1rem;

@@ -75,7 +75,6 @@ class Dailies extends Component {
       const winners = data.thingsForGivenDay.filter(
          thing => thing.winner != null
       );
-      console.log(winners);
       this.setState({
          thingDays,
          winnerOffset: this.state.winnerOffset + winners.length,

@@ -15,6 +15,13 @@ const StyledCurate = styled.div`
       margin-left: 2rem;
       .tinyThing {
          margin: 0 0 2rem 0;
+         .thingInfo {
+            max-width: calc(100% - 1rem);
+         }
+         input {
+            margin-left: 1rem;
+            margin-right: -0.25rem;
+         }
       }
    }
 `;
