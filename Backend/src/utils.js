@@ -249,65 +249,7 @@ async function getFinalists(ctx) {
             }
          }
       },
-      `{id
-         title
-         author {
-         displayName
-      }
-         featuredImage
-         originalSource
-         summary
-         includedLinks {
-         title
-            url
-            id
-      }
-         includedThings {
-         id
-            title
-            originalSource
-            author {
-         displayName
-      }
-            createdAt
-         }
-      partOfNarratives {
-         id
-         title
-      }
-      comments {
-         id
-         author {
-            id
-            displayName
-            avatar
-            rep
-         }
-         comment
-         createdAt
-         updatedAt
-      }
-      votes {
-         voter {
-            id
-            displayName
-            avatar
-            roles
-         }
-         value
-      }
-      passes {
-         passer {
-            id
-            displayName
-            avatar
-            roles
-         }
-      }
-      finalistDate
-      eliminated
-      createdAt
-      updatedAt}`
+      `{${fullThingFields}}`
    );
    return finalists;
 }
