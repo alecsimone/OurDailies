@@ -35,7 +35,7 @@ const StyledLittleThing = styled.article`
    div.lede {
       width: 100%;
       flex-grow: 1;
-      max-height: 60%;
+      max-height: 50%;
       position: relative;
       h3 {
          position: absolute;
