@@ -103,10 +103,7 @@ const Query = {
                AND: {
                   createdAt_gte: twoDaysAgo,
                   eliminated: false,
-                  finalistDate: null,
-                  votes_some: {
-                     id_not: null
-                  }
+                  finalistDate: null
                }
             }
          },
