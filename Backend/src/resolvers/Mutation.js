@@ -337,7 +337,7 @@ const Mutations = {
 
       if (
          currentSummary.author.id !== ctx.request.memberId ||
-         ctx.request.member.roles.some(role =>
+         !ctx.request.member.roles.some(role =>
             ['Admin', 'Editor', 'Moderator'].includes(role)
          )
       ) {
@@ -416,7 +416,7 @@ const Mutations = {
 
       if (
          currentSummary.author.id !== ctx.request.memberId ||
-         ctx.request.member.roles.some(role =>
+         !ctx.request.member.roles.some(role =>
             ['Admin', 'Editor', 'Moderator'].includes(role)
          )
       ) {
