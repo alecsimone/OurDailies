@@ -17,6 +17,7 @@ const StyledFilter = styled.div`
          margin: 0 0 2rem 0;
          .thingInfo {
             max-width: calc(100% - 1rem);
+            flex-grow: 1;
          }
          input {
             margin-left: 1rem;
