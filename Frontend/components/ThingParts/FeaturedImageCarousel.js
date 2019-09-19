@@ -7,21 +7,36 @@ import {
    getGfycatSlugFromLink
 } from '../../lib/utils';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
+import { NARRATIVE_THINGS_QUERY } from '../../pages/narrative';
 
 const SET_FEATURED_IMAGE_MUTATION = gql`
-   mutation SET_FEATURED_IMAGE_MUTATION($imageUrl: String!, $thingID: ID!) {
-      setFeaturedImage(imageUrl: $imageUrl, thingID: $thingID) {
-         id
-         featuredImage
+   mutation SET_FEATURED_IMAGE_MUTATION(
+      $imageUrl: String!
+      $thingID: ID!
+      $isNarrative: Boolean
+   ) {
+      setFeaturedImage(
+         imageUrl: $imageUrl
+         thingID: $thingID
+         isNarrative: $isNarrative
+      ) {
+         message
       }
    }
 `;
 
 const CHANGE_TITLE_MUTATION = gql`
-   mutation CHANGE_TITLE_MUTATION($title: String!, $thingID: ID!) {
-      changeThingTitle(title: $title, thingID: $thingID) {
-         id
-         title
+   mutation CHANGE_TITLE_MUTATION(
+      $title: String!
+      $thingID: ID!
+      $isNarrative: Boolean
+   ) {
+      changeThingTitle(
+         title: $title
+         thingID: $thingID
+         isNarrative: $isNarrative
+      ) {
+         message
       }
    }
 `;
@@ -187,7 +202,7 @@ class FeaturedImageCarousel extends Component {
    state = {
       currentSliderPosition: 0,
       editingTitle: false,
-      title: this.props.thing.title
+      title: this.props.headline
    };
 
    sliderPositionDown = mediaLinksArray => {
@@ -232,17 +247,16 @@ class FeaturedImageCarousel extends Component {
    };
 
    render() {
-      const { thing } = this.props;
-      const featuredImageButItsAnArrayNow = [thing.featuredImage];
+      const featuredImageButItsAnArrayNow = [this.props.featuredImage];
 
       const justTheLinks =
-         thing.includedLinks != null
-            ? thing.includedLinks.map(linkObject => linkObject.url)
+         this.props.includedLinks != null
+            ? this.props.includedLinks.map(linkObject => linkObject.url)
             : [];
 
       const mediaLinksArray = justTheLinks.filter(
          link =>
-            link !== thing.featuredImage &&
+            link !== this.props.featuredImage &&
             (link.includes('jpg') ||
                link.includes('jpeg') ||
                link.includes('png') ||
@@ -252,8 +266,8 @@ class FeaturedImageCarousel extends Component {
                link.includes('gfycat.com/'))
       );
       const allMedia =
-         thing.featuredImage != null &&
-         thing.featuredImage !== '/static/defaultPic.jpg'
+         this.props.featuredImage != null &&
+         this.props.featuredImage !== '/static/defaultPic.jpg'
             ? featuredImageButItsAnArrayNow.concat(mediaLinksArray)
             : mediaLinksArray;
 
@@ -267,10 +281,18 @@ class FeaturedImageCarousel extends Component {
             {this.state.editingTitle ? (
                <Mutation
                   mutation={CHANGE_TITLE_MUTATION}
-                  variables={{ title: this.state.title, thingID: thing.id }}
+                  variables={{
+                     title: this.state.title,
+                     thingID: this.props.thingID,
+                     isNarrative: this.props.isNarrative
+                  }}
                   refetchQueries={[
                      {
                         query: SINGLE_THING_QUERY,
+                        variables: { id: this.props.thingID }
+                     },
+                     {
+                        query: NARRATIVE_THINGS_QUERY,
                         variables: { id: this.props.thingID }
                      }
                   ]}
@@ -290,11 +312,15 @@ class FeaturedImageCarousel extends Component {
                </Mutation>
             ) : (
                <a
-                  href={thing.originalSource}
+                  href={
+                     this.props.originalSource
+                        ? this.props.originalSource
+                        : null
+                  }
                   target="_blank"
                   className="headlineLink title"
                >
-                  {thing.title}
+                  {this.props.headline}
                </a>
             )}
             <img
@@ -309,8 +335,8 @@ class FeaturedImageCarousel extends Component {
       if (
          mediaLinksArray.length > 1 ||
          (mediaLinksArray.length > 0 &&
-            thing.featuredImage != null &&
-            thing.featuredImage !== '/static/defaultPic.jpg')
+            this.props.featuredImage != null &&
+            this.props.featuredImage !== '/static/defaultPic.jpg')
       ) {
          leftButton = (
             <button
@@ -369,11 +395,16 @@ class FeaturedImageCarousel extends Component {
                            mutation={SET_FEATURED_IMAGE_MUTATION}
                            variables={{
                               imageUrl: currentLink,
-                              thingID: this.props.thingID
+                              thingID: this.props.thingID,
+                              isNarrative: this.props.isNarrative
                            }}
                            refetchQueries={[
                               {
                                  query: SINGLE_THING_QUERY,
+                                 variables: { id: this.props.thingID }
+                              },
+                              {
+                                 query: NARRATIVE_THINGS_QUERY,
                                  variables: { id: this.props.thingID }
                               }
                            ]}
@@ -384,7 +415,9 @@ class FeaturedImageCarousel extends Component {
                            ) => (
                               <input
                                  type="checkbox"
-                                 checked={currentLink === thing.featuredImage}
+                                 checked={
+                                    currentLink === this.props.featuredImage
+                                 }
                                  onChange={e => {
                                     e.preventDefault();
                                     this.setFeaturedImageHandler(

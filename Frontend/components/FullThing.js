@@ -97,7 +97,6 @@ class FullThing extends Component {
          <StyledFullThing>
             <div className="lede">
                <FeaturedImageCarousel
-                  thing={thing}
                   featuredImage={thing.featuredImage}
                   includedLinks={thing.includedLinks}
                   originalSource={thing.originalSource}
@@ -119,6 +118,7 @@ class FullThing extends Component {
             <Summary
                summary={thing.summary}
                thingID={thing.id}
+               author={thing.author}
                member={member.me}
                key={`Summary-${thing.id}`}
             />

@@ -76,6 +76,7 @@ const StyledLittleThing = styled.article`
    }
    p.meta {
       color: ${props => props.theme.lowContrastGrey};
+      font-size: ${props => props.theme.tinyText};
       font-style: italic;
       margin: 0.5rem 1.5rem;
    }

@@ -325,6 +325,7 @@ const fullThingFields = `
          id
          title
          author {
+            id
             displayName
          }
          featuredImage

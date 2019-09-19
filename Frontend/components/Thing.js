@@ -81,7 +81,7 @@ const StyledThing = styled.article`
             max-width: 60%;
             z-index: 1;
             h3 {
-                font-size: ${props => props.theme.bigHead};
+                font-size: ${props => props.theme.smallHead};
                 text-shadow: ${props => props.theme.background};
                 margin: 0;
                 background: ${props => props.theme.lowContrastCoolGrey};
@@ -90,7 +90,7 @@ const StyledThing = styled.article`
                 display: inline;
             }
             p.meta {
-               font-size: ${props => props.theme.smallText};
+               font-size: ${props => props.theme.tinyText};
                 color: ${props => props.theme.lowContrastGrey};
                 font-style: italic;
             }
@@ -109,11 +109,11 @@ const StyledThing = styled.article`
             }
             span {
                 /* margin-right: .5rem; */
+                font-size: ${props => props.theme.tinyText};
+                font-weight: 300;
             }
             a {
                 color: ${props => props.theme.highContrastGrey};
-                font-size: ${props => props.theme.smallText};
-                font-weight: 300;
             }
         }
     }

@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
 import { TOGGLE_MODAL_MUTATION } from '../Modal';
 import { NEW_THINGS_QUERY } from '../../pages/new';
-import { CURATE_THINGS_QUERY } from '../../pages/curate';
+import { FILTER_THINGS_QUERY } from '../../pages/filter';
 
 const VOTE_ON_THING_MUTATION = gql`
    mutation VOTE_ON_THING_MUTATION($thingID: ID!) {
@@ -281,119 +281,9 @@ class VoteBar extends Component {
             variables={{ thingID: this.props.thingID }}
             refetchQueries={[
                {
-                  query: SINGLE_THING_QUERY,
-                  variables: { id: this.props.thingID }
-               },
-               {
                   query: NEW_THINGS_QUERY
                }
             ]}
-            optimisticResponse={
-               this.props.member != null
-                  ? {
-                       __typename: 'Mutation',
-                       voteOnThing: {
-                          __typename: 'Vote',
-                          voter: {
-                             __typename: 'Member',
-                             id: this.props.member.id,
-                             displayName: this.props.member.displayName,
-                             avatar: this.props.member.avatar,
-                             roles: this.props.member.roles
-                          },
-                          value: this.props.member.rep
-                       }
-                    }
-                  : { fuck: 'you' }
-            }
-            update={(cache, { data: { voteOnThing } }) => {
-               const thing = cache.readFragment({
-                  id: `Thing:${this.props.thingID}`,
-                  fragment: gql`
-                     fragment thisThing on Thing {
-                        __typename
-                        id
-                        votes {
-                           voter {
-                              id
-                              displayName
-                              avatar
-                              roles
-                           }
-                           value
-                        }
-                        passes {
-                           passer {
-                              id
-                              displayName
-                              avatar
-                              roles
-                           }
-                        }
-                     }
-                  `
-               });
-
-               let hasVoted = false;
-               let newVotes;
-               thing.votes.forEach(vote => {
-                  if (vote.voter.id === this.props.member.id) {
-                     hasVoted = true;
-                  }
-               });
-               if (hasVoted) {
-                  newVotes = thing.votes.filter(
-                     vote => vote.voter.id !== this.props.member.id
-                  );
-               } else {
-                  const newVoteArray = [voteOnThing];
-                  newVotes = thing.votes.concat(newVoteArray);
-               }
-               thing.votes = newVotes;
-
-               let hasPassed = false;
-               let newPasses;
-               thing.passes.forEach(pass => {
-                  if (pass.passer.id === this.props.member.id) {
-                     hasPassed = true;
-                  }
-               });
-               if (hasPassed) {
-                  newPasses = thing.passes.filter(
-                     pass => pass.passer.id !== this.props.member.id
-                  );
-               }
-               if (newPasses == null) newPasses = [];
-               thing.passes = newPasses;
-
-               cache.writeFragment({
-                  id: `Thing:${this.props.thingID}`,
-                  fragment: gql`
-                     fragment thisThing on Thing {
-                        __typename
-                        id
-                        votes {
-                           voter {
-                              id
-                              displayName
-                              avatar
-                              roles
-                           }
-                           value
-                        }
-                        passes {
-                           passer {
-                              id
-                              displayName
-                              avatar
-                              roles
-                           }
-                        }
-                     }
-                  `,
-                  data: thing
-               });
-            }}
          >
             {(voteOnThing, { loading, error }) => (
                <button
@@ -432,118 +322,9 @@ class VoteBar extends Component {
             variables={{ thingID: this.props.thingID }}
             refetchQueries={[
                {
-                  query: SINGLE_THING_QUERY,
-                  variables: { id: this.props.thingID }
-               },
-               {
                   query: NEW_THINGS_QUERY
                }
             ]}
-            optimisticResponse={
-               this.props.member != null
-                  ? {
-                       __typename: 'Mutation',
-                       passOnThing: {
-                          __typename: 'Pass',
-                          passer: {
-                             __typename: 'Member',
-                             id: this.props.member.id,
-                             displayName: this.props.member.displayName,
-                             avatar: this.props.member.avatar,
-                             roles: this.props.member.roles
-                          }
-                       }
-                    }
-                  : { fuck: 'you' }
-            }
-            update={(cache, { data: { passOnThing } }) => {
-               const thing = cache.readFragment({
-                  id: `Thing:${this.props.thingID}`,
-                  fragment: gql`
-                     fragment thisThing on Thing {
-                        __typename
-                        id
-                        votes {
-                           voter {
-                              id
-                              displayName
-                              avatar
-                              roles
-                           }
-                           value
-                        }
-                        passes {
-                           passer {
-                              id
-                              displayName
-                              avatar
-                              roles
-                           }
-                        }
-                     }
-                  `
-               });
-
-               let hasPassed = false;
-               let newPasses;
-               thing.passes.forEach(pass => {
-                  if (pass.passser.id === this.props.member.id) {
-                     hasPassed = true;
-                  }
-               });
-               if (hasPassed) {
-                  newPasses = thing.passes.filter(
-                     pass => pass.passser.id !== this.props.member.id
-                  );
-               } else {
-                  const newPassArray = [passOnThing];
-                  newPasses = thing.passes.concat(newPassArray);
-               }
-               thing.passes = newPasses;
-
-               let hasVoted = false;
-               let newVotes;
-               thing.votes.forEach(vote => {
-                  if (vote.voter.id === this.props.member.id) {
-                     hasVoted = true;
-                  }
-               });
-               if (hasVoted) {
-                  newVotes = thing.votes.filter(
-                     vote => vote.voter.id !== this.props.member.id
-                  );
-               }
-               if (newVotes == null) newVotes = [];
-               thing.votes = newVotes;
-
-               cache.writeFragment({
-                  id: `Thing:${this.props.thingID}`,
-                  fragment: gql`
-                     fragment thisThing on Thing {
-                        __typename
-                        id
-                        votes {
-                           voter {
-                              id
-                              displayName
-                              avatar
-                              roles
-                           }
-                           value
-                        }
-                        passes {
-                           passer {
-                              id
-                              displayName
-                              avatar
-                              roles
-                           }
-                        }
-                     }
-                  `,
-                  data: thing
-               });
-            }}
          >
             {(passOnThing, { loading, error }) => (
                <button
@@ -587,7 +368,7 @@ class VoteBar extends Component {
                   query: NEW_THINGS_QUERY
                },
                {
-                  query: CURATE_THINGS_QUERY
+                  query: FILTER_THINGS_QUERY
                }
             ]}
          >
@@ -618,7 +399,7 @@ class VoteBar extends Component {
                   query: NEW_THINGS_QUERY
                },
                {
-                  query: CURATE_THINGS_QUERY
+                  query: FILTER_THINGS_QUERY
                }
             ]}
          >

@@ -67,17 +67,6 @@ const Mutations = {
                      id: ctx.request.memberId
                   }
                },
-               votes: {
-                  create: {
-                     voter: {
-                        connect: {
-                           id: ctx.request.memberId
-                        }
-                     },
-                     value: ctx.request.member.rep
-                  }
-               },
-               score: ctx.request.member.rep,
                featuredImage,
                includedLinks
             }
@@ -215,9 +204,36 @@ const Mutations = {
 
       return updatedThing;
    },
-   async addLinkToThing(parent, { title, url, thingID }, ctx, info) {
+   async addLinkToThing(
+      parent,
+      { title, url, thingID, isNarrative },
+      ctx,
+      info
+   ) {
       loggedInGate(ctx);
       fullMemberGate(ctx.request.member);
+
+      if (isNarrative) {
+         const updatedNarrative = await ctx.db.mutation.updateNarrative(
+            {
+               where: { id: thingID },
+               data: {
+                  includedLinks: {
+                     create: {
+                        title,
+                        url
+                     }
+                  }
+               }
+            },
+            `{id createdAt score}`
+         );
+
+         // We need a new subscription for narratives
+         // publishThingUpdate(updatedThing, ctx);
+
+         return { message: 'Success!' };
+      }
 
       const thingUrlStructure = `${process.env.FRONTEND_URL}/thing?id=`;
       const thingUrlStructureNoHTTP = thingUrlStructure.substring(
@@ -251,7 +267,7 @@ const Mutations = {
          );
 
          publishThingUpdate(updatedThing, ctx);
-         return updatedThing;
+         return { message: 'Success!' };
       }
       const updatedThing = await ctx.db.mutation.updateThing(
          {
@@ -269,13 +285,46 @@ const Mutations = {
       );
 
       publishThingUpdate(updatedThing, ctx);
-      return updatedThing;
-
-      return updatedThing;
+      return { message: 'Success!' };
    },
-   async addSummaryLineToThing(parent, { summaryLine, thingID }, ctx, info) {
+   async addSummaryLineToThing(
+      parent,
+      { summaryLine, thingID, isNarrative },
+      ctx,
+      info
+   ) {
       loggedInGate(ctx);
       fullMemberGate(ctx.request.member);
+
+      if (isNarrative) {
+         modGate(ctx.request.member);
+         const currentSummary = await ctx.db.query.narrative(
+            {
+               where: {
+                  id: thingID
+               }
+            },
+            `{summary}`
+         );
+         currentSummary.summary.push(summaryLine);
+
+         const updatedNarrative = await ctx.db.mutation.updateNarrative(
+            {
+               where: { id: thingID },
+               data: {
+                  summary: {
+                     set: currentSummary.summary
+                  }
+               }
+            },
+            `{id title score}`
+         );
+
+         // We need a narrative subscription
+         // publishThingUpdate(updatedThing, ctx);
+
+         return { message: 'Success!' };
+      }
 
       const currentSummary = await ctx.db.query.thing(
          {
@@ -283,8 +332,20 @@ const Mutations = {
                id: thingID
             }
          },
-         `{summary}`
+         `{summary author {id}}`
       );
+
+      if (
+         currentSummary.author.id !== ctx.request.memberId ||
+         ctx.request.member.roles.some(role =>
+            ['Admin', 'Editor', 'Moderator'].includes(role)
+         )
+      ) {
+         throw new Error(
+            "You can't edit the summaries of things you didn't create"
+         );
+      }
+
       currentSummary.summary.push(summaryLine);
 
       const updatedThing = await ctx.db.mutation.updateThing(
@@ -301,16 +362,48 @@ const Mutations = {
 
       publishThingUpdate(updatedThing, ctx);
 
-      return updatedThing;
+      return { message: 'Success!' };
    },
    async removeSummaryLineFromThing(
       parent,
-      { summaryLine, thingID },
+      { summaryLine, thingID, isNarrative },
       ctx,
       info
    ) {
       loggedInGate(ctx);
-      modGate(ctx.request.member);
+      fullMemberGate(ctx.request.member);
+
+      if (isNarrative) {
+         modGate(ctx.request.member);
+         const currentSummary = await ctx.db.query.narrative(
+            {
+               where: {
+                  id: thingID
+               }
+            },
+            `{summary}`
+         );
+         const newSummary = currentSummary.summary.filter(
+            line => line !== summaryLine
+         );
+
+         const updatedNarrative = await ctx.db.mutation.updateNarrative(
+            {
+               where: { id: thingID },
+               data: {
+                  summary: {
+                     set: newSummary
+                  }
+               }
+            },
+            `{id title score}`
+         );
+
+         // We need a narrative subscription
+         // publishThingUpdate(updatedThing, ctx);
+
+         return { message: 'Success!' };
+      }
 
       const currentSummary = await ctx.db.query.thing(
          {
@@ -318,8 +411,19 @@ const Mutations = {
                id: thingID
             }
          },
-         `{summary}`
+         `{summary author {id}}`
       );
+
+      if (
+         currentSummary.author.id !== ctx.request.memberId ||
+         ctx.request.member.roles.some(role =>
+            ['Admin', 'Editor', 'Moderator'].includes(role)
+         )
+      ) {
+         throw new Error(
+            "You can't edit the summaries of things you didn't create"
+         );
+      }
 
       const newSummary = currentSummary.summary.filter(
          line => line !== summaryLine
@@ -341,11 +445,33 @@ const Mutations = {
 
       return updatedThing;
    },
-   async setFeaturedImage(parent, { imageUrl, thingID }, ctx, info) {
+   async setFeaturedImage(
+      parent,
+      { imageUrl, thingID, isNarrative },
+      ctx,
+      info
+   ) {
       loggedInGate(ctx);
       modGate(ctx.request.member);
 
-      const updatedThing = await ctx.db.mutation.updateThing(
+      if (!isNarrative) {
+         const updatedThing = await ctx.db.mutation.updateThing(
+            {
+               where: {
+                  id: thingID
+               },
+               data: {
+                  featuredImage: imageUrl
+               }
+            },
+            `{${fullThingFields}}`
+         );
+
+         publishThingUpdate(updatedThing, ctx);
+
+         return { message: 'Success!' };
+      }
+      const updatedNarrative = await ctx.db.mutation.updateNarrative(
          {
             where: {
                id: thingID
@@ -354,18 +480,35 @@ const Mutations = {
                featuredImage: imageUrl
             }
          },
-         `{${fullThingFields}}`
+         `{id title createdAt}`
       );
 
-      publishThingUpdate(updatedThing, ctx);
+      // We need a narrative subscription
+      // publishThingUpdate(updatedThing, ctx);
 
-      return updatedThing;
+      return { message: 'Success!' };
    },
-   async changeThingTitle(parent, { title, thingID }, ctx, info) {
+   async changeThingTitle(parent, { title, thingID, isNarrative }, ctx, info) {
       loggedInGate(ctx);
       modGate(ctx.request.member);
 
-      const updatedThing = await ctx.db.mutation.updateThing(
+      if (!isNarrative) {
+         const updatedThing = await ctx.db.mutation.updateThing(
+            {
+               where: {
+                  id: thingID
+               },
+               data: {
+                  title
+               }
+            },
+            `{${fullThingFields}}`
+         );
+         publishThingUpdate(updatedThing, ctx);
+
+         return { message: 'Success!' };
+      }
+      const updatedNarrative = await ctx.db.mutation.updateNarrative(
          {
             where: {
                id: thingID
@@ -374,16 +517,45 @@ const Mutations = {
                title
             }
          },
-         `{${fullThingFields}}`
+         `{id title createdAt}`
       );
+      // We need a narrative subscription
+      // publishThingUpdate(updatedThing, ctx);
 
-      publishThingUpdate(updatedThing, ctx);
-
-      return updatedThing;
+      return { message: 'Success!' };
    },
-   async addCommentToThing(parent, { comment, thingID }, ctx, info) {
+   async addCommentToThing(
+      parent,
+      { comment, thingID, isNarrative },
+      ctx,
+      info
+   ) {
       loggedInGate(ctx);
       fullMemberGate(ctx.request.member);
+
+      if (isNarrative) {
+         const addedComment = await ctx.db.mutation.createComment({
+            data: {
+               comment,
+               onNarrative: {
+                  connect: {
+                     id: thingID
+                  }
+               },
+               author: {
+                  connect: {
+                     id: ctx.request.memberId
+                  }
+               }
+            }
+         });
+
+         // We need a new subscription for narratives
+         // const updatedThing = await getThing(thingID, ctx.db);
+         // publishThingUpdate(updatedThing, ctx);
+
+         return addedComment;
+      }
 
       const addedComment = await ctx.db.mutation.createComment({
          data: {
@@ -412,10 +584,12 @@ const Mutations = {
 
       const comment = await ctx.db.query.comment(
          { where: { id } },
-         `{id author {id} onThing {id}}`
+         `{id author {id} onThing {id} onNarrative {id}}`
       );
 
-      const thingID = comment.onThing.id;
+      const thingID = comment.onThing
+         ? comment.onThing.id
+         : comment.onNarrative.id;
 
       if (
          !ctx.request.member.roles.some(role =>
@@ -430,6 +604,12 @@ const Mutations = {
             id
          }
       });
+
+      if (comment.onNarrative) {
+         // We need a new subscription for Narratives
+
+         return deletedComment;
+      }
 
       const updatedThing = await getThing(thingID, ctx.db);
 

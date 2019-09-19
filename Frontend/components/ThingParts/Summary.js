@@ -4,16 +4,21 @@ import { Mutation, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
 import ErrorMessage from '../ErrorMessage';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
-import { CURATE_THINGS_QUERY } from '../../pages/curate';
+import { FILTER_THINGS_QUERY } from '../../pages/filter';
+import { NARRATIVE_THINGS_QUERY } from '../../pages/narrative';
 
 const ADD_SUMMARY_LINE_TO_THING_MUTATION = gql`
    mutation ADD_SUMMARY_LINE_TO_THING_MUTATION(
       $summaryLine: String!
       $thingID: ID!
+      $isNarrative: Boolean
    ) {
-      addSummaryLineToThing(summaryLine: $summaryLine, thingID: $thingID) {
-         id
-         summary
+      addSummaryLineToThing(
+         summaryLine: $summaryLine
+         thingID: $thingID
+         isNarrative: $isNarrative
+      ) {
+         message
       }
    }
 `;
@@ -22,10 +27,14 @@ const REMOVE_SUMMARY_LINE_FROM_THING_MUTATION = gql`
    mutation REMOVE_SUMMARY_LINE_FROM_THING_MUTATION(
       $summaryLine: String!
       $thingID: ID!
+      $isNarrative: Boolean
    ) {
-      removeSummaryLineFromThing(summaryLine: $summaryLine, thingID: $thingID) {
-         id
-         summary
+      removeSummaryLineFromThing(
+         summaryLine: $summaryLine
+         thingID: $thingID
+         isNarrative: $isNarrative
+      ) {
+         message
       }
    }
 `;
@@ -116,14 +125,16 @@ class Summary extends Component {
          <li key={index}>
             <span>- {bullet}</span>
             {this.props.member != null &&
-               this.props.member.roles.some(role =>
+               (this.props.member.roles.some(role =>
                   ['Admin', 'Editor', 'Moderator'].includes(role)
-               ) && (
+               ) ||
+                  this.props.member.id === this.props.author.id) && (
                   <Mutation
                      mutation={REMOVE_SUMMARY_LINE_FROM_THING_MUTATION}
                      variables={{
                         summaryLine: bullet,
-                        thingID: this.props.thingID
+                        thingID: this.props.thingID,
+                        isNarrative: this.props.isNarrative
                      }}
                      refetchQueries={[
                         {
@@ -131,7 +142,11 @@ class Summary extends Component {
                            variables: { id: this.props.thingID }
                         },
                         {
-                           query: CURATE_THINGS_QUERY
+                           query: FILTER_THINGS_QUERY
+                        },
+                        {
+                           query: NARRATIVE_THINGS_QUERY,
+                           variables: { id: this.props.thingID }
                         }
                      ]}
                   >
@@ -160,7 +175,8 @@ class Summary extends Component {
             mutation={ADD_SUMMARY_LINE_TO_THING_MUTATION}
             variables={{
                summaryLine: this.state.lineToAdd,
-               thingID: this.props.thingID
+               thingID: this.props.thingID,
+               isNarrative: this.props.isNarrative
             }}
             refetchQueries={[
                {
@@ -168,7 +184,11 @@ class Summary extends Component {
                   variables: { id: this.props.thingID }
                },
                {
-                  query: CURATE_THINGS_QUERY
+                  query: FILTER_THINGS_QUERY
+               },
+               {
+                  query: NARRATIVE_THINGS_QUERY,
+                  variables: { id: this.props.thingID }
                }
             ]}
          >
@@ -177,11 +197,10 @@ class Summary extends Component {
                   <ul>{summaryItems}</ul>
                   <ErrorMessage error={error} />
                   {this.props.member != null &&
-                     this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator', 'Member'].includes(
-                           role
-                        )
-                     ) && (
+                     (this.props.member.roles.some(role =>
+                        ['Admin', 'Editor', 'Moderator'].includes(role)
+                     ) ||
+                        this.props.member.id === this.props.author.id) && (
                         <textarea
                            placeholder={
                               loading ? 'Adding...' : '- Add summary line'

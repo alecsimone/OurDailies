@@ -5,19 +5,19 @@ import styled from 'styled-components';
 import Head from 'next/head';
 import FullThing from '../components/FullThing';
 import Member from '../components/Member';
-import Curate from '../components/Curate';
+import Filter from '../components/Filter';
 import { THING_SUBSCRIPTION } from './thing';
 import { fullThingFields } from '../lib/utils';
 
-const CURATE_THINGS_QUERY = gql`
-   query CURATE_THINGS_QUERY {
-      thingsForCurate {
+const FILTER_THINGS_QUERY = gql`
+   query FILTER_THINGS_QUERY {
+      thingsForFilter {
          ${fullThingFields}
       }
    }
 `;
 
-const StyledCuratePage = styled.div`
+const StyledFilterPage = styled.div`
    p.nothing {
       color: ${props => props.theme.majorColor};
       text-align: center;
@@ -26,7 +26,7 @@ const StyledCuratePage = styled.div`
    }
 `;
 
-class CuratePage extends Component {
+class FilterPage extends Component {
    state = {
       mainThingId: false
    };
@@ -37,19 +37,19 @@ class CuratePage extends Component {
    };
 
    addSubscription = (subscribeToMore, data) => {
-      const IDsToSubscribe = data.thingsForCurate.map(thing => thing.id);
+      const IDsToSubscribe = data.thingsForFilter.map(thing => thing.id);
       return subscribeToMore({
          document: THING_SUBSCRIPTION,
          variables: { IDs: IDsToSubscribe },
          updateQuery: (prev, { subscriptionData }) => {
             const newThingData = subscriptionData.data.thing.node;
             const changedThingID = newThingData.id;
-            const changedThingIndex = data.thingsForCurate.findIndex(
+            const changedThingIndex = data.thingsForFilter.findIndex(
                thing => thing.id === changedThingID
             );
             if (changedThingIndex === -1) return data;
 
-            data.thingsForCurate[changedThingIndex] = newThingData;
+            data.thingsForFilter[changedThingIndex] = newThingData;
             return data;
          }
       });
@@ -57,13 +57,13 @@ class CuratePage extends Component {
 
    render() {
       return (
-         <StyledCuratePage>
+         <StyledFilterPage>
             <Head>
-               <title>Curate - Our Dailies</title>
+               <title>Filter - Our Dailies</title>
             </Head>
             <Member>
                {({ data: memberData }) => (
-                  <Query query={CURATE_THINGS_QUERY}>
+                  <Query query={FILTER_THINGS_QUERY}>
                      {({
                         error,
                         loading,
@@ -73,10 +73,10 @@ class CuratePage extends Component {
                         subscribeToMore
                      }) => {
                         if (networkStatus === 1) return <div>Loading...</div>;
-                        if (data.thingsForCurate.length > 0) {
+                        if (data.thingsForFilter.length > 0) {
                            return (
-                              <Curate
-                                 things={data.thingsForCurate}
+                              <Filter
+                                 things={data.thingsForFilter}
                                  member={memberData}
                                  makeMain={this.makeMain}
                                  mainThingId={this.state.mainThingId}
@@ -87,15 +87,15 @@ class CuratePage extends Component {
                               />
                            );
                         }
-                        return <p className="nothing">Nothing to curate</p>;
+                        return <p className="nothing">Nothing to filter</p>;
                      }}
                   </Query>
                )}
             </Member>
-         </StyledCuratePage>
+         </StyledFilterPage>
       );
    }
 }
 
-export default CuratePage;
-export { CURATE_THINGS_QUERY };
+export default FilterPage;
+export { FILTER_THINGS_QUERY };

@@ -22,7 +22,12 @@ type Thing {
 type Narrative {
   id: ID! @id @unique
   title: String! @unique
+  featuredImage: String
+  summary: [String!] @scalarList(strategy:RELATION)
+  includedLinks: [Link]
   connectedThings: [Thing]
+  comments: [Comment]
+  score: Int! @default(value: 0)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
 }
@@ -36,6 +41,7 @@ type Comment {
   onThing: Thing
   onLink: Link
   onComment: Comment
+  onNarrative: Narrative
 }
 
 type Link {

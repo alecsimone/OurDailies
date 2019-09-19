@@ -4,6 +4,7 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import ErrorMessage from '../ErrorMessage';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
+import { NARRATIVE_THINGS_QUERY } from '../../pages/narrative';
 import { convertISOtoAgo, urlFinder } from '../../lib/utils';
 
 const DELETE_COMMENT_MUTATION = gql`
@@ -177,6 +178,10 @@ class Comment extends Component {
                               variables: {
                                  id: this.props.thingID
                               }
+                           },
+                           {
+                              query: NARRATIVE_THINGS_QUERY,
+                              variables: { id: this.props.thingID }
                            }
                         ]}
                      >

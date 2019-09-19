@@ -20,9 +20,9 @@ const ThingContainer = styled.div`
    align-items: stretch;
    .thing {
       grid-column: 1 / -1;
-      grid-row: span 6;
+      grid-row: span 7;
       @media screen and (min-width: 1921px) {
-         grid-row: span 8;
+         grid-row: span 9;
       }
    }
    .littleThing {

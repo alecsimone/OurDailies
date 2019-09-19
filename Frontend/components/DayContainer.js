@@ -93,7 +93,7 @@ const DayContainer = props => {
       return scoreB - scoreA;
    });
 
-   props.things.splice(10);
+   props.things.splice(12);
    const thingsArray = props.things.map(thing => {
       if (!process.browser) {
          return <LoadingRing />;

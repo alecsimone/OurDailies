@@ -678,7 +678,7 @@ const customEntrances = {
       notdrumzorz: 1,
       sixnineactual: 0.5,
       manhattaan: 0.1,
-      nyptroxrl: 0.2,
+      mr_nyptrox: 0.2,
       haxzyt: 0.1,
       ganerrl: 0.6,
       fisheysauce: 0.7,

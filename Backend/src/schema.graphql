@@ -25,13 +25,13 @@ type Mutation {
     password: String!
     confirmPassword: String!
   ): Member!
-  setFeaturedImage(imageUrl: String!, thingID: ID!): Thing!
-  changeThingTitle(title: String!, thingID: ID!): Thing!
+  setFeaturedImage(imageUrl: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
+  changeThingTitle(title: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
   addNarrativeToThing(title: String!, thingID: ID!): Thing!
-  addLinkToThing(title: String!, url: String!, thingID: ID!): Thing!
-  addSummaryLineToThing(summaryLine: String!, thingID: ID!): Thing!
-  removeSummaryLineFromThing(summaryLine: String!, thingID: ID!): Thing!
-  addCommentToThing(comment: String!, thingID: ID!): Comment!
+  addLinkToThing(title: String!, url: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
+  addSummaryLineToThing(summaryLine: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
+  removeSummaryLineFromThing(summaryLine: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
+  addCommentToThing(comment: String!, thingID: ID!, isNarrative: Boolean): Comment!
   deleteComment(id: ID!): Comment!
   voteOnThing(thingID: ID!): Vote
   liveChatVote(voter: ID!): Vote
@@ -57,7 +57,7 @@ type Query {
   me: Member
   thingsForGivenDay(day: String, winnerOffset: Int): [Thing]!
   thingsForNew: [Thing]!
-  thingsForCurate: [Thing]!
+  thingsForFilter: [Thing]!
   thingsForFinalists: [Thing]!
 }
 

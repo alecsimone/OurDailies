@@ -39,6 +39,7 @@ type Comment {
   onThing: Thing
   onLink: Link
   onComment: Comment
+  onNarrative: Narrative
 }
 
 type CommentConnection {
@@ -54,10 +55,16 @@ input CommentCreateInput {
   onThing: ThingCreateOneWithoutCommentsInput
   onLink: LinkCreateOneInput
   onComment: CommentCreateOneInput
+  onNarrative: NarrativeCreateOneWithoutCommentsInput
 }
 
 input CommentCreateManyWithoutAuthorInput {
   create: [CommentCreateWithoutAuthorInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CommentCreateManyWithoutOnNarrativeInput {
+  create: [CommentCreateWithoutOnNarrativeInput!]
   connect: [CommentWhereUniqueInput!]
 }
 
@@ -77,6 +84,16 @@ input CommentCreateWithoutAuthorInput {
   onThing: ThingCreateOneWithoutCommentsInput
   onLink: LinkCreateOneInput
   onComment: CommentCreateOneInput
+  onNarrative: NarrativeCreateOneWithoutCommentsInput
+}
+
+input CommentCreateWithoutOnNarrativeInput {
+  id: ID
+  author: MemberCreateOneWithoutCommentsInput!
+  comment: String!
+  onThing: ThingCreateOneWithoutCommentsInput
+  onLink: LinkCreateOneInput
+  onComment: CommentCreateOneInput
 }
 
 input CommentCreateWithoutOnThingInput {
@@ -85,6 +102,7 @@ input CommentCreateWithoutOnThingInput {
   comment: String!
   onLink: LinkCreateOneInput
   onComment: CommentCreateOneInput
+  onNarrative: NarrativeCreateOneWithoutCommentsInput
 }
 
 type CommentEdge {
@@ -184,6 +202,7 @@ input CommentUpdateDataInput {
   onThing: ThingUpdateOneWithoutCommentsInput
   onLink: LinkUpdateOneInput
   onComment: CommentUpdateOneInput
+  onNarrative: NarrativeUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateInput {
@@ -192,6 +211,7 @@ input CommentUpdateInput {
   onThing: ThingUpdateOneWithoutCommentsInput
   onLink: LinkUpdateOneInput
   onComment: CommentUpdateOneInput
+  onNarrative: NarrativeUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateManyDataInput {
@@ -210,6 +230,18 @@ input CommentUpdateManyWithoutAuthorInput {
   disconnect: [CommentWhereUniqueInput!]
   update: [CommentUpdateWithWhereUniqueWithoutAuthorInput!]
   upsert: [CommentUpsertWithWhereUniqueWithoutAuthorInput!]
+  deleteMany: [CommentScalarWhereInput!]
+  updateMany: [CommentUpdateManyWithWhereNestedInput!]
+}
+
+input CommentUpdateManyWithoutOnNarrativeInput {
+  create: [CommentCreateWithoutOnNarrativeInput!]
+  delete: [CommentWhereUniqueInput!]
+  connect: [CommentWhereUniqueInput!]
+  set: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutOnNarrativeInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutOnNarrativeInput!]
   deleteMany: [CommentScalarWhereInput!]
   updateMany: [CommentUpdateManyWithWhereNestedInput!]
 }
@@ -245,6 +277,15 @@ input CommentUpdateWithoutAuthorDataInput {
   onThing: ThingUpdateOneWithoutCommentsInput
   onLink: LinkUpdateOneInput
   onComment: CommentUpdateOneInput
+  onNarrative: NarrativeUpdateOneWithoutCommentsInput
+}
+
+input CommentUpdateWithoutOnNarrativeDataInput {
+  author: MemberUpdateOneRequiredWithoutCommentsInput
+  comment: String
+  onThing: ThingUpdateOneWithoutCommentsInput
+  onLink: LinkUpdateOneInput
+  onComment: CommentUpdateOneInput
 }
 
 input CommentUpdateWithoutOnThingDataInput {
@@ -252,11 +293,17 @@ input CommentUpdateWithoutOnThingDataInput {
   comment: String
   onLink: LinkUpdateOneInput
   onComment: CommentUpdateOneInput
+  onNarrative: NarrativeUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateWithWhereUniqueWithoutAuthorInput {
   where: CommentWhereUniqueInput!
   data: CommentUpdateWithoutAuthorDataInput!
+}
+
+input CommentUpdateWithWhereUniqueWithoutOnNarrativeInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateWithoutOnNarrativeDataInput!
 }
 
 input CommentUpdateWithWhereUniqueWithoutOnThingInput {
@@ -273,6 +320,12 @@ input CommentUpsertWithWhereUniqueWithoutAuthorInput {
   where: CommentWhereUniqueInput!
   update: CommentUpdateWithoutAuthorDataInput!
   create: CommentCreateWithoutAuthorInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutOnNarrativeInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutOnNarrativeDataInput!
+  create: CommentCreateWithoutOnNarrativeInput!
 }
 
 input CommentUpsertWithWhereUniqueWithoutOnThingInput {
@@ -330,6 +383,7 @@ input CommentWhereInput {
   onThing: ThingWhereInput
   onLink: LinkWhereInput
   onComment: CommentWhereInput
+  onNarrative: NarrativeWhereInput
   AND: [CommentWhereInput!]
   OR: [CommentWhereInput!]
   NOT: [CommentWhereInput!]
@@ -361,6 +415,11 @@ input LinkCreateInput {
   title: String!
   url: String!
   onThing: ThingCreateOneWithoutIncludedLinksInput
+}
+
+input LinkCreateManyInput {
+  create: [LinkCreateInput!]
+  connect: [LinkWhereUniqueInput!]
 }
 
 input LinkCreateManyWithoutOnThingInput {
@@ -504,6 +563,18 @@ input LinkUpdateManyDataInput {
   url: String
 }
 
+input LinkUpdateManyInput {
+  create: [LinkCreateInput!]
+  update: [LinkUpdateWithWhereUniqueNestedInput!]
+  upsert: [LinkUpsertWithWhereUniqueNestedInput!]
+  delete: [LinkWhereUniqueInput!]
+  connect: [LinkWhereUniqueInput!]
+  set: [LinkWhereUniqueInput!]
+  disconnect: [LinkWhereUniqueInput!]
+  deleteMany: [LinkScalarWhereInput!]
+  updateMany: [LinkUpdateManyWithWhereNestedInput!]
+}
+
 input LinkUpdateManyMutationInput {
   title: String
   url: String
@@ -540,12 +611,23 @@ input LinkUpdateWithoutOnThingDataInput {
   url: String
 }
 
+input LinkUpdateWithWhereUniqueNestedInput {
+  where: LinkWhereUniqueInput!
+  data: LinkUpdateDataInput!
+}
+
 input LinkUpdateWithWhereUniqueWithoutOnThingInput {
   where: LinkWhereUniqueInput!
   data: LinkUpdateWithoutOnThingDataInput!
 }
 
 input LinkUpsertNestedInput {
+  update: LinkUpdateDataInput!
+  create: LinkCreateInput!
+}
+
+input LinkUpsertWithWhereUniqueNestedInput {
+  where: LinkWhereUniqueInput!
   update: LinkUpdateDataInput!
   create: LinkCreateInput!
 }
@@ -1241,7 +1323,12 @@ enum MutationType {
 type Narrative {
   id: ID!
   title: String!
+  featuredImage: String
+  summary: [String!]!
+  includedLinks(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
   connectedThings(where: ThingWhereInput, orderBy: ThingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Thing!]
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  score: Int!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -1255,7 +1342,12 @@ type NarrativeConnection {
 input NarrativeCreateInput {
   id: ID
   title: String!
+  featuredImage: String
+  summary: NarrativeCreatesummaryInput
+  includedLinks: LinkCreateManyInput
   connectedThings: ThingCreateManyWithoutPartOfNarrativesInput
+  comments: CommentCreateManyWithoutOnNarrativeInput
+  score: Int
 }
 
 input NarrativeCreateManyWithoutConnectedThingsInput {
@@ -1263,9 +1355,33 @@ input NarrativeCreateManyWithoutConnectedThingsInput {
   connect: [NarrativeWhereUniqueInput!]
 }
 
+input NarrativeCreateOneWithoutCommentsInput {
+  create: NarrativeCreateWithoutCommentsInput
+  connect: NarrativeWhereUniqueInput
+}
+
+input NarrativeCreatesummaryInput {
+  set: [String!]
+}
+
+input NarrativeCreateWithoutCommentsInput {
+  id: ID
+  title: String!
+  featuredImage: String
+  summary: NarrativeCreatesummaryInput
+  includedLinks: LinkCreateManyInput
+  connectedThings: ThingCreateManyWithoutPartOfNarrativesInput
+  score: Int
+}
+
 input NarrativeCreateWithoutConnectedThingsInput {
   id: ID
   title: String!
+  featuredImage: String
+  summary: NarrativeCreatesummaryInput
+  includedLinks: LinkCreateManyInput
+  comments: CommentCreateManyWithoutOnNarrativeInput
+  score: Int
 }
 
 type NarrativeEdge {
@@ -1278,6 +1394,10 @@ enum NarrativeOrderByInput {
   id_DESC
   title_ASC
   title_DESC
+  featuredImage_ASC
+  featuredImage_DESC
+  score_ASC
+  score_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -1287,6 +1407,9 @@ enum NarrativeOrderByInput {
 type NarrativePreviousValues {
   id: ID!
   title: String!
+  featuredImage: String
+  summary: [String!]!
+  score: Int!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -1320,6 +1443,28 @@ input NarrativeScalarWhereInput {
   title_not_starts_with: String
   title_ends_with: String
   title_not_ends_with: String
+  featuredImage: String
+  featuredImage_not: String
+  featuredImage_in: [String!]
+  featuredImage_not_in: [String!]
+  featuredImage_lt: String
+  featuredImage_lte: String
+  featuredImage_gt: String
+  featuredImage_gte: String
+  featuredImage_contains: String
+  featuredImage_not_contains: String
+  featuredImage_starts_with: String
+  featuredImage_not_starts_with: String
+  featuredImage_ends_with: String
+  featuredImage_not_ends_with: String
+  score: Int
+  score_not: Int
+  score_in: [Int!]
+  score_not_in: [Int!]
+  score_lt: Int
+  score_lte: Int
+  score_gt: Int
+  score_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -1361,15 +1506,26 @@ input NarrativeSubscriptionWhereInput {
 
 input NarrativeUpdateInput {
   title: String
+  featuredImage: String
+  summary: NarrativeUpdatesummaryInput
+  includedLinks: LinkUpdateManyInput
   connectedThings: ThingUpdateManyWithoutPartOfNarrativesInput
+  comments: CommentUpdateManyWithoutOnNarrativeInput
+  score: Int
 }
 
 input NarrativeUpdateManyDataInput {
   title: String
+  featuredImage: String
+  summary: NarrativeUpdatesummaryInput
+  score: Int
 }
 
 input NarrativeUpdateManyMutationInput {
   title: String
+  featuredImage: String
+  summary: NarrativeUpdatesummaryInput
+  score: Int
 }
 
 input NarrativeUpdateManyWithoutConnectedThingsInput {
@@ -1389,13 +1545,45 @@ input NarrativeUpdateManyWithWhereNestedInput {
   data: NarrativeUpdateManyDataInput!
 }
 
+input NarrativeUpdateOneWithoutCommentsInput {
+  create: NarrativeCreateWithoutCommentsInput
+  update: NarrativeUpdateWithoutCommentsDataInput
+  upsert: NarrativeUpsertWithoutCommentsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: NarrativeWhereUniqueInput
+}
+
+input NarrativeUpdatesummaryInput {
+  set: [String!]
+}
+
+input NarrativeUpdateWithoutCommentsDataInput {
+  title: String
+  featuredImage: String
+  summary: NarrativeUpdatesummaryInput
+  includedLinks: LinkUpdateManyInput
+  connectedThings: ThingUpdateManyWithoutPartOfNarrativesInput
+  score: Int
+}
+
 input NarrativeUpdateWithoutConnectedThingsDataInput {
   title: String
+  featuredImage: String
+  summary: NarrativeUpdatesummaryInput
+  includedLinks: LinkUpdateManyInput
+  comments: CommentUpdateManyWithoutOnNarrativeInput
+  score: Int
 }
 
 input NarrativeUpdateWithWhereUniqueWithoutConnectedThingsInput {
   where: NarrativeWhereUniqueInput!
   data: NarrativeUpdateWithoutConnectedThingsDataInput!
+}
+
+input NarrativeUpsertWithoutCommentsInput {
+  update: NarrativeUpdateWithoutCommentsDataInput!
+  create: NarrativeCreateWithoutCommentsInput!
 }
 
 input NarrativeUpsertWithWhereUniqueWithoutConnectedThingsInput {
@@ -1433,9 +1621,37 @@ input NarrativeWhereInput {
   title_not_starts_with: String
   title_ends_with: String
   title_not_ends_with: String
+  featuredImage: String
+  featuredImage_not: String
+  featuredImage_in: [String!]
+  featuredImage_not_in: [String!]
+  featuredImage_lt: String
+  featuredImage_lte: String
+  featuredImage_gt: String
+  featuredImage_gte: String
+  featuredImage_contains: String
+  featuredImage_not_contains: String
+  featuredImage_starts_with: String
+  featuredImage_not_starts_with: String
+  featuredImage_ends_with: String
+  featuredImage_not_ends_with: String
+  includedLinks_every: LinkWhereInput
+  includedLinks_some: LinkWhereInput
+  includedLinks_none: LinkWhereInput
   connectedThings_every: ThingWhereInput
   connectedThings_some: ThingWhereInput
   connectedThings_none: ThingWhereInput
+  comments_every: CommentWhereInput
+  comments_some: CommentWhereInput
+  comments_none: CommentWhereInput
+  score: Int
+  score_not: Int
+  score_in: [Int!]
+  score_not_in: [Int!]
+  score_lt: Int
+  score_lte: Int
+  score_gt: Int
+  score_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

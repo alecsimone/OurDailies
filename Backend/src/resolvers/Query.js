@@ -1,5 +1,9 @@
 const { forwardTo } = require('prisma-binding');
-const { getWinnersFromDifferentDays, getFinalists } = require('../utils');
+const {
+   getWinnersFromDifferentDays,
+   getFinalists,
+   fullThingFields
+} = require('../utils');
 
 const Query = {
    thing: forwardTo('db'),
@@ -63,47 +67,52 @@ const Query = {
       return thingsForDay;
    },
    async thingsForNew(parent, args, ctx, info) {
+      const now = new Date();
+      const twoDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 2);
       const thingsForNew = await ctx.db.query.things(
          {
             where: {
-               AND: {
-                  votes_none: {
-                     voter: {
-                        id: ctx.request.memberId
-                     }
-                  },
-                  passes_none: {
-                     passer: {
-                        id: ctx.request.memberId
-                     }
-                  },
-                  finalistDate: null,
-                  eliminated: false
-               }
+               votes_none: {
+                  voter: {
+                     id: ctx.request.memberId
+                  }
+               },
+               passes_none: {
+                  passer: {
+                     id: ctx.request.memberId
+                  }
+               },
+               finalistDate: null,
+               eliminated: false,
+               createdAt_gte: twoDaysAgo
             },
             orderBy: 'createdAt_DESC',
             first: 3
          },
-         info
+         `{${fullThingFields}}`
       );
+      console.log(thingsForNew);
       return thingsForNew;
    },
-   async thingsForCurate(parent, args, ctx, info) {
+   async thingsForFilter(parent, args, ctx, info) {
       const now = new Date();
       const twoDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 2);
-      const thingsForCurate = await ctx.db.query.things(
+      const thingsForFilter = await ctx.db.query.things(
          {
             where: {
                AND: {
                   createdAt_gte: twoDaysAgo,
                   eliminated: false,
-                  finalistDate: null
+                  finalistDate: null,
+                  votes_some: {
+                     id_not: null
+                  }
                }
             }
          },
          info
       );
-      return thingsForCurate;
+      return thingsForFilter;
    },
    async thingsForFinalists(parent, args, ctx, info) {
       const finalists = await getFinalists(ctx);

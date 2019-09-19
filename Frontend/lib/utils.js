@@ -169,6 +169,7 @@ const fullThingFields = `
    id
    title
    author {
+      id
       displayName
    }
    featuredImage
@@ -218,6 +219,7 @@ const fullThingFields = `
    score
    winner
    finalistDate
+   eliminated
    createdAt
    updatedAt
 `;

@@ -120,6 +120,7 @@ class FullThingEmbed extends Component {
                <Summary
                   summary={thing.summary}
                   thingID={thing.id}
+                  author={thing.author}
                   member={member.me}
                   key={`Summary-${thing.id}`}
                />

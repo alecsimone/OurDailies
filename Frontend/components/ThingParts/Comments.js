@@ -6,11 +6,20 @@ import gql from 'graphql-tag';
 import ErrorMessage from '../ErrorMessage';
 import Comment from './Comment';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
+import { NARRATIVE_THINGS_QUERY } from '../../pages/narrative';
 import MustSignIn from '../MustSignIn';
 
 const ADD_COMMENT_TO_THING_MUTATION = gql`
-   mutation ADD_COMMENT_TO_THING_MUTATION($comment: String!, $thingID: ID!) {
-      addCommentToThing(comment: $comment, thingID: $thingID) {
+   mutation ADD_COMMENT_TO_THING_MUTATION(
+      $comment: String!
+      $thingID: ID!
+      $isNarrative: Boolean
+   ) {
+      addCommentToThing(
+         comment: $comment
+         thingID: $thingID
+         isNarrative: $isNarrative
+      ) {
          id
          comment
       }
@@ -82,7 +91,7 @@ class Comments extends Component {
             : '';
 
       return (
-         <StyledComments>
+         <StyledComments className="Comments">
             <h5 className="comments">COMMENTS</h5>
             {commentItems.length ? (
                commentItems
@@ -94,11 +103,16 @@ class Comments extends Component {
                   mutation={ADD_COMMENT_TO_THING_MUTATION}
                   variables={{
                      comment: this.state.commentToAdd,
-                     thingID: this.props.thingID
+                     thingID: this.props.thingID,
+                     isNarrative: this.props.isNarrative
                   }}
                   refetchQueries={[
                      {
                         query: SINGLE_THING_QUERY,
+                        variables: { id: this.props.thingID }
+                     },
+                     {
+                        query: NARRATIVE_THINGS_QUERY,
                         variables: { id: this.props.thingID }
                      }
                   ]}

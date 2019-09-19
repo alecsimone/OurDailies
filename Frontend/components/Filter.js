@@ -4,7 +4,7 @@ import FullThing from './FullThing';
 import TinyThing from './TinyThing';
 import { getScoreForThing } from '../lib/utils';
 
-const StyledCurate = styled.div`
+const StyledFilter = styled.div`
    display: flex;
    flex-wrap: wrap;
    @media screen and (min-width: 800px) {
@@ -26,7 +26,7 @@ const StyledCurate = styled.div`
    }
 `;
 
-class Curate extends Component {
+class Filter extends Component {
    sortThings = (a, b) => {
       const aScore = getScoreForThing(a);
       const bScore = getScoreForThing(b);
@@ -44,19 +44,6 @@ class Curate extends Component {
       }
    }
 
-   // state = {
-   //    mainThingId: this.sortedThings[0].id
-   // };
-
-   // makeMain = id => {
-   //    console.log(`We makin the thing with id ${id} main, baby!`);
-   //    let newMain;
-   //    this.props.things.forEach(thing => {
-   //       if (thing.id === id) newMain = thing.id;
-   //    });
-   //    this.setState({ mainThingId: newMain });
-   // };
-
    render() {
       const { things, member } = this.props;
 
@@ -71,7 +58,8 @@ class Curate extends Component {
          things.splice(indexToEliminate, 1);
       });
       const sortedThings = things.sort(this.sortThings);
-      if (mainThingData == null) mainThingData = sortedThings[0];
+      if (mainThingData == null)
+         mainThingData = sortedThings[sortedThings.length - 1];
       const mainThing = (
          <FullThing
             thing={mainThingData}
@@ -93,12 +81,12 @@ class Curate extends Component {
       ));
 
       return (
-         <StyledCurate>
+         <StyledFilter>
             <div className="mainThingContainer">{mainThing}</div>
             <div className="tinyThingsContainer">{tinyThings}</div>
-         </StyledCurate>
+         </StyledFilter>
       );
    }
 }
 
-export default Curate;
+export default Filter;
