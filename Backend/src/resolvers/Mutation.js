@@ -67,6 +67,17 @@ const Mutations = {
                      id: ctx.request.memberId
                   }
                },
+               votes: {
+                  create: {
+                     voter: {
+                        connect: {
+                           id: ctx.request.memberId
+                        }
+                     },
+                     value: ctx.request.member.rep
+                  }
+               },
+               score: ctx.request.member.rep,
                featuredImage,
                includedLinks
             }
