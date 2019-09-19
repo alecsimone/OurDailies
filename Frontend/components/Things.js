@@ -18,6 +18,7 @@ const ThingContainer = styled.div`
    grid-gap: 3rem;
    justify-items: stretch;
    align-items: stretch;
+   grid-auto-flow: dense;
    .thing {
       grid-column: 1 / -1;
       grid-row: span 7;
