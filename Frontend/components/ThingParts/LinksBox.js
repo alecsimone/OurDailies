@@ -77,11 +77,12 @@ const StyledLinksBox = styled.div`
    }
    form {
       flex-grow: 1;
-      max-width: calc(800px + 5rem);
+      max-width: 100%;
       text-align: center;
    }
    .wholeAddLinkForm {
       width: 100%;
+      position: relative;
       margin-top: 2rem;
       display: flex;
       flex-wrap: wrap;
@@ -358,6 +359,7 @@ class LinksBox extends Component {
                                           onChange={this.handleURLChange}
                                        />
                                        {this.state.things.length > 0 && isOpen && (
+                                          // that true is supposed to be isOpen
                                           <div className="autocompleteSuggestions">
                                              {this.state.things.map(
                                                 (item, index) => (

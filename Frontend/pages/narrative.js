@@ -53,9 +53,15 @@ const NarrativeContainer = styled.div`
    margin: auto;
    display: flex;
    align-items: flex-start;
+   flex-wrap: wrap;
+   @media screen and (min-width: 800px) {
+      flex-wrap: nowrap;
+   }
    .narrativesSidebar {
       min-width: 20%;
-      max-width: 35%;
+      @media screen and (min-width: 800px) {
+         max-width: 35%;
+      }
       flex-grow: 1;
       overflow: hidden;
       padding: 2rem;
@@ -69,7 +75,9 @@ const NarrativeContainer = styled.div`
       }
    }
    .narrativesBody {
-      max-width: 80%;
+      @media screen and (min-width: 800px) {
+         max-width: 80%;
+      }
       flex-grow: 2;
       h2 {
          text-align: center;

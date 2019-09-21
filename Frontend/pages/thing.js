@@ -110,11 +110,12 @@ const SingleThing = props => {
                   }
                   if (data.thing.includedLinks != null) {
                      data.thing.includedLinks.forEach(link => {
+                        const lowerCasedLink = link.url.toLowerCase();
                         if (
-                           link.url.includes('jpg') ||
-                           link.url.includes('jpeg') ||
-                           link.url.includes('png') ||
-                           link.url.includes('gif')
+                           lowerCasedLink.includes('jpg') ||
+                           lowerCasedLink.includes('jpeg') ||
+                           lowerCasedLink.includes('png') ||
+                           lowerCasedLink.includes('gif')
                         ) {
                            thingComponent = (
                               <FullThing

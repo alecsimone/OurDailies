@@ -34,10 +34,16 @@ const StyledModal = styled.div`
       box-shadow: 0 0.1rem 0.2rem ${props => props.theme.background};
       border: 3px solid ${props => props.theme.secondaryAccent40};
       position: absolute;
-      width: 50%;
-      height: 50%;
-      left: 25%;
-      top: 25%;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      @media screen and (min-width: 800px) {
+         width: 50%;
+         height: 50%;
+         left: 25%;
+         top: 25%;
+      }
       text-align: center;
       border-radius: 0.5rem;
       padding: 2rem;

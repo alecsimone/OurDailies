@@ -254,17 +254,19 @@ class FeaturedImageCarousel extends Component {
             ? this.props.includedLinks.map(linkObject => linkObject.url)
             : [];
 
-      const mediaLinksArray = justTheLinks.filter(
-         link =>
+      const mediaLinksArray = justTheLinks.filter(link => {
+         const lowerCasedLink = link.toLowerCase();
+         return (
             link !== this.props.featuredImage &&
-            (link.includes('jpg') ||
-               link.includes('jpeg') ||
-               link.includes('png') ||
-               link.includes('gif') ||
-               link.includes('youtube.com/watch?v=') ||
-               link.includes('youtu.be/') ||
-               link.includes('gfycat.com/'))
-      );
+            (lowerCasedLink.includes('jpg') ||
+               lowerCasedLink.includes('jpeg') ||
+               lowerCasedLink.includes('png') ||
+               lowerCasedLink.includes('gif') ||
+               lowerCasedLink.includes('youtube.com/watch?v=') ||
+               lowerCasedLink.includes('youtu.be/') ||
+               lowerCasedLink.includes('gfycat.com/'))
+         );
+      });
       const allMedia =
          this.props.featuredImage != null &&
          this.props.featuredImage !== '/static/defaultPic.jpg'
@@ -365,6 +367,8 @@ class FeaturedImageCarousel extends Component {
 
       let featuredImage;
 
+      const lowerCasedCurrentLink = currentLink.toLowerCase();
+
       if (currentLink == null) {
          featuredImage = (
             <>
@@ -379,10 +383,10 @@ class FeaturedImageCarousel extends Component {
             </>
          );
       } else if (
-         currentLink.includes('jpg') ||
-         currentLink.includes('jpeg') ||
-         currentLink.includes('png') ||
-         currentLink.includes('gif')
+         lowerCasedCurrentLink.includes('jpg') ||
+         lowerCasedCurrentLink.includes('jpeg') ||
+         lowerCasedCurrentLink.includes('png') ||
+         lowerCasedCurrentLink.includes('gif')
       ) {
          featuredImage = (
             <>

@@ -14,7 +14,8 @@ const {
    fullThingFields,
    getThing,
    publishThingUpdate,
-   addNarrative
+   addNarrative,
+   clearLiveVotes
 } = require('../utils');
 
 const Mutations = {
@@ -33,19 +34,20 @@ const Mutations = {
       }
 
       const link = args.originalSource;
+      const lowerCasedLink = link.toLowerCase();
       let featuredImage = null;
       let includedLinks = [];
       if (
-         link.includes('jpg') ||
-         link.includes('jpeg') ||
-         link.includes('png') ||
-         link.includes('gif')
+         lowerCasedLink.includes('jpg') ||
+         lowerCasedLink.includes('jpeg') ||
+         lowerCasedLink.includes('png') ||
+         lowerCasedLink.includes('gif')
       ) {
          featuredImage = link;
       } else if (
-         link.includes('youtube.com/watch?v=') ||
-         link.includes('youtu.be/') ||
-         link.includes('gfycat.com/')
+         lowerCasedLink.includes('youtube.com/watch?v=') ||
+         lowerCasedLink.includes('youtu.be/') ||
+         lowerCasedLink.includes('gfycat.com/')
       ) {
          featuredImage = '/static/defaultPic.jpg';
          includedLinks = {
@@ -55,8 +57,6 @@ const Mutations = {
             }
          };
       }
-
-      console.log(featuredImage);
 
       const thing = await ctx.db.mutation.createThing(
          {
@@ -722,42 +722,9 @@ const Mutations = {
       return { message };
    },
    async resetLiveThing(parent, args, ctx, info) {
-      const deletedVotes = await ctx.db.mutation.deleteManyVotes(
-         {
-            where: {
-               onThing: {
-                  id: liveThingID
-               }
-            }
-         },
-         `{count}`
-      );
-      const deletedPasses = await ctx.db.mutation.deleteManyPasses(
-         {
-            where: {
-               onThing: {
-                  id: liveThingID
-               }
-            }
-         },
-         `{count}`
-      );
+      const deletedVoteCount = clearLiveVotes(ctx);
 
-      const updatedThing = await ctx.db.mutation.updateThing(
-         {
-            where: {
-               id: liveThingID
-            },
-            data: {
-               score: 0
-            }
-         },
-         `{${fullThingFields}}`
-      );
-
-      publishThingUpdate(updatedThing, ctx);
-
-      return deletedVotes.count + deletedPasses.count;
+      return deletedVoteCount;
    },
    async eliminateThing(parent, { thingID }, ctx, info) {
       loggedInGate(ctx);
@@ -776,6 +743,7 @@ const Mutations = {
       );
 
       publishThingUpdate(updatedThing, ctx);
+      clearLiveVotes(ctx);
 
       return updatedThing;
    },
@@ -798,6 +766,7 @@ const Mutations = {
       );
 
       publishThingUpdate(updatedThing, ctx);
+      clearLiveVotes(ctx);
 
       return updatedThing;
    },

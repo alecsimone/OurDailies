@@ -430,3 +430,42 @@ async function addNarrative(title, thingID, ctx) {
    return updatedThing;
 }
 exports.addNarrative = addNarrative;
+
+async function clearLiveVotes(ctx) {
+   const deletedVotes = await ctx.db.mutation.deleteManyVotes(
+      {
+         where: {
+            onThing: {
+               id: liveThingID
+            }
+         }
+      },
+      `{count}`
+   );
+   const deletedPasses = await ctx.db.mutation.deleteManyPasses(
+      {
+         where: {
+            onThing: {
+               id: liveThingID
+            }
+         }
+      },
+      `{count}`
+   );
+
+   const updatedThing = await ctx.db.mutation.updateThing(
+      {
+         where: {
+            id: liveThingID
+         },
+         data: {
+            score: 0
+         }
+      },
+      `{${fullThingFields}}`
+   );
+
+   publishThingUpdate(updatedThing, ctx);
+   return deletedVotes.count + deletedPasses.count;
+}
+exports.clearLiveVotes = clearLiveVotes;

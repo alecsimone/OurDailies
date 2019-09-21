@@ -38,11 +38,11 @@ const StyledFullThing = styled.article`
       }
    }
    .thingInfo {
-      width: 33%;
-      background: ${props => props.theme.veryLowContrastCoolGrey};
+      /* width: 33%;
+      background: ${props => props.theme.veryLowContrastCoolGrey}; */
       padding: 0.5rem 1.5rem;
       border-radius: 0 3px 3px 0;
-      border-left: 3px solid ${props => props.theme.background};
+      /* border-left: 3px solid ${props => props.theme.background}; */
       overflow: auto;
       h3.headline {
          margin: 0;
@@ -77,6 +77,9 @@ const StyledFullThing = styled.article`
          -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.5);
          background: ${props => props.theme.lowContrastGrey};
       }
+   }
+   .autocompleteSuggestions {
+      max-width: 500px;
    }
 `;
 

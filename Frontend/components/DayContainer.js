@@ -75,7 +75,11 @@ const DayContainer = props => {
       windowWidth = window.innerWidth;
    } catch (windowError) {}
 
-   props.things.sort((a, b) => {
+   const thingsWithVotes = props.things.filter(
+      thing => thing.votes.length > 0 || thing.finalistDate != null
+   );
+
+   thingsWithVotes.sort((a, b) => {
       if (a.winner != null && b.winner == null) {
          return -1;
       }
@@ -93,8 +97,8 @@ const DayContainer = props => {
       return scoreB - scoreA;
    });
 
-   props.things.splice(12);
-   const thingsArray = props.things.map(thing => {
+   thingsWithVotes.splice(12);
+   const thingsArray = thingsWithVotes.map(thing => {
       if (!process.browser) {
          return <LoadingRing />;
       }
