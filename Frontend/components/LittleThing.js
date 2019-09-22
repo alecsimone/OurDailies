@@ -200,6 +200,7 @@ class LittleThing extends Component {
                         passData={data.passes}
                         finalistDate={data.finalistDate}
                         winner={data.winner}
+                        eliminated={data.eliminated}
                         thingID={data.id}
                         member={memberData.me}
                      />

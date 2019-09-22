@@ -212,6 +212,9 @@ const StyledVoteBar = styled.div`
             height: 2rem;
          }
       }
+      .eliminated {
+         margin-right: 1rem;
+      }
       .promoteContainer,
       .makeWinnerContainer {
          flex-grow: 1;
@@ -354,7 +357,7 @@ class VoteBar extends Component {
          </Mutation>
       );
 
-      const eliminateButton = (
+      let eliminateButton = (
          <Mutation
             mutation={ELIMINATE_THING_MUTATION}
             variables={{ thingID: this.props.thingID }}
@@ -381,6 +384,9 @@ class VoteBar extends Component {
             )}
          </Mutation>
       );
+      if (this.props.eliminated) {
+         eliminateButton = <div className="eliminated">Eliminated</div>;
+      }
 
       const promoteButton = (
          <Mutation

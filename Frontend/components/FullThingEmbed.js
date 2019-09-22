@@ -139,6 +139,7 @@ class FullThingEmbed extends Component {
                   passData={thing.passes}
                   finalistDate={thing.finalistDate}
                   winner={thing.winner}
+                  eliminated={thing.eliminated}
                   thingID={thing.id}
                   member={member.me}
                />

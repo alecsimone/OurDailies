@@ -119,7 +119,7 @@ class newPage extends Component {
                         );
 
                         const mainThing = this.getMainThing(
-                           unEliminatedThings,
+                           data.thingsForNew,
                            memberData.me.id
                         );
                         const otherThings = data.thingsForNew.filter(
