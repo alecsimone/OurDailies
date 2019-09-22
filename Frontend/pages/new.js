@@ -114,8 +114,12 @@ class newPage extends Component {
                            windowWidth = window.innerWidth;
                         } catch (windowError) {}
 
+                        const unEliminatedThings = data.thingsForNew.filter(
+                           thing => !thing.eliminated
+                        );
+
                         const mainThing = this.getMainThing(
-                           data.thingsForNew,
+                           unEliminatedThings,
                            memberData.me.id
                         );
                         const otherThings = data.thingsForNew.filter(
@@ -137,7 +141,7 @@ class newPage extends Component {
                            </>
                         );
 
-                        if (data.thingsForNew.length === 0) {
+                        if (unEliminatedThings.length === 0) {
                            thingComponent = (
                               <p className="nothing">No new things!</p>
                            );
