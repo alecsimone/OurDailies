@@ -39,6 +39,24 @@ const REMOVE_SUMMARY_LINE_FROM_THING_MUTATION = gql`
    }
 `;
 
+const EDIT_SUMMARY_LINE_ON_THING_MUTATION = gql`
+   mutation EDIT_SUMMARY_LINE_ON_THING_MUTATION(
+      $editedIndex: Int!
+      $newSummaryLine: String!
+      $thingID: ID!
+      $isNarrative: Boolean
+   ) {
+      editSummaryLineOnThing(
+         editedIndex: $editedIndex
+         newSummaryLine: $newSummaryLine
+         thingID: $thingID
+         isNarrative: $isNarrative
+      ) {
+         message
+      }
+   }
+`;
+
 const StyledSummary = styled.div`
    ul {
       margin: 0;
@@ -48,32 +66,39 @@ const StyledSummary = styled.div`
          line-height: 1.4;
          list-style-type: ' - ';
          display: flex;
-         align-items: center;
+         align-items: stretch;
          justify-content: space-between;
          margin: 2rem 0;
          @media screen and (min-width: 800px) {
             span {
                max-width: calc(100% - 3rem);
+               flex-grow: 1;
             }
          }
-         img {
-            display: none;
-            @media screen and (min-width: 800px) {
-               display: block;
-            }
-            width: 2rem;
-            height: 2rem;
-            cursor: pointer;
-            opacity: 0.4;
-            &:hover {
-               opacity: 1;
-            }
-            &.loading {
-               opacity: 1;
-               animation-name: spin;
-               animation-duration: 750ms;
-               animation-iteration-count: infinite;
-               animation-timing-function: linear;
+         .buttons {
+            display: flex;
+            flex-wrap: nowrap;
+            img {
+               display: none;
+               @media screen and (min-width: 800px) {
+                  display: block;
+               }
+               width: 2rem;
+               min-width: 2rem;
+               height: 2rem;
+               margin-left: 1rem;
+               cursor: pointer;
+               opacity: 0.4;
+               &:hover {
+                  opacity: 1;
+               }
+               &.loading {
+                  opacity: 1;
+                  animation-name: spin;
+                  animation-duration: 750ms;
+                  animation-iteration-count: infinite;
+                  animation-timing-function: linear;
+               }
             }
          }
       }
@@ -105,7 +130,9 @@ const StyledSummary = styled.div`
 
 class Summary extends Component {
    state = {
-      lineToAdd: ''
+      lineToAdd: '',
+      editingIndexes: [],
+      summary: this.props.summary
    };
 
    handleKeyDown = (e, addSummaryLineToThing) => {
@@ -120,55 +147,153 @@ class Summary extends Component {
       this.setState({ lineToAdd: e.target.value });
    };
 
+   handleEditBoxKeyDown = (e, index, editSummaryLineOnThing) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+         e.preventDefault();
+         const previousEditingIndexes = this.state.editingIndexes;
+         const newEditingIndexes = previousEditingIndexes.filter(
+            editingIndex => editingIndex !== index
+         );
+         this.setState({ editingIndexes: newEditingIndexes });
+         editSummaryLineOnThing();
+      }
+   };
+
+   handleEditBoxChange = (e, index) => {
+      const { summary } = this.state;
+      summary[index] = e.target.value;
+      this.setState({ summary });
+   };
+
    render() {
-      const summaryItems = this.props.summary.map((bullet, index) => (
-         <li key={index}>
-            <span>- {bullet}</span>
-            {this.props.member != null &&
-               (this.props.member.roles.some(role =>
-                  ['Admin', 'Editor', 'Moderator'].includes(role)
-               ) ||
-                  this.props.member.id === this.props.author.id) && (
-                  <Mutation
-                     mutation={REMOVE_SUMMARY_LINE_FROM_THING_MUTATION}
-                     variables={{
-                        summaryLine: bullet,
-                        thingID: this.props.thingID,
-                        isNarrative: this.props.isNarrative
+      const summaryItems = this.props.summary.map((bullet, index) => {
+         const editButton = (
+            <img
+               className="editSummaryLineButton"
+               src="/static/edit-this.png"
+               alt="edit comment button"
+               onClick={() => {
+                  let { editingIndexes } = this.state;
+                  if (editingIndexes.includes(index)) {
+                     editingIndexes = editingIndexes.filter(
+                        editIndex => editIndex !== index
+                     );
+                  } else {
+                     editingIndexes.push(index);
+                  }
+                  this.setState({ editingIndexes });
+               }}
+            />
+         );
+         const deleteButton = (
+            <Mutation
+               mutation={REMOVE_SUMMARY_LINE_FROM_THING_MUTATION}
+               variables={{
+                  summaryLine: bullet,
+                  thingID: this.props.thingID,
+                  isNarrative: this.props.isNarrative
+               }}
+               refetchQueries={[
+                  {
+                     query: SINGLE_THING_QUERY,
+                     variables: { id: this.props.thingID }
+                  },
+                  {
+                     query: FILTER_THINGS_QUERY
+                  },
+                  {
+                     query: NARRATIVE_THINGS_QUERY,
+                     variables: { id: this.props.thingID }
+                  }
+               ]}
+            >
+               {(
+                  removeSummaryLineFromThing,
+                  { loading, error, called, data }
+               ) => (
+                  <img
+                     src="/static/red-x.png"
+                     alt="delete summary line button"
+                     className={loading ? 'loading' : ''}
+                     onClick={() => {
+                        removeSummaryLineFromThing().catch(err => {
+                           alert(err.message);
+                        });
                      }}
-                     refetchQueries={[
-                        {
-                           query: SINGLE_THING_QUERY,
-                           variables: { id: this.props.thingID }
-                        },
-                        {
-                           query: FILTER_THINGS_QUERY
-                        },
-                        {
-                           query: NARRATIVE_THINGS_QUERY,
-                           variables: { id: this.props.thingID }
-                        }
-                     ]}
-                  >
-                     {(
-                        removeSummaryLineFromThing,
-                        { loading, error, called, data }
-                     ) => (
-                        <img
-                           src="/static/red-x.png"
-                           alt="delete summary line button"
-                           className={loading ? 'loading' : ''}
-                           onClick={() => {
-                              removeSummaryLineFromThing().catch(err => {
-                                 alert(err.message);
-                              });
-                           }}
-                        />
-                     )}
-                  </Mutation>
+                  />
                )}
-         </li>
-      ));
+            </Mutation>
+         );
+         const buttons = (
+            <div className="buttons">
+               {editButton}
+               {deleteButton}
+            </div>
+         );
+         if (!this.state.editingIndexes.includes(index)) {
+            return (
+               <li key={index}>
+                  <span>- {bullet}</span>
+                  {this.props.member != null &&
+                     (this.props.member.roles.some(role =>
+                        ['Admin', 'Editor', 'Moderator'].includes(role)
+                     ) ||
+                        this.props.member.id === this.props.author.id) &&
+                     buttons}
+               </li>
+            );
+         }
+         return (
+            <li key={index}>
+               <Mutation
+                  mutation={EDIT_SUMMARY_LINE_ON_THING_MUTATION}
+                  variables={{
+                     editedIndex: index,
+                     newSummaryLine: this.state.summary[index],
+                     thingID: this.props.thingID,
+                     isNarrative: this.props.isNarrative
+                  }}
+                  refetchQueries={[
+                     {
+                        query: SINGLE_THING_QUERY,
+                        variables: { id: this.props.thingID }
+                     },
+                     {
+                        query: FILTER_THINGS_QUERY
+                     },
+                     {
+                        query: NARRATIVE_THINGS_QUERY,
+                        variables: { id: this.props.thingID }
+                     }
+                  ]}
+               >
+                  {(
+                     editSummaryLineOnThing,
+                     { loading, error, called, data }
+                  ) => (
+                     <textarea
+                        placeholder="Edit summary line"
+                        value={this.state.summary[index]}
+                        onChange={e => this.handleEditBoxChange(e, index)}
+                        onKeyDown={e =>
+                           this.handleEditBoxKeyDown(
+                              e,
+                              index,
+                              editSummaryLineOnThing
+                           )
+                        }
+                     />
+                  )}
+               </Mutation>
+               {this.props.member != null &&
+                  (this.props.member.roles.some(role =>
+                     ['Admin', 'Editor', 'Moderator'].includes(role)
+                  ) ||
+                     this.props.member.id === this.props.author.id) &&
+                  buttons}
+            </li>
+         );
+      });
 
       return (
          <Mutation
@@ -180,15 +305,11 @@ class Summary extends Component {
             }}
             refetchQueries={[
                {
-                  query: SINGLE_THING_QUERY,
+                  query: NARRATIVE_THINGS_QUERY,
                   variables: { id: this.props.thingID }
                },
                {
                   query: FILTER_THINGS_QUERY
-               },
-               {
-                  query: NARRATIVE_THINGS_QUERY,
-                  variables: { id: this.props.thingID }
                }
             ]}
          >

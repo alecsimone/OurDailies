@@ -121,6 +121,7 @@ const StyledComment = styled.div`
          min-width: 2rem;
          height: 2rem;
          opacity: 0.25;
+         margin-top: 1rem;
          /* margin-bottom: -1.6rem; */
          cursor: pointer;
          &:hover {
@@ -304,11 +305,7 @@ class Comment extends Component {
                            )}
                         </Mutation>
                         <img
-                           className={
-                              false
-                                 ? 'editCommentButton loading'
-                                 : 'editCommentButton'
-                           }
+                           className="editCommentButton"
                            src="/static/edit-this.png"
                            alt="edit comment button"
                            onClick={() => {

@@ -92,6 +92,7 @@ class FullThing extends Component {
 
    render() {
       const { thing, member } = this.props;
+      console.log(thing);
 
       return (
          <StyledFullThing>

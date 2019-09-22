@@ -19,6 +19,7 @@ import { home, prodHome } from '../config';
 const NARRATIVE_THINGS_QUERY = gql`
    query NARRATIVE_THINGS_QUERY($id: ID!) {
       narrative(where: { id: $id }) {
+         __typename
          id
          title
          featuredImage

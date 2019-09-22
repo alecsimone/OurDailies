@@ -456,6 +456,85 @@ const Mutations = {
 
       return updatedThing;
    },
+   async editSummaryLineOnThing(
+      parent,
+      { editedIndex, newSummaryLine, thingID, isNarrative },
+      ctx,
+      info
+   ) {
+      loggedInGate(ctx);
+      fullMemberGate(ctx.request.member);
+
+      if (isNarrative) {
+         modGate(ctx.request.member);
+         const currentSummary = await ctx.db.query.narrative(
+            {
+               where: {
+                  id: thingID
+               }
+            },
+            `{summary}`
+         );
+         const newSummary = currentSummary.summary;
+         newSummary[editedIndex] = newSummaryLine;
+
+         const updatedNarrative = await ctx.db.mutation.updateNarrative(
+            {
+               where: { id: thingID },
+               data: {
+                  summary: {
+                     set: newSummary
+                  }
+               }
+            },
+            `{id title score}`
+         );
+
+         // We need a narrative subscription
+         // publishThingUpdate(updatedThing, ctx);
+
+         return { message: 'Success!' };
+      }
+
+      const currentSummary = await ctx.db.query.thing(
+         {
+            where: {
+               id: thingID
+            }
+         },
+         `{summary author {id}}`
+      );
+
+      if (
+         currentSummary.author.id !== ctx.request.memberId ||
+         !ctx.request.member.roles.some(role =>
+            ['Admin', 'Editor', 'Moderator'].includes(role)
+         )
+      ) {
+         throw new Error(
+            "You can't edit the summaries of things you didn't create"
+         );
+      }
+
+      const newSummary = currentSummary.summary;
+      newSummary[editedIndex] = newSummaryLine;
+
+      const updatedThing = await ctx.db.mutation.updateThing(
+         {
+            where: { id: thingID },
+            data: {
+               summary: {
+                  set: newSummary
+               }
+            }
+         },
+         `{${fullThingFields}}`
+      );
+
+      publishThingUpdate(updatedThing, ctx);
+
+      return updatedThing;
+   },
    async setFeaturedImage(
       parent,
       { imageUrl, thingID, isNarrative },

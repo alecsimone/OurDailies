@@ -31,6 +31,7 @@ type Mutation {
   addLinkToThing(title: String!, url: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
   addSummaryLineToThing(summaryLine: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
   removeSummaryLineFromThing(summaryLine: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
+  editSummaryLineOnThing(editedIndex: Int!, newSummaryLine: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
   addCommentToThing(comment: String!, thingID: ID!, isNarrative: Boolean): Comment!
   deleteComment(id: ID!): Comment!
   editComment(id: ID!, newComment: String!): Comment!
