@@ -33,6 +33,7 @@ type Mutation {
   removeSummaryLineFromThing(summaryLine: String!, thingID: ID!, isNarrative: Boolean): SuccessMessage
   addCommentToThing(comment: String!, thingID: ID!, isNarrative: Boolean): Comment!
   deleteComment(id: ID!): Comment!
+  editComment(id: ID!, newComment: String!): Comment!
   voteOnThing(thingID: ID!): Vote
   liveChatVote(voter: ID!): Vote
   passOnThing(thingID: ID!): Pass

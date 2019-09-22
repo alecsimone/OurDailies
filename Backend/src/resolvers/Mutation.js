@@ -628,6 +628,42 @@ const Mutations = {
 
       return deletedComment;
    },
+   async editComment(parent, { id, newComment }, ctx, info) {
+      loggedInGate(ctx);
+
+      const comment = await ctx.db.query.comment(
+         { where: { id } },
+         `{id author {id} onThing {id} onNarrative {id}}`
+      );
+
+      const thingID = comment.onThing
+         ? comment.onThing.id
+         : comment.onNarrative.id;
+
+      if (
+         !ctx.request.member.roles.some(role =>
+            ['Admin', 'Editor', 'Moderator'].includes(role)
+         ) &&
+         comment.author.id !== ctx.request.memberId
+      ) {
+         throw new Error("You don't have permission to do that");
+      }
+
+      const editedComment = await ctx.db.mutation.updateComment({
+         where: {
+            id
+         },
+         data: {
+            comment: newComment
+         }
+      });
+
+      const updatedThing = await getThing(thingID, ctx.db);
+
+      publishThingUpdate(updatedThing, ctx);
+
+      return editedComment;
+   },
    async voteOnThing(parent, { thingID }, ctx, info) {
       loggedInGate(ctx);
       fullMemberGate(ctx.request.member);
