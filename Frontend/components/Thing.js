@@ -109,7 +109,8 @@ const StyledThing = styled.article`
             }
             span {
                 /* margin-right: .5rem; */
-                font-size: ${props => props.theme.tinyText};
+                font-size: ${props => props.theme.smallText};
+                line-height: 1.5;
                 font-weight: 300;
             }
             a {
