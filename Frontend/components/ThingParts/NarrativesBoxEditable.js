@@ -146,7 +146,7 @@ class NarrativesBox extends Component {
                      <span key={narrative.id}>
                         <Link
                            href={{
-                              pathname: '/narrative',
+                              pathname: '/context',
                               query: {
                                  id: narrative.id
                               }
@@ -162,7 +162,7 @@ class NarrativesBox extends Component {
                   <span key={narrative.id}>
                      <Link
                         href={{
-                           pathname: '/narrative',
+                           pathname: '/context',
                            query: {
                               id: narrative.id
                            }

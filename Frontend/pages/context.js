@@ -97,7 +97,7 @@ const NarrativeContainer = styled.div`
    }
 `;
 
-const NarrativeFeed = props => (
+const ContextPage = props => (
    <Query
       query={NARRATIVE_THINGS_QUERY}
       variables={{
@@ -191,5 +191,5 @@ const NarrativeFeed = props => (
    </Query>
 );
 
-export default NarrativeFeed;
+export default ContextPage;
 export { NARRATIVE_THINGS_QUERY };

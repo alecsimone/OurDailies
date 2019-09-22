@@ -7,7 +7,7 @@ import {
    getGfycatSlugFromLink
 } from '../../lib/utils';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
-import { NARRATIVE_THINGS_QUERY } from '../../pages/narrative';
+import { NARRATIVE_THINGS_QUERY } from '../../pages/context';
 
 const SET_FEATURED_IMAGE_MUTATION = gql`
    mutation SET_FEATURED_IMAGE_MUTATION(

@@ -122,7 +122,7 @@ class LittleThing extends Component {
                <span key={narrative.title}>
                   <Link
                      href={{
-                        pathname: '/narrative',
+                        pathname: '/context',
                         query: {
                            id: narrative.id
                         }
@@ -138,7 +138,7 @@ class LittleThing extends Component {
             <span key={narrative.title}>
                <Link
                   href={{
-                     pathname: '/narrative',
+                     pathname: '/context',
                      query: {
                         id: narrative.id
                      }

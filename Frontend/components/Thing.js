@@ -133,7 +133,7 @@ class Thing extends Component {
                <span key={narrative.title}>
                   <Link
                      href={{
-                        pathname: '/narrative',
+                        pathname: '/context',
                         query: {
                            id: narrative.id
                         }
@@ -149,7 +149,7 @@ class Thing extends Component {
             <span key={narrative.title}>
                <Link
                   href={{
-                     pathname: '/narrative',
+                     pathname: '/context',
                      query: {
                         id: narrative.id
                      }

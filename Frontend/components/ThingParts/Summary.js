@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import ErrorMessage from '../ErrorMessage';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
 import { FILTER_THINGS_QUERY } from '../../pages/filter';
-import { NARRATIVE_THINGS_QUERY } from '../../pages/narrative';
+import { NARRATIVE_THINGS_QUERY } from '../../pages/context';
 
 const ADD_SUMMARY_LINE_TO_THING_MUTATION = gql`
    mutation ADD_SUMMARY_LINE_TO_THING_MUTATION(
