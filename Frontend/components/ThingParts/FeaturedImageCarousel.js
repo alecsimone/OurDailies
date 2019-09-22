@@ -367,7 +367,8 @@ class FeaturedImageCarousel extends Component {
 
       let featuredImage;
 
-      const lowerCasedCurrentLink = currentLink.toLowerCase();
+      const lowerCasedCurrentLink =
+         currentLink != null ? currentLink.toLowerCase() : null;
 
       if (currentLink == null) {
          featuredImage = (
