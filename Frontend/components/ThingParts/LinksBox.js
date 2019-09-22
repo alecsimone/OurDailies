@@ -6,7 +6,7 @@ import Downshift, { resetIdCounter } from 'downshift';
 import debounce from 'lodash.debounce';
 import ErrorMessage from '../ErrorMessage';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
-import { NARRATIVE_THINGS_QUERY } from '../../pages/context';
+import { CONTEXT_QUERY } from '../../pages/context';
 import TinyThing from '../TinyThing';
 import { homeNoHTTP, prodHomeNoHTTP } from '../../config';
 import { tinyThingFields } from '../../lib/utils';
@@ -241,7 +241,7 @@ class LinksBox extends Component {
                   variables: { id: this.props.thingID }
                },
                {
-                  query: NARRATIVE_THINGS_QUERY,
+                  query: CONTEXT_QUERY,
                   variables: { id: this.props.thingID }
                }
             ]}

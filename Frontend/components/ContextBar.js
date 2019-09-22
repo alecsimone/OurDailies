@@ -31,7 +31,7 @@ const FRESHEST_NARRATIVES_QUERY = gql`
    }
 `;
 
-const StyledNarrativesBar = styled.div`
+const StyledContextBar = styled.div`
    width: 90%;
    margin: 2rem auto 3rem;
    display: flex;
@@ -64,7 +64,7 @@ const StyledNarrativesBar = styled.div`
    }
 `;
 
-class NarrativesBar extends Component {
+class ContextBar extends Component {
    numberToDisplay = 15;
 
    pickTheNarratives = data => {
@@ -100,7 +100,7 @@ class NarrativesBar extends Component {
                if (error) return <p>Error: {error.message}</p>;
                const topNarrativesArray = this.pickTheNarratives(data);
                return (
-                  <StyledNarrativesBar>
+                  <StyledContextBar>
                      <h5>BIG THIS WEEK: </h5>
                      {topNarrativesArray.map((narrative, index) => {
                         if (index < topNarrativesArray.length - 1) {
@@ -135,7 +135,7 @@ class NarrativesBar extends Component {
                            </span>
                         );
                      })}
-                  </StyledNarrativesBar>
+                  </StyledContextBar>
                );
             }}
          </Query>
@@ -143,4 +143,4 @@ class NarrativesBar extends Component {
    }
 }
 
-export default NarrativesBar;
+export default ContextBar;

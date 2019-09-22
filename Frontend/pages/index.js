@@ -3,7 +3,7 @@ import { Query, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 import Dailies from '../components/Dailies';
-import NarrativesBar from '../components/NarrativesBar';
+import ContextBar from '../components/ContextBar';
 import LoadingRing from '../components/LoadingRing';
 import { littleThingFields } from '../lib/utils';
 
@@ -19,7 +19,7 @@ class Home extends Component {
    render() {
       return (
          <div>
-            <NarrativesBar />
+            <ContextBar />
             <Query
                query={THINGS_FOR_GIVEN_DAY_QUERY}
                variables={{ winnerOffset: 0 }}

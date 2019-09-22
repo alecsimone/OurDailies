@@ -90,7 +90,7 @@ const StyledNarratives = styled.div`
    }
 `;
 
-class NarrativesBox extends Component {
+class ContextBox extends Component {
    state = {
       addNarrative: '',
       narratives: [],
@@ -296,4 +296,4 @@ class NarrativesBox extends Component {
    }
 }
 
-export default NarrativesBox;
+export default ContextBox;

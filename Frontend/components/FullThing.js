@@ -7,7 +7,7 @@ import gql from 'graphql-tag';
 import { convertISOtoAgo } from '../lib/utils';
 import Error from './ErrorMessage';
 import VoteBar from './ThingParts/VoteBar';
-import NarrativesBoxEditable from './ThingParts/NarrativesBoxEditable';
+import ContextBoxEditable from './ThingParts/ContextBoxEditable';
 import LinksBox from './ThingParts/LinksBox';
 import Summary from './ThingParts/Summary';
 import Comments from './ThingParts/Comments';
@@ -123,11 +123,11 @@ class FullThing extends Component {
                member={member.me}
                key={`Summary-${thing.id}`}
             />
-            <NarrativesBoxEditable
+            <ContextBoxEditable
                partOfNarratives={thing.partOfNarratives}
                thingID={thing.id}
                member={member.me}
-               key={`NarrativesBoxEditable-${thing.id}`}
+               key={`ContextBoxEditable-${thing.id}`}
             />
             <VoteBar
                key={thing.id}

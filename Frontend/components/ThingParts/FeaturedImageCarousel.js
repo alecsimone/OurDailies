@@ -7,7 +7,7 @@ import {
    getGfycatSlugFromLink
 } from '../../lib/utils';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
-import { NARRATIVE_THINGS_QUERY } from '../../pages/context';
+import { CONTEXT_QUERY } from '../../pages/context';
 
 const SET_FEATURED_IMAGE_MUTATION = gql`
    mutation SET_FEATURED_IMAGE_MUTATION(
@@ -294,7 +294,7 @@ class FeaturedImageCarousel extends Component {
                         variables: { id: this.props.thingID }
                      },
                      {
-                        query: NARRATIVE_THINGS_QUERY,
+                        query: CONTEXT_QUERY,
                         variables: { id: this.props.thingID }
                      }
                   ]}
@@ -409,7 +409,7 @@ class FeaturedImageCarousel extends Component {
                                  variables: { id: this.props.thingID }
                               },
                               {
-                                 query: NARRATIVE_THINGS_QUERY,
+                                 query: CONTEXT_QUERY,
                                  variables: { id: this.props.thingID }
                               }
                            ]}

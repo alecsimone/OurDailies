@@ -16,8 +16,8 @@ import Comments from '../components/ThingParts/Comments';
 import { littleThingFields } from '../lib/utils';
 import { home, prodHome } from '../config';
 
-const NARRATIVE_THINGS_QUERY = gql`
-   query NARRATIVE_THINGS_QUERY($id: ID!) {
+const CONTEXT_QUERY = gql`
+   query CONTEXT_QUERY($id: ID!) {
       narrative(where: { id: $id }) {
          __typename
          id
@@ -99,7 +99,7 @@ const NarrativeContainer = styled.div`
 
 const ContextPage = props => (
    <Query
-      query={NARRATIVE_THINGS_QUERY}
+      query={CONTEXT_QUERY}
       variables={{
          id: props.query.id
       }}
@@ -192,4 +192,4 @@ const ContextPage = props => (
 );
 
 export default ContextPage;
-export { NARRATIVE_THINGS_QUERY };
+export { CONTEXT_QUERY };
