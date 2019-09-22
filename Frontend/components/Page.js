@@ -101,7 +101,7 @@ injectGlobal`
       @media screen and (min-width: 800px) {
          font-size: 10px;
       }
-      @media screen and (min-width: 1280px) {
+      @media screen and (min-width: 1921px) {
          font-size: 12px;
       }
    }
