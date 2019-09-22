@@ -87,11 +87,11 @@ class newPage extends Component {
          thing.passes.forEach(pass => {
             if (pass.passer.id === memberID) hasPassed = true;
          });
-         return !hasVoted && !hasPassed;
+         return !hasVoted && !hasPassed && !thing.eliminated;
       });
       if (unvotedThings.length === 0) {
          // Return the thing with the highest score
-         things.sort(this.highScoreSort);
+         things.sort(this.lowScoreSort);
          return things[0];
       }
       // Return the thing with the lowest score
