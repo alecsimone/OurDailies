@@ -4,7 +4,6 @@ import { Mutation, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
 import ErrorMessage from '../ErrorMessage';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
-import { FILTER_THINGS_QUERY } from '../../pages/filter';
 import { CONTEXT_QUERY } from '../../pages/context';
 
 const ADD_SUMMARY_LINE_TO_THING_MUTATION = gql`
@@ -199,9 +198,6 @@ class Summary extends Component {
                      variables: { id: this.props.thingID }
                   },
                   {
-                     query: FILTER_THINGS_QUERY
-                  },
-                  {
                      query: CONTEXT_QUERY,
                      variables: { id: this.props.thingID }
                   }
@@ -259,9 +255,6 @@ class Summary extends Component {
                         variables: { id: this.props.thingID }
                      },
                      {
-                        query: FILTER_THINGS_QUERY
-                     },
-                     {
                         query: CONTEXT_QUERY,
                         variables: { id: this.props.thingID }
                      }
@@ -307,9 +300,6 @@ class Summary extends Component {
                {
                   query: CONTEXT_QUERY,
                   variables: { id: this.props.thingID }
-               },
-               {
-                  query: FILTER_THINGS_QUERY
                }
             ]}
          >

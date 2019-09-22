@@ -17,9 +17,6 @@ const StageBox = () => (
       <Link href="/new">
          <a>New</a>
       </Link>
-      <Link href="/filter">
-         <a>Filter</a>
-      </Link>
       <Link href="/finalists">
          <a>Finalists</a>
       </Link>

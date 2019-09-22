@@ -281,17 +281,7 @@ async function getWinnersFromDifferentDays(winnerOffset, ctx) {
 exports.getWinnersFromDifferentDays = getWinnersFromDifferentDays;
 
 async function getFinalists(ctx) {
-   const [mostRecentWinner] = await ctx.db.query.things(
-      {
-         where: {
-            winner_not: null
-         },
-         orderBy: 'finalistDate_DESC',
-         first: 1
-      },
-      `{winner}`
-   );
-   const lastWinnerDate = new Date(mostRecentWinner.winner);
+   const lastWinnerDate = await getLastWinnerDate(ctx);
    const finalists = await ctx.db.query.things(
       {
          where: {
@@ -469,3 +459,19 @@ async function clearLiveVotes(ctx) {
    return deletedVotes.count + deletedPasses.count;
 }
 exports.clearLiveVotes = clearLiveVotes;
+
+async function getLastWinnerDate(ctx) {
+   const [mostRecentWinner] = await ctx.db.query.things(
+      {
+         where: {
+            winner_not: null
+         },
+         orderBy: 'winner_DESC',
+         first: 1
+      },
+      `{winner}`
+   );
+   const lastWinnerDate = new Date(mostRecentWinner.winner);
+   return lastWinnerDate;
+}
+exports.getLastWinnerDate = getLastWinnerDate;

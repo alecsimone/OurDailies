@@ -8,7 +8,8 @@ import FullThingEmbed from '../components/FullThingEmbed';
 import Error from '../components/ErrorMessage';
 import Member from '../components/Member';
 import MustSignIn from '../components/MustSignIn';
-import { fullThingFields } from '../lib/utils';
+import ThingPicker from '../components/ThingPicker';
+import { fullThingFields, getScoreForThing } from '../lib/utils';
 
 const NEW_THINGS_QUERY = gql`
    query NEW_THINGS_QUERY {
@@ -19,15 +20,85 @@ const NEW_THINGS_QUERY = gql`
 `;
 
 const StyledNew = styled.div`
+   display: flex;
+   flex-wrap: nowrap;
    p.nothing {
       text-align: center;
       font-size: ${props => props.theme.smallHead};
       font-weight: 600;
       color: ${props => props.theme.majorColor};
+      flex-grow: 1;
+   }
+   .thingPicker {
+      flex-grow: 1;
+      margin-left: 2rem;
    }
 `;
 
 class newPage extends Component {
+   state = {
+      mainThingId: false
+   };
+
+   makeMain = id => {
+      this.setState({ mainThingId: id });
+   };
+
+   highScoreSort = (a, b) => {
+      const aScore = getScoreForThing(a);
+      const bScore = getScoreForThing(b);
+      if (aScore === bScore) {
+         // Newer things first
+         return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+         );
+      }
+      return bScore - aScore;
+   };
+
+   lowScoreSort = (a, b) => {
+      const aScore = getScoreForThing(a);
+      const bScore = getScoreForThing(b);
+      if (aScore === bScore) {
+         // Older things first
+         return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+         );
+      }
+      return aScore - bScore;
+   };
+
+   getMainThing = (things, memberID) => {
+      const { mainThingId } = this.state;
+      if (mainThingId !== false) {
+         const mainThingInAnArray = things.filter(
+            thing => thing.id === mainThingId
+         );
+         if (mainThingInAnArray.length > 0) {
+            return mainThingInAnArray[0];
+         }
+      }
+      const unvotedThings = things.filter(thing => {
+         let hasVoted = false;
+         thing.votes.forEach(vote => {
+            if (vote.voter.id === memberID) hasVoted = true;
+         });
+         let hasPassed = false;
+         thing.passes.forEach(pass => {
+            if (pass.passer.id === memberID) hasPassed = true;
+         });
+         return !hasVoted && !hasPassed;
+      });
+      if (unvotedThings.length === 0) {
+         // Return the thing with the highest score
+         things.sort(this.highScoreSort);
+         return things[0];
+      }
+      // Return the thing with the lowest score
+      unvotedThings.sort(this.lowScoreSort);
+      return unvotedThings[0];
+   };
+
    render() {
       return (
          <MustSignIn>
@@ -43,24 +114,28 @@ class newPage extends Component {
                            windowWidth = window.innerWidth;
                         } catch (windowError) {}
 
-                        const firstThing = data.thingsForNew[0];
+                        const mainThing = this.getMainThing(
+                           data.thingsForNew,
+                           memberData.me.id
+                        );
+                        const otherThings = data.thingsForNew.filter(
+                           thing => thing.id !== mainThing.id
+                        );
+                        otherThings.sort(this.highScoreSort);
 
-                        let thingComponent;
-                        if (windowWidth < 800) {
-                           thingComponent = (
+                        let thingComponent = (
+                           <>
                               <FullThing
-                                 thing={firstThing}
+                                 thing={mainThing}
                                  member={memberData}
                               />
-                           );
-                        } else {
-                           thingComponent = (
-                              <FullThingEmbed
-                                 thing={firstThing}
-                                 member={memberData}
+                              <ThingPicker
+                                 things={otherThings}
+                                 picker={this.makeMain}
+                                 defaultFilters={['eliminated']}
                               />
-                           );
-                        }
+                           </>
+                        );
 
                         if (data.thingsForNew.length === 0) {
                            thingComponent = (

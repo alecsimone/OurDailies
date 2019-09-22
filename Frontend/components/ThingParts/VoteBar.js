@@ -5,7 +5,6 @@ import gql from 'graphql-tag';
 import { SINGLE_THING_QUERY } from '../../pages/thing';
 import { TOGGLE_MODAL_MUTATION } from '../Modal';
 import { NEW_THINGS_QUERY } from '../../pages/new';
-import { FILTER_THINGS_QUERY } from '../../pages/filter';
 
 const VOTE_ON_THING_MUTATION = gql`
    mutation VOTE_ON_THING_MUTATION($thingID: ID!) {
@@ -366,9 +365,6 @@ class VoteBar extends Component {
                },
                {
                   query: NEW_THINGS_QUERY
-               },
-               {
-                  query: FILTER_THINGS_QUERY
                }
             ]}
          >
@@ -397,9 +393,6 @@ class VoteBar extends Component {
                },
                {
                   query: NEW_THINGS_QUERY
-               },
-               {
-                  query: FILTER_THINGS_QUERY
                }
             ]}
          >
