@@ -21,7 +21,13 @@ const NEW_THINGS_QUERY = gql`
 
 const StyledNew = styled.div`
    display: flex;
-   flex-wrap: nowrap;
+   flex-wrap: wrap;
+   @media screen and (min-width: 800px) {
+      flex-wrap: nowrap;
+      .thingPicker {
+         max-width: none;
+      }
+   }
    p.nothing {
       text-align: center;
       font-size: ${props => props.theme.smallHead};
@@ -32,6 +38,7 @@ const StyledNew = styled.div`
    .thingPicker {
       flex-grow: 1;
       margin-left: 2rem;
+      max-width: calc(100% - 4rem);
    }
 `;
 

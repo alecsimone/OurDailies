@@ -51,7 +51,9 @@ class ThingPicker extends Component {
    };
 
    componentDidMount() {
-      this.setState({ activeFilters: this.props.defaultFilters });
+      if (this.props.defaultFilters != null) {
+         this.setState({ activeFilters: this.props.defaultFilters });
+      }
    }
 
    toggleFilter = filterName => {
