@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -149,176 +149,163 @@ const StyledComment = styled.div`
    }
 `;
 
-class Comment extends Component {
-   state = {
-      editing: false,
-      comment: this.props.data.comment
-   };
+const Comment = props => {
+   const [editing, setEditing] = useState(false);
+   const [comment, setComment] = useState(props.data.comment);
 
-   handleKeyDown = (e, editComment) => {
+   const handleKeyDown = function(e, editComment) {
       if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
-         this.setState({ editing: false });
+         setEditing(false);
          editComment().catch(err => {
             alert(err.message);
          });
       }
    };
 
-   handleChange = e => {
-      this.setState({ comment: e.target.value });
+   const handleChange = function(e) {
+      setComment(e.target.value);
    };
 
-   render() {
-      const { data } = this.props;
-      const paragraphsAndEmptyStrings = this.state.comment.split('\n');
-      const paragraphs = paragraphsAndEmptyStrings.filter(
-         string => string != ''
-      );
+   const { data } = props;
+   const paragraphsAndEmptyStrings = comment.split('\n');
+   const paragraphs = paragraphsAndEmptyStrings.filter(string => string != '');
 
-      paragraphs.forEach((graph, index) => {
-         graph.replace(urlFinder, (match, offset, string) => {
-            const beginning = string.substring(0, offset);
-            const end = string.substring(beginning.length + match.length);
-            const jsxGraph = (
-               <>
-                  {beginning}
-                  <a target="_blank" href={match}>
-                     {match.length > 20
-                        ? `${match.substring(0, 60)}...`
-                        : match}
-                  </a>
-                  {end}
-               </>
-            );
-            paragraphs[index] = jsxGraph;
-         });
+   paragraphs.forEach((graph, index) => {
+      graph.replace(urlFinder, (match, offset, string) => {
+         const beginning = string.substring(0, offset);
+         const end = string.substring(beginning.length + match.length);
+         const jsxGraph = (
+            <>
+               {beginning}
+               <a target="_blank" href={match}>
+                  {match.length > 20 ? `${match.substring(0, 60)}...` : match}
+               </a>
+               {end}
+            </>
+         );
+         paragraphs[index] = jsxGraph;
       });
+   });
 
-      const paragraphElements = paragraphs.map((commentString, index) => (
-         <p className="commentParagraph" key={index}>
-            {index === 0 ? (
-               <span className="commenter">
-                  [{data.author.rep}] {data.author.displayName}
-               </span>
-            ) : (
-               ''
-            )}
-            {commentString}
-         </p>
-      ));
+   const paragraphElements = paragraphs.map((commentString, index) => (
+      <p className="commentParagraph" key={index}>
+         {index === 0 ? (
+            <span className="commenter">
+               [{data.author.rep}] {data.author.displayName}
+            </span>
+         ) : (
+            ''
+         )}
+         {commentString}
+      </p>
+   ));
 
-      const createdAtISO = data.createdAt;
-      const timeAgoString = convertISOtoAgo(createdAtISO);
+   const createdAtISO = data.createdAt;
+   const timeAgoString = convertISOtoAgo(createdAtISO);
 
-      return (
-         <StyledComment>
-            <div className="commentContent">
-               <div className="commentLeft">
-                  <img
-                     className="avatar"
-                     src={
-                        data.author.avatar != null
-                           ? data.author.avatar
-                           : '/static/defaultAvatar.jpg'
-                     }
-                     alt={`${data.author.displayName} avatar`}
-                  />
-                  <div className="commentAndAuthorContainer">
-                     {!this.state.editing ? (
-                        paragraphElements
-                     ) : (
-                        <Mutation
-                           mutation={EDIT_COMMENT_MUTATION}
-                           variables={{
-                              id: data.id,
-                              newComment: this.state.comment
-                           }}
-                           refetchQueries={[
-                              {
-                                 query: SINGLE_THING_QUERY,
-                                 variables: { id: this.props.thingID }
-                              },
-                              {
-                                 query: CONTEXT_QUERY,
-                                 variables: { id: this.props.thingID }
-                              }
-                           ]}
-                        >
-                           {(editComment, { loading, error, called, data }) => (
-                              <textarea
-                                 className="editCommentBox"
-                                 placeholder="Edit comment"
-                                 onKeyDown={e =>
-                                    this.handleKeyDown(e, editComment)
-                                 }
-                                 onChange={this.handleChange}
-                                 value={this.state.comment}
-                              />
-                           )}
-                        </Mutation>
-                     )}
-                  </div>
-               </div>
-               {this.props.member != null &&
-                  (data.author.id === this.props.member.id ||
-                     this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator'].includes(role)
-                     )) && (
-                     <div className="buttons">
-                        <Mutation
-                           mutation={DELETE_COMMENT_MUTATION}
-                           variables={{
-                              id: data.id
-                           }}
-                           refetchQueries={[
-                              {
-                                 query: SINGLE_THING_QUERY,
-                                 variables: {
-                                    id: this.props.thingID
-                                 }
-                              },
-                              {
-                                 query: CONTEXT_QUERY,
-                                 variables: { id: this.props.thingID }
-                              }
-                           ]}
-                        >
-                           {(
-                              deleteComment,
-                              { loading, error, called, data }
-                           ) => (
-                              <img
-                                 className={
-                                    loading
-                                       ? 'deleteCommentButton loading'
-                                       : 'deleteCommentButton'
-                                 }
-                                 src="/static/red-x.png"
-                                 alt="delete comment button"
-                                 onClick={() => {
-                                    deleteComment().catch(err => {
-                                       alert(err.message);
-                                    });
-                                 }}
-                              />
-                           )}
-                        </Mutation>
-                        <img
-                           className="editCommentButton"
-                           src="/static/edit-this.png"
-                           alt="edit comment button"
-                           onClick={() => {
-                              this.setState({ editing: !this.state.editing });
-                           }}
-                        />
-                     </div>
+   return (
+      <StyledComment>
+         <div className="commentContent">
+            <div className="commentLeft">
+               <img
+                  className="avatar"
+                  src={
+                     data.author.avatar != null
+                        ? data.author.avatar
+                        : '/static/defaultAvatar.jpg'
+                  }
+                  alt={`${data.author.displayName} avatar`}
+               />
+               <div className="commentAndAuthorContainer">
+                  {!editing ? (
+                     paragraphElements
+                  ) : (
+                     <Mutation
+                        mutation={EDIT_COMMENT_MUTATION}
+                        variables={{
+                           id: data.id,
+                           newComment: comment
+                        }}
+                        refetchQueries={[
+                           {
+                              query: SINGLE_THING_QUERY,
+                              variables: { id: props.thingID }
+                           },
+                           {
+                              query: CONTEXT_QUERY,
+                              variables: { id: props.thingID }
+                           }
+                        ]}
+                     >
+                        {(editComment, { loading, error, called, data }) => (
+                           <textarea
+                              className="editCommentBox"
+                              placeholder="Edit comment"
+                              onKeyDown={e => handleKeyDown(e, editComment)}
+                              onChange={handleChange}
+                              value={comment}
+                           />
+                        )}
+                     </Mutation>
                   )}
+               </div>
             </div>
-            <div className="commentMeta">{timeAgoString} AGO</div>
-         </StyledComment>
-      );
-   }
-}
+            {props.member != null &&
+               (data.author.id === props.member.id ||
+                  props.member.roles.some(role =>
+                     ['Admin', 'Editor', 'Moderator'].includes(role)
+                  )) && (
+                  <div className="buttons">
+                     <Mutation
+                        mutation={DELETE_COMMENT_MUTATION}
+                        variables={{
+                           id: data.id
+                        }}
+                        refetchQueries={[
+                           {
+                              query: SINGLE_THING_QUERY,
+                              variables: {
+                                 id: props.thingID
+                              }
+                           },
+                           {
+                              query: CONTEXT_QUERY,
+                              variables: { id: props.thingID }
+                           }
+                        ]}
+                     >
+                        {(deleteComment, { loading, error, called, data }) => (
+                           <img
+                              className={
+                                 loading
+                                    ? 'deleteCommentButton loading'
+                                    : 'deleteCommentButton'
+                              }
+                              src="/static/red-x.png"
+                              alt="delete comment button"
+                              onClick={() => {
+                                 deleteComment().catch(err => {
+                                    alert(err.message);
+                                 });
+                              }}
+                           />
+                        )}
+                     </Mutation>
+                     <img
+                        className="editCommentButton"
+                        src="/static/edit-this.png"
+                        alt="edit comment button"
+                        onClick={() => {
+                           setEditing(!editing);
+                        }}
+                     />
+                  </div>
+               )}
+         </div>
+         <div className="commentMeta">{timeAgoString} AGO</div>
+      </StyledComment>
+   );
+};
 
 export default Comment;

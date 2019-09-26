@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { Mutation, ApolloConsumer } from 'react-apollo';
@@ -90,26 +90,24 @@ const StyledNarratives = styled.div`
    }
 `;
 
-class ContextBox extends Component {
-   state = {
-      addNarrative: '',
-      narratives: [],
-      loading: false
+const ContextBox = props => {
+   const [addNarrative, setAddNarrative] = useState('');
+   const [narratives, setNarratives] = useState([]);
+   const [loading, setLoading] = useState(false);
+
+   const handleChange = function(e, client) {
+      setAddNarrative(e.target.value);
+      generateAutocomplete(e, client);
    };
 
-   handleChange = (e, client) => {
-      this.setState({ addNarrative: e.target.value });
-      this.generateAutocomplete(e, client);
-   };
-
-   submitNarrative = async addNarrativeToThing => {
+   const submitNarrative = async function(addNarrativeToThing) {
       const res = await addNarrativeToThing().catch(err => {
          alert(err.message);
       });
-      this.setState({ addNarrative: '' });
+      setAddNarrative('');
    };
 
-   generateAutocomplete = debounce(async (e, client) => {
+   const generateAutocomplete = debounce(async function(e, client) {
       let searchTerm;
       if (e.target.value.includes(',')) {
          const finalCommaLocation = e.target.value.lastIndexOf(',');
@@ -124,176 +122,164 @@ class ContextBox extends Component {
          query: NARRATIVES_SEARCH_QUERY,
          variables: { searchTerm }
       });
-      const usedNarratives = this.props.partOfNarratives.map(
+      const usedNarratives = props.partOfNarratives.map(
          narrativeObject => narrativeObject.title
       );
       const unusedNarratives = allNarratives.data.narratives.filter(
          narrativeObject => !usedNarratives.includes(narrativeObject.title)
       );
-      this.setState({
-         narratives: e.target.value === '' ? [] : unusedNarratives
-      });
+      setNarratives(e.target.value === '' ? [] : unusedNarratives);
    }, 250);
 
-   render() {
-      resetIdCounter();
-      let narrativeLinks;
-      if (this.props.partOfNarratives) {
-         narrativeLinks = this.props.partOfNarratives.map(
-            (narrative, index) => {
-               if (index < this.props.partOfNarratives.length - 1) {
-                  return (
-                     <span key={narrative.id}>
-                        <Link
-                           href={{
-                              pathname: '/context',
-                              query: {
-                                 id: narrative.id
-                              }
-                           }}
-                        >
-                           <a key={narrative.title}>{narrative.title}</a>
-                        </Link>
-                        ,
-                     </span>
-                  );
-               }
-               return (
-                  <span key={narrative.id}>
-                     <Link
-                        href={{
-                           pathname: '/context',
-                           query: {
-                              id: narrative.id
-                           }
-                        }}
-                     >
-                        <a key={narrative.title}>{narrative.title}</a>
-                     </Link>
-                  </span>
-               );
-            }
+   resetIdCounter();
+   let narrativeLinks;
+   if (props.partOfNarratives) {
+      narrativeLinks = props.partOfNarratives.map((narrative, index) => {
+         if (index < props.partOfNarratives.length - 1) {
+            return (
+               <span key={narrative.id}>
+                  <Link
+                     href={{
+                        pathname: '/context',
+                        query: {
+                           id: narrative.id
+                        }
+                     }}
+                  >
+                     <a key={narrative.title}>{narrative.title}</a>
+                  </Link>
+                  ,
+               </span>
+            );
+         }
+         return (
+            <span key={narrative.id}>
+               <Link
+                  href={{
+                     pathname: '/context',
+                     query: {
+                        id: narrative.id
+                     }
+                  }}
+               >
+                  <a key={narrative.title}>{narrative.title}</a>
+               </Link>
+            </span>
          );
-      }
-      return (
-         <Mutation
-            mutation={ADD_NARRATIVE_TO_THING_MUTATION}
-            variables={{
-               title: this.state.addNarrative,
-               thingID: this.props.thingID
-            }}
-            refetchQueries={[
-               {
-                  query: SINGLE_THING_QUERY,
-                  variables: { id: this.props.thingID }
-               }
-            ]}
-         >
-            {(addNarrativeToThing, { loading, error, called, data }) => (
-               <StyledNarratives>
-                  <h5 className="narratives">PART OF:</h5> {narrativeLinks}{' '}
-                  {this.props.member != null && (
-                     <ApolloConsumer>
-                        {client => (
-                           <Downshift
-                              onChange={async item => {
-                                 this.setState({
-                                    addNarrative: '',
-                                    loading: true
-                                 });
-                                 const res = await client
-                                    .mutate({
-                                       mutation: ADD_NARRATIVE_TO_THING_MUTATION,
-                                       variables: {
-                                          title: item.title,
-                                          thingID: this.props.thingID
-                                       },
-                                       refetchQueries: [
-                                          {
-                                             query: SINGLE_THING_QUERY,
-                                             variables: {
-                                                id: this.props.thingID
-                                             }
-                                          }
-                                       ]
-                                    })
-                                    .catch(err => {
-                                       alert(err.message);
-                                    });
-                                 this.setState({ loading: false });
-                              }}
-                              itemToString={item =>
-                                 item === null ? '' : item.title
-                              }
-                           >
-                              {({
-                                 getInputProps,
-                                 getItemProps,
-                                 isOpen,
-                                 inputValue,
-                                 highlightedIndex
-                              }) => (
-                                 <form
-                                    onSubmit={async e => {
-                                       e.preventDefault();
-                                       const res = await addNarrativeToThing().catch(
-                                          err => {
-                                             alert(err.message);
-                                          }
-                                       );
-                                       this.setState({ addNarrative: '' });
-                                    }}
-                                 >
-                                    <input
-                                       {...getInputProps({
-                                          type: 'text',
-                                          id: 'addNarrative',
-                                          name: 'addNarrative',
-                                          placeholder: this.state.loading
-                                             ? 'Adding...'
-                                             : '+ Add a Narrative',
-                                          value: this.state.addNarrative,
-                                          disabled: this.state.loading,
-                                          onChange: e => {
-                                             e.persist();
-                                             this.handleChange(e, client);
-                                          }
-                                       })}
-                                    />
-                                    {this.state.narratives.length > 0 &&
-                                       isOpen && (
-                                          <div className="autocompleteSuggestions">
-                                             {this.state.narratives.map(
-                                                (item, index) => (
-                                                   <div
-                                                      className={
-                                                         index ===
-                                                         highlightedIndex
-                                                            ? 'autoCompleteSuggestionItem highlighted'
-                                                            : 'autoCompleteSuggestionItem'
-                                                      }
-                                                      {...getItemProps({
-                                                         item
-                                                      })}
-                                                      key={item.title}
-                                                   >
-                                                      {item.title}
-                                                   </div>
-                                                )
-                                             )}
-                                          </div>
-                                       )}
-                                 </form>
-                              )}
-                           </Downshift>
-                        )}
-                     </ApolloConsumer>
-                  )}
-               </StyledNarratives>
-            )}
-         </Mutation>
-      );
+      });
    }
-}
+   return (
+      <Mutation
+         mutation={ADD_NARRATIVE_TO_THING_MUTATION}
+         variables={{
+            title: addNarrative,
+            thingID: props.thingID
+         }}
+         refetchQueries={[
+            {
+               query: SINGLE_THING_QUERY,
+               variables: { id: props.thingID }
+            }
+         ]}
+      >
+         {(addNarrativeToThing, { loading, error, called, data }) => (
+            <StyledNarratives>
+               <h5 className="narratives">PART OF:</h5> {narrativeLinks}{' '}
+               {props.member != null && (
+                  <ApolloConsumer>
+                     {client => (
+                        <Downshift
+                           onChange={async item => {
+                              setAddNarrative('');
+                              setLoading(true);
+                              const res = await client
+                                 .mutate({
+                                    mutation: ADD_NARRATIVE_TO_THING_MUTATION,
+                                    variables: {
+                                       title: item.title,
+                                       thingID: props.thingID
+                                    },
+                                    refetchQueries: [
+                                       {
+                                          query: SINGLE_THING_QUERY,
+                                          variables: {
+                                             id: props.thingID
+                                          }
+                                       }
+                                    ]
+                                 })
+                                 .catch(err => {
+                                    alert(err.message);
+                                 });
+                              setLoading(false);
+                           }}
+                           itemToString={item =>
+                              item === null ? '' : item.title
+                           }
+                        >
+                           {({
+                              getInputProps,
+                              getItemProps,
+                              isOpen,
+                              inputValue,
+                              highlightedIndex
+                           }) => (
+                              <form
+                                 onSubmit={async e => {
+                                    e.preventDefault();
+                                    const res = await addNarrativeToThing().catch(
+                                       err => {
+                                          alert(err.message);
+                                       }
+                                    );
+                                    setAddNarrative('');
+                                 }}
+                              >
+                                 <input
+                                    {...getInputProps({
+                                       type: 'text',
+                                       id: 'addNarrative',
+                                       name: 'addNarrative',
+                                       placeholder: loading
+                                          ? 'Adding...'
+                                          : '+ Add a Narrative',
+                                       value: addNarrative,
+                                       disabled: loading,
+                                       onChange: e => {
+                                          e.persist();
+                                          handleChange(e, client);
+                                       }
+                                    })}
+                                 />
+                                 {narratives.length > 0 && isOpen && (
+                                    <div className="autocompleteSuggestions">
+                                       {narratives.map((item, index) => (
+                                          <div
+                                             className={
+                                                index === highlightedIndex
+                                                   ? 'autoCompleteSuggestionItem highlighted'
+                                                   : 'autoCompleteSuggestionItem'
+                                             }
+                                             {...getItemProps({
+                                                item
+                                             })}
+                                             key={item.title}
+                                          >
+                                             {item.title}
+                                          </div>
+                                       ))}
+                                    </div>
+                                 )}
+                              </form>
+                           )}
+                        </Downshift>
+                     )}
+                  </ApolloConsumer>
+               )}
+            </StyledNarratives>
+         )}
+      </Mutation>
+   );
+};
 
 export default ContextBox;

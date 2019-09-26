@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TinyThing from './TinyThing';
 
@@ -45,73 +45,65 @@ const StyledThingPicker = styled.div`
    }
 `;
 
-class ThingPicker extends Component {
-   state = {
-      activeFilters: []
-   };
+const ThingPicker = props => {
+   const [activeFilters, setActiveFilters] = useState([]);
 
-   componentDidMount() {
-      if (this.props.defaultFilters != null) {
-         this.setState({ activeFilters: this.props.defaultFilters });
+   useEffect(() => {
+      if (props.defaultFilters != null) {
+         setActiveFilters(props.defaultFilters);
       }
-   }
+   }, [props.defaultFilters]);
 
-   toggleFilter = filterName => {
-      if (this.state.activeFilters.includes(filterName)) {
-         const newFilters = this.state.activeFilters.filter(
+   const toggleFilter = function(filterName) {
+      if (activeFilters.includes(filterName)) {
+         const newFilters = activeFilters.filter(
             filter => filter !== filterName
          );
-         this.setState({ activeFilters: newFilters });
+         setActiveFilters(newFilters);
       } else {
-         const newFilters = this.state.activeFilters.concat([filterName]);
-         this.setState({ activeFilters: newFilters });
+         const newFilters = activeFilters.concat([filterName]);
+         setActiveFilters(newFilters);
       }
    };
 
-   render() {
-      const { things } = this.props;
+   const { things } = props;
 
-      let filteredThings = things;
-      if (this.state.activeFilters.includes('voteless')) {
-         filteredThings = things.filter(thing => thing.votes.length > 0);
-      }
-      if (this.state.activeFilters.includes('eliminated')) {
-         filteredThings = filteredThings.filter(thing => !thing.eliminated);
-      }
-
-      const tinyThings = filteredThings.map(thing => (
-         <TinyThing thing={thing} key={thing.id} checkbox={this.props.picker} />
-      ));
-
-      return (
-         <StyledThingPicker className="thingPicker">
-            <div className="filterButtons">
-               Filter Out:
-               <button
-                  className={
-                     this.state.activeFilters.includes('voteless')
-                        ? 'active'
-                        : 'inactive'
-                  }
-                  onClick={() => this.toggleFilter('voteless')}
-               >
-                  Voteless
-               </button>
-               <button
-                  className={
-                     this.state.activeFilters.includes('eliminated')
-                        ? 'active'
-                        : 'inactive'
-                  }
-                  onClick={() => this.toggleFilter('eliminated')}
-               >
-                  Eliminated
-               </button>
-            </div>
-            {tinyThings}
-         </StyledThingPicker>
-      );
+   let filteredThings = things;
+   if (activeFilters.includes('voteless')) {
+      filteredThings = things.filter(thing => thing.votes.length > 0);
    }
-}
+   if (activeFilters.includes('eliminated')) {
+      filteredThings = filteredThings.filter(thing => !thing.eliminated);
+   }
+
+   const tinyThings = filteredThings.map(thing => (
+      <TinyThing thing={thing} key={thing.id} checkbox={props.picker} />
+   ));
+
+   return (
+      <StyledThingPicker className="thingPicker">
+         <div className="filterButtons">
+            Filter Out:
+            <button
+               className={
+                  activeFilters.includes('voteless') ? 'active' : 'inactive'
+               }
+               onClick={() => toggleFilter('voteless')}
+            >
+               Voteless
+            </button>
+            <button
+               className={
+                  activeFilters.includes('eliminated') ? 'active' : 'inactive'
+               }
+               onClick={() => toggleFilter('eliminated')}
+            >
+               Eliminated
+            </button>
+         </div>
+         {tinyThings}
+      </StyledThingPicker>
+   );
+};
 
 export default ThingPicker;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Mutation, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -127,208 +127,192 @@ const StyledSummary = styled.div`
    }
 `;
 
-class Summary extends Component {
-   state = {
-      lineToAdd: '',
-      editingIndexes: [],
-      summary: this.props.summary
-   };
+const Summary = props => {
+   const [lineToAdd, setLineToAdd] = useState('');
+   const [editingIndexes, setEditingIndexes] = useState([]);
+   const [summary, setSummary] = useState(props.summary);
 
-   handleKeyDown = (e, addSummaryLineToThing) => {
+   const handleKeyDown = function(e, addSummaryLineToThing) {
       if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
-         this.setState({ lineToAdd: '' });
+         setLineToAdd('');
          addSummaryLineToThing();
       }
    };
 
-   handleChange = e => {
-      this.setState({ lineToAdd: e.target.value });
+   const handleChange = function(e) {
+      setLineToAdd(e.target.value);
    };
 
-   handleEditBoxKeyDown = (e, index, editSummaryLineOnThing) => {
+   const handleEditBoxKeyDown = function(e, index, editSummaryLineOnThing) {
       if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
-         const previousEditingIndexes = this.state.editingIndexes;
+         const previousEditingIndexes = editingIndexes;
          const newEditingIndexes = previousEditingIndexes.filter(
             editingIndex => editingIndex !== index
          );
-         this.setState({ editingIndexes: newEditingIndexes });
+         setEditingIndexes(newEditingIndexes);
          editSummaryLineOnThing();
       }
    };
 
-   handleEditBoxChange = (e, index) => {
-      const { summary } = this.state;
-      summary[index] = e.target.value;
-      this.setState({ summary });
+   const handleEditBoxChange = function(e, index) {
+      const newSummary = summary.slice(0);
+      newSummary[index] = e.target.value;
+      setSummary(newSummary);
    };
 
-   render() {
-      const summaryItems = this.props.summary.map((bullet, index) => {
-         const editButton = (
-            <img
-               className="editSummaryLineButton"
-               src="/static/edit-this.png"
-               alt="edit comment button"
-               onClick={() => {
-                  let { editingIndexes } = this.state;
-                  if (editingIndexes.includes(index)) {
-                     editingIndexes = editingIndexes.filter(
-                        editIndex => editIndex !== index
-                     );
-                  } else {
-                     editingIndexes.push(index);
-                  }
-                  this.setState({ editingIndexes });
-               }}
-            />
+   const summaryItems = props.summary.map((bullet, index) => {
+      const editButton = (
+         <img
+            className="editSummaryLineButton"
+            src="/static/edit-this.png"
+            alt="edit comment button"
+            onClick={() => {
+               let newEditingIndexes;
+               if (editingIndexes.includes(index)) {
+                  newEditingIndexes = editingIndexes.filter(
+                     editIndex => editIndex !== index
+                  );
+               } else {
+                  newEditingIndexes = editingIndexes.concat([index]);
+               }
+               setEditingIndexes(newEditingIndexes);
+            }}
+         />
+      );
+      const deleteButton = (
+         <Mutation
+            mutation={REMOVE_SUMMARY_LINE_FROM_THING_MUTATION}
+            variables={{
+               summaryLine: bullet,
+               thingID: props.thingID,
+               isNarrative: props.isNarrative
+            }}
+            refetchQueries={[
+               {
+                  query: SINGLE_THING_QUERY,
+                  variables: { id: props.thingID }
+               },
+               {
+                  query: CONTEXT_QUERY,
+                  variables: { id: props.thingID }
+               }
+            ]}
+         >
+            {(removeSummaryLineFromThing, { loading, error, called, data }) => (
+               <img
+                  src="/static/red-x.png"
+                  alt="delete summary line button"
+                  className={loading ? 'loading' : ''}
+                  onClick={() => {
+                     removeSummaryLineFromThing().catch(err => {
+                        alert(err.message);
+                     });
+                  }}
+               />
+            )}
+         </Mutation>
+      );
+      const buttons = (
+         <div className="buttons">
+            {editButton}
+            {deleteButton}
+         </div>
+      );
+      if (!editingIndexes.includes(index)) {
+         return (
+            <li key={index}>
+               <span>- {bullet}</span>
+               {props.member != null &&
+                  (props.member.roles.some(role =>
+                     ['Admin', 'Editor', 'Moderator'].includes(role)
+                  ) ||
+                     props.member.id === props.author.id) &&
+                  buttons}
+            </li>
          );
-         const deleteButton = (
+      }
+      return (
+         <li key={index}>
             <Mutation
-               mutation={REMOVE_SUMMARY_LINE_FROM_THING_MUTATION}
+               mutation={EDIT_SUMMARY_LINE_ON_THING_MUTATION}
                variables={{
-                  summaryLine: bullet,
-                  thingID: this.props.thingID,
-                  isNarrative: this.props.isNarrative
+                  editedIndex: index,
+                  newSummaryLine: summary[index],
+                  thingID: props.thingID,
+                  isNarrative: props.isNarrative
                }}
                refetchQueries={[
                   {
                      query: SINGLE_THING_QUERY,
-                     variables: { id: this.props.thingID }
+                     variables: { id: props.thingID }
                   },
                   {
                      query: CONTEXT_QUERY,
-                     variables: { id: this.props.thingID }
+                     variables: { id: props.thingID }
                   }
                ]}
             >
-               {(
-                  removeSummaryLineFromThing,
-                  { loading, error, called, data }
-               ) => (
-                  <img
-                     src="/static/red-x.png"
-                     alt="delete summary line button"
-                     className={loading ? 'loading' : ''}
-                     onClick={() => {
-                        removeSummaryLineFromThing().catch(err => {
-                           alert(err.message);
-                        });
-                     }}
+               {(editSummaryLineOnThing, { loading, error, called, data }) => (
+                  <textarea
+                     placeholder="Edit summary line"
+                     value={summary[index]}
+                     onChange={e => handleEditBoxChange(e, index)}
+                     onKeyDown={e =>
+                        handleEditBoxKeyDown(e, index, editSummaryLineOnThing)
+                     }
                   />
                )}
             </Mutation>
-         );
-         const buttons = (
-            <div className="buttons">
-               {editButton}
-               {deleteButton}
-            </div>
-         );
-         if (!this.state.editingIndexes.includes(index)) {
-            return (
-               <li key={index}>
-                  <span>- {bullet}</span>
-                  {this.props.member != null &&
-                     (this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator'].includes(role)
-                     ) ||
-                        this.props.member.id === this.props.author.id) &&
-                     buttons}
-               </li>
-            );
-         }
-         return (
-            <li key={index}>
-               <Mutation
-                  mutation={EDIT_SUMMARY_LINE_ON_THING_MUTATION}
-                  variables={{
-                     editedIndex: index,
-                     newSummaryLine: this.state.summary[index],
-                     thingID: this.props.thingID,
-                     isNarrative: this.props.isNarrative
-                  }}
-                  refetchQueries={[
-                     {
-                        query: SINGLE_THING_QUERY,
-                        variables: { id: this.props.thingID }
-                     },
-                     {
-                        query: CONTEXT_QUERY,
-                        variables: { id: this.props.thingID }
-                     }
-                  ]}
-               >
-                  {(
-                     editSummaryLineOnThing,
-                     { loading, error, called, data }
-                  ) => (
-                     <textarea
-                        placeholder="Edit summary line"
-                        value={this.state.summary[index]}
-                        onChange={e => this.handleEditBoxChange(e, index)}
-                        onKeyDown={e =>
-                           this.handleEditBoxKeyDown(
-                              e,
-                              index,
-                              editSummaryLineOnThing
-                           )
-                        }
-                     />
-                  )}
-               </Mutation>
-               {this.props.member != null &&
-                  (this.props.member.roles.some(role =>
+            {props.member != null &&
+               (props.member.roles.some(role =>
+                  ['Admin', 'Editor', 'Moderator'].includes(role)
+               ) ||
+                  props.member.id === props.author.id) &&
+               buttons}
+         </li>
+      );
+   });
+
+   return (
+      <Mutation
+         mutation={ADD_SUMMARY_LINE_TO_THING_MUTATION}
+         variables={{
+            summaryLine: lineToAdd,
+            thingID: props.thingID,
+            isNarrative: props.isNarrative
+         }}
+         refetchQueries={[
+            {
+               query: CONTEXT_QUERY,
+               variables: { id: props.thingID }
+            }
+         ]}
+      >
+         {(addSummaryLineToThing, { loading, error, called, data }) => (
+            <StyledSummary>
+               <ul>{summaryItems}</ul>
+               <ErrorMessage error={error} />
+               {props.member != null &&
+                  (props.member.roles.some(role =>
                      ['Admin', 'Editor', 'Moderator'].includes(role)
                   ) ||
-                     this.props.member.id === this.props.author.id) &&
-                  buttons}
-            </li>
-         );
-      });
-
-      return (
-         <Mutation
-            mutation={ADD_SUMMARY_LINE_TO_THING_MUTATION}
-            variables={{
-               summaryLine: this.state.lineToAdd,
-               thingID: this.props.thingID,
-               isNarrative: this.props.isNarrative
-            }}
-            refetchQueries={[
-               {
-                  query: CONTEXT_QUERY,
-                  variables: { id: this.props.thingID }
-               }
-            ]}
-         >
-            {(addSummaryLineToThing, { loading, error, called, data }) => (
-               <StyledSummary>
-                  <ul>{summaryItems}</ul>
-                  <ErrorMessage error={error} />
-                  {this.props.member != null &&
-                     (this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator'].includes(role)
-                     ) ||
-                        this.props.member.id === this.props.author.id) && (
-                        <textarea
-                           placeholder={
-                              loading ? 'Adding...' : '- Add summary line'
-                           }
-                           onKeyDown={e =>
-                              this.handleKeyDown(e, addSummaryLineToThing)
-                           }
-                           onChange={this.handleChange}
-                           value={this.state.lineToAdd}
-                           aria-disabled={loading}
-                        />
-                     )}
-               </StyledSummary>
-            )}
-         </Mutation>
-      );
-   }
-}
+                     props.member.id === props.author.id) && (
+                     <textarea
+                        placeholder={
+                           loading ? 'Adding...' : '- Add summary line'
+                        }
+                        onKeyDown={e => handleKeyDown(e, addSummaryLineToThing)}
+                        onChange={handleChange}
+                        value={lineToAdd}
+                        aria-disabled={loading}
+                     />
+                  )}
+            </StyledSummary>
+         )}
+      </Mutation>
+   );
+};
 
 export default Summary;

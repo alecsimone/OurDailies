@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
@@ -24,21 +24,16 @@ const ThingContainer = styled.div`
    }
 `;
 
-class Dailies extends Component {
-   state = {
-      thingDays: [],
-      winnerOffset: 1,
-      pullingMore: false
-   };
+const Dailies = props => {
+   const [thingDays, setThingDays] = useState([]);
+   const [winnerOffset, setWinnerOffset] = useState(1);
+   const [pullingMore, setPullingMore] = useState(false);
+   const [noMorePosts, setNoMorePosts] = useState(false);
 
-   componentDidMount() {
-      window.addEventListener('scroll', this.handleScroll);
-   }
-
-   handleScroll = e => {
+   const handleScroll = e => {
       const thingContainer = document.getElementById('thingContainer');
       if (thingContainer == null) {
-         window.removeEventListener('scroll', this.handleScroll);
+         window.removeEventListener('scroll', handleScroll);
          return;
       }
       const thingContainerBottom =
@@ -46,59 +41,50 @@ class Dailies extends Component {
       const windowHeight = window.innerHeight;
       const scrollPos = e.pageY ? e.pageY : document.documentElement.scrollTop;
       const bottomOfWindow = scrollPos + windowHeight;
-      if (
-         bottomOfWindow + 500 > thingContainerBottom &&
-         !this.state.pullingMore
-      ) {
-         this.setState({ pullingMore: true });
-         this.getNextDaysThings();
+      if (bottomOfWindow + 500 > thingContainerBottom && !pullingMore) {
+         setPullingMore(true);
+         getNextDaysThings();
       }
    };
 
-   getNextDaysThings = async () => {
-      const { client } = this.props;
+   useEffect(() => {
+      window.addEventListener('scroll', handleScroll);
+   }, [handleScroll]);
+
+   const getNextDaysThings = async function() {
+      const { client } = props;
       const { data } = await client.query({
          query: THINGS_FOR_GIVEN_DAY_QUERY,
-         variables: { winnerOffset: this.state.winnerOffset }
+         variables: { winnerOffset }
       });
       if (data.thingsForGivenDay.length === 0) {
-         this.setState({
-            pullingMore: false,
-            noMorePosts: true
-         });
-         window.removeEventListener('scroll', this.handleScroll);
+         setPullingMore(false);
+         setNoMorePosts(true);
+         window.removeEventListener('scroll', handleScroll);
          return;
       }
-      const { thingDays } = this.state;
       thingDays.push(data.thingsForGivenDay);
       const { thingsForGivenDay } = data;
       const winners = data.thingsForGivenDay.filter(
          thing => thing.winner != null
       );
-      this.setState({
-         thingDays,
-         winnerOffset: this.state.winnerOffset + winners.length,
-         pullingMore: false
-      });
+      setThingDays(thingDays);
+      setWinnerOffset(winnerOffset + winners.length);
+      setPullingMore(false);
    };
 
-   render() {
-      const dayContainersArray = this.state.thingDays.map(thingDay => (
-         <DayContainer things={thingDay} key={thingDay[0].id} />
-      ));
-      return (
-         <ThingContainer id="thingContainer">
-            <DayContainer things={this.props.things} />
-            {dayContainersArray}
-            {this.state.pullingMore ? <LoadingRing /> : ''}
-            {this.state.noMorePosts ? (
-               <p className="nextDayStatus">NO MORE POSTS</p>
-            ) : (
-               ''
-            )}
-         </ThingContainer>
-      );
-   }
-}
+   const dayContainersArray = thingDays.map(thingDay => (
+      <DayContainer things={thingDay} key={thingDay[0].id} />
+   ));
+
+   return (
+      <ThingContainer id="thingContainer">
+         <DayContainer things={props.things} />
+         {dayContainersArray}
+         {pullingMore ? <LoadingRing /> : ''}
+         {noMorePosts ? <p className="nextDayStatus">NO MORE POSTS</p> : ''}
+      </ThingContainer>
+   );
+};
 
 export default Dailies;

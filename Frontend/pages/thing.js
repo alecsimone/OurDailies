@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { Query, Subscription } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import Head from 'next/head';
 import FullThing from '../components/FullThing';
 import FullThingEmbed from '../components/FullThingEmbed';
@@ -65,6 +66,7 @@ const SingleThing = props => {
             return newThingData;
          }
       });
+
    return (
       <Member>
          {({ data: memberData }) => (

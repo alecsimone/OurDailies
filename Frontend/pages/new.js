@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
@@ -42,16 +42,14 @@ const StyledNew = styled.div`
    }
 `;
 
-class newPage extends Component {
-   state = {
-      mainThingId: false
+const newPage = () => {
+   const [mainThingId, setMainThingId] = useState(false);
+
+   const makeMain = function(id) {
+      setMainThingId(id);
    };
 
-   makeMain = id => {
-      this.setState({ mainThingId: id });
-   };
-
-   highScoreSort = (a, b) => {
+   const highScoreSort = (a, b) => {
       const aScore = getScoreForThing(a);
       const bScore = getScoreForThing(b);
       if (aScore === bScore) {
@@ -63,7 +61,7 @@ class newPage extends Component {
       return bScore - aScore;
    };
 
-   lowScoreSort = (a, b) => {
+   const lowScoreSort = (a, b) => {
       const aScore = getScoreForThing(a);
       const bScore = getScoreForThing(b);
       if (aScore === bScore) {
@@ -75,8 +73,7 @@ class newPage extends Component {
       return aScore - bScore;
    };
 
-   getMainThing = (things, memberID) => {
-      const { mainThingId } = this.state;
+   const getMainThing = function(things, memberID) {
       if (mainThingId !== false) {
          const mainThingInAnArray = things.filter(
             thing => thing.id === mainThingId
@@ -98,78 +95,73 @@ class newPage extends Component {
       });
       if (unvotedThings.length === 0) {
          // Return the thing with the highest score
-         things.sort(this.lowScoreSort);
+         things.sort(lowScoreSort);
          return things[0];
       }
       // Return the thing with the lowest score
-      unvotedThings.sort(this.lowScoreSort);
+      unvotedThings.sort(lowScoreSort);
       return unvotedThings[0];
    };
 
-   render() {
-      return (
-         <MustSignIn>
-            <Member>
-               {({ data: memberData }) => (
-                  <Query query={NEW_THINGS_QUERY}>
-                     {({ error, loading, data }) => {
-                        if (error) return <Error error={error} />;
-                        if (loading) return <p>Loading...</p>;
+   return (
+      <MustSignIn>
+         <Member>
+            {({ data: memberData }) => (
+               <Query query={NEW_THINGS_QUERY}>
+                  {({ error, loading, data }) => {
+                     if (error) return <Error error={error} />;
+                     if (loading) return <p>Loading...</p>;
 
-                        let windowWidth = 800;
-                        try {
-                           windowWidth = window.innerWidth;
-                        } catch (windowError) {}
+                     let windowWidth = 800;
+                     try {
+                        windowWidth = window.innerWidth;
+                     } catch (windowError) {}
 
-                        const unEliminatedThings = data.thingsForNew.filter(
-                           thing => !thing.eliminated
+                     const unEliminatedThings = data.thingsForNew.filter(
+                        thing => !thing.eliminated
+                     );
+
+                     const mainThing = getMainThing(
+                        data.thingsForNew,
+                        memberData.me.id
+                     );
+                     const otherThings = data.thingsForNew.filter(
+                        thing => thing.id !== mainThing.id
+                     );
+                     otherThings.sort(highScoreSort);
+
+                     let thingComponent = (
+                        <>
+                           <FullThing thing={mainThing} member={memberData} />
+                           <ThingPicker
+                              things={otherThings}
+                              picker={makeMain}
+                              defaultFilters={['eliminated']}
+                           />
+                        </>
+                     );
+
+                     if (unEliminatedThings.length === 0) {
+                        thingComponent = (
+                           <p className="nothing">No new things!</p>
                         );
+                     }
 
-                        const mainThing = this.getMainThing(
-                           data.thingsForNew,
-                           memberData.me.id
-                        );
-                        const otherThings = data.thingsForNew.filter(
-                           thing => thing.id !== mainThing.id
-                        );
-                        otherThings.sort(this.highScoreSort);
-
-                        let thingComponent = (
-                           <>
-                              <FullThing
-                                 thing={mainThing}
-                                 member={memberData}
-                              />
-                              <ThingPicker
-                                 things={otherThings}
-                                 picker={this.makeMain}
-                                 defaultFilters={['eliminated']}
-                              />
-                           </>
-                        );
-
-                        if (unEliminatedThings.length === 0) {
-                           thingComponent = (
-                              <p className="nothing">No new things!</p>
-                           );
-                        }
-
-                        return (
-                           <StyledNew>
-                              <Head>
-                                 <title>New - Our Dailies</title>
-                              </Head>
-                              {thingComponent}
-                           </StyledNew>
-                        );
-                     }}
-                  </Query>
-               )}
-            </Member>
-         </MustSignIn>
-      );
-   }
-}
+                     return (
+                        <StyledNew>
+                           <Head>
+                              <title>New - Our Dailies</title>
+                           </Head>
+                           {thingComponent}
+                        </StyledNew>
+                     );
+                  }}
+               </Query>
+            )}
+         </Member>
+      </MustSignIn>
+   );
+};
 
 export default newPage;
 export { NEW_THINGS_QUERY };

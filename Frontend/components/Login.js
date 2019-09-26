@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import Router from "next/router";
-import Error from "./ErrorMessage";
-import { CURRENT_MEMBER_QUERY } from "./Member";
-import { StyledModal } from "../styles/ModalStyles";
+import React, { useState } from 'react';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import Router from 'next/router';
+import Error from './ErrorMessage';
+import { CURRENT_MEMBER_QUERY } from './Member';
+import { StyledModal } from '../styles/ModalStyles';
 
 const LOGIN_MUTATION = gql`
    mutation LOGIN_MUTATION($email: String!, $password: String!) {
@@ -17,68 +17,69 @@ const LOGIN_MUTATION = gql`
    }
 `;
 
-class Login extends Component {
-   state = {
-      email: '',
-      password: ""
+const Login = props => {
+   const [email, setEmail] = useState('');
+   const [password, setPassword] = useState('');
+
+   const saveToState = function(e) {
+      if (e.target.name === 'email') {
+         setEmail(e.target.value);
+      }
+      if (e.target.name === 'password') {
+         setPassword(e.target.value);
+      }
    };
 
-   saveToState = e => {
-      this.setState({ [e.target.name]: e.target.value });
-   };
+   return (
+      <Mutation
+         mutation={LOGIN_MUTATION}
+         variables={{ email, password }}
+         refetchQueries={[{ query: CURRENT_MEMBER_QUERY }]}
+      >
+         {(login, { error, loading }) => (
+            <StyledModal
+               method="post"
+               onSubmit={async e => {
+                  e.preventDefault();
+                  await login();
+                  if (props.redirect !== false) {
+                     Router.push({
+                        pathname: '/'
+                     });
+                  }
+                  if (props.callBack) {
+                     props.callBack();
+                  }
+               }}
+            >
+               <fieldset disabled={loading} aria-busy={loading}>
+                  <Error error={error} />
+                  <label htmlFor="email">
+                     <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={saveToState}
+                     />
+                  </label>
+                  <label htmlFor="password">
+                     <input
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={saveToState}
+                     />
+                  </label>
 
-   render() {
-      return (
-         <Mutation
-            mutation={LOGIN_MUTATION}
-            variables={this.state}
-            refetchQueries={[{ query: CURRENT_MEMBER_QUERY }]}
-         >
-            {(login, { error, loading }) => (
-               <StyledModal
-                  method="post"
-                  onSubmit={async e => {
-                     e.preventDefault();
-                     await login();
-                     if (this.props.redirect !== false) {
-                        Router.push({
-                           pathname: '/'
-                        });
-                     }
-                     if (this.props.callBack) {
-                        this.props.callBack();
-                     }
-                  }}
-               >
-                  <fieldset disabled={loading} aria-busy={loading}>
-                     <Error error={error} />
-                     <label htmlFor="email">
-                        <input
-                           type="email"
-                           name="email"
-                           placeholder="Email"
-                           value={this.state.email}
-                           onChange={this.saveToState}
-                        />
-                     </label>
-                     <label htmlFor="password">
-                        <input
-                           type="password"
-                           name="password"
-                           placeholder="Password"
-                           value={this.state.password}
-                           onChange={this.saveToState}
-                        />
-                     </label>
-
-                     <button type="submit">Log In</button>
-                  </fieldset>
-               </StyledModal>
-            )}
-         </Mutation>
-      );
-   }
-}
+                  <button type="submit">Log In</button>
+               </fieldset>
+            </StyledModal>
+         )}
+      </Mutation>
+   );
+};
 
 Login.defaultProps = {
    redirect: '/'

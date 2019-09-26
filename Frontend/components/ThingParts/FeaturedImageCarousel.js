@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -198,296 +198,281 @@ const FeaturedImageContainer = styled.div`
    }
 `;
 
-class FeaturedImageCarousel extends Component {
-   state = {
-      currentSliderPosition: 0,
-      editingTitle: false,
-      title: this.props.headline
+const FeaturedImageCarousel = props => {
+   const [currentSliderPosition, setCurrentSliderPosition] = useState(0);
+   const [editingTitle, setEditingTitle] = useState(false);
+   const [title, setTitle] = useState(props.headline);
+
+   const sliderPositionDown = function(mediaLinksArray) {
+      setCurrentSliderPosition(
+         currentSliderPosition === 0
+            ? mediaLinksArray.length
+            : currentSliderPosition - 1
+      );
    };
 
-   sliderPositionDown = mediaLinksArray => {
-      this.setState({
-         currentSliderPosition:
-            this.state.currentSliderPosition === 0
-               ? mediaLinksArray.length
-               : this.state.currentSliderPosition - 1
-      });
+   const sliderPositionUp = function(mediaLinksArray) {
+      setCurrentSliderPosition(
+         currentSliderPosition === mediaLinksArray.length
+            ? 0
+            : currentSliderPosition + 1
+      );
    };
 
-   sliderPositionUp = mediaLinksArray => {
-      this.setState({
-         currentSliderPosition:
-            this.state.currentSliderPosition === mediaLinksArray.length
-               ? 0
-               : this.state.currentSliderPosition + 1
-      });
-   };
-
-   setFeaturedImageHandler = async (e, setFeaturedImage) => {
+   const setFeaturedImageHandler = async function(e, setFeaturedImage) {
       // e.target.checked is returning false when the box is already checked, presumably because it's giving me the value after the click even though I used preventDefault. So e.target.checked === false actually means the box IS already checked
       if (e.target.checked) {
          await setFeaturedImage();
-         this.setState({ currentSliderPosition: 0 });
+         setCurrentSliderPosition(0);
       }
    };
 
-   makeTitleEditable = () => {
-      this.setState({ editingTitle: !this.state.editingTitle });
+   const makeTitleEditable = function() {
+      setEditingTitle(!editingTitle);
    };
 
-   handleTitleChange = e => {
-      this.setState({ title: e.target.value });
+   const handleTitleChange = function(e) {
+      setTitle(e.target.value);
    };
 
-   watchForEnter = async (e, changeThingTitle) => {
+   const watchForEnter = async function(e, changeThingTitle) {
       if (e.key === 'Enter') {
          await changeThingTitle();
-         this.setState({ editingTitle: false });
+         setEditingTitle(false);
       }
    };
 
-   render() {
-      const featuredImageButItsAnArrayNow = [this.props.featuredImage];
+   const featuredImageButItsAnArrayNow = [props.featuredImage];
 
-      const justTheLinks =
-         this.props.includedLinks != null
-            ? this.props.includedLinks.map(linkObject => linkObject.url)
-            : [];
+   const justTheLinks =
+      props.includedLinks != null
+         ? props.includedLinks.map(linkObject => linkObject.url)
+         : [];
 
-      const mediaLinksArray = justTheLinks.filter(link => {
-         const lowerCasedLink = link.toLowerCase();
-         return (
-            link !== this.props.featuredImage &&
-            (lowerCasedLink.includes('jpg') ||
-               lowerCasedLink.includes('jpeg') ||
-               lowerCasedLink.includes('png') ||
-               lowerCasedLink.includes('gif') ||
-               lowerCasedLink.includes('youtube.com/watch?v=') ||
-               lowerCasedLink.includes('youtu.be/') ||
-               lowerCasedLink.includes('gfycat.com/'))
-         );
-      });
-      const allMedia =
-         this.props.featuredImage != null &&
-         this.props.featuredImage !== '/static/defaultPic.jpg'
-            ? featuredImageButItsAnArrayNow.concat(mediaLinksArray)
-            : mediaLinksArray;
-
-      const currentLink = allMedia[this.state.currentSliderPosition];
-
-      let leftButton;
-      let rightButton;
-
-      const headline = (
-         <h3 className="headline">
-            {this.state.editingTitle ? (
-               <Mutation
-                  mutation={CHANGE_TITLE_MUTATION}
-                  variables={{
-                     title: this.state.title,
-                     thingID: this.props.thingID,
-                     isNarrative: this.props.isNarrative
-                  }}
-                  refetchQueries={[
-                     {
-                        query: SINGLE_THING_QUERY,
-                        variables: { id: this.props.thingID }
-                     },
-                     {
-                        query: CONTEXT_QUERY,
-                        variables: { id: this.props.thingID }
-                     }
-                  ]}
-               >
-                  {(changeThingTitle, { loading, error, called, data }) => (
-                     <input
-                        type="text"
-                        className="title"
-                        value={this.state.title}
-                        onChange={this.handleTitleChange}
-                        onKeyDown={e => {
-                           e.persist();
-                           this.watchForEnter(e, changeThingTitle);
-                        }}
-                     />
-                  )}
-               </Mutation>
-            ) : (
-               <a
-                  href={
-                     this.props.originalSource
-                        ? this.props.originalSource
-                        : null
-                  }
-                  target="_blank"
-                  className="headlineLink title"
-               >
-                  {this.props.headline}
-               </a>
-            )}
-            <img
-               src="/static/edit-this.png"
-               alt="edit headline button"
-               className="editThis"
-               onClick={this.makeTitleEditable}
-            />
-         </h3>
-      );
-
-      if (
-         mediaLinksArray.length > 1 ||
-         (mediaLinksArray.length > 0 &&
-            this.props.featuredImage != null &&
-            this.props.featuredImage !== '/static/defaultPic.jpg')
-      ) {
-         leftButton = (
-            <button
-               className="prev"
-               onClick={e => {
-                  this.sliderPositionDown(mediaLinksArray);
-               }}
-            >
-               <img
-                  src="/static/grey-up-arrow.png"
-                  alt="previous image button"
-               />
-            </button>
-         );
-         rightButton = (
-            <button
-               className="next"
-               onClick={e => {
-                  this.sliderPositionUp(mediaLinksArray);
-               }}
-            >
-               <img src="/static/grey-up-arrow.png" alt="next image button" />
-            </button>
-         );
-      }
-
-      let featuredImage;
-
-      const lowerCasedCurrentLink =
-         currentLink != null ? currentLink.toLowerCase() : null;
-
-      if (currentLink == null) {
-         featuredImage = (
-            <>
-               <div className="featuredImageWrapper">
-                  <img
-                     src="/static/defaultPic.jpg"
-                     className="featured"
-                     alt="empty featured image"
-                  />
-               </div>
-               {headline}
-            </>
-         );
-      } else if (
-         lowerCasedCurrentLink.includes('jpg') ||
-         lowerCasedCurrentLink.includes('jpeg') ||
-         lowerCasedCurrentLink.includes('png') ||
-         lowerCasedCurrentLink.includes('gif')
-      ) {
-         featuredImage = (
-            <>
-               <div className="featuredImageWrapper">
-                  {this.props.member != null &&
-                     this.props.member.roles.some(role =>
-                        ['Admin', 'Editor', 'Moderator'].includes(role)
-                     ) && (
-                        <Mutation
-                           mutation={SET_FEATURED_IMAGE_MUTATION}
-                           variables={{
-                              imageUrl: currentLink,
-                              thingID: this.props.thingID,
-                              isNarrative: this.props.isNarrative
-                           }}
-                           refetchQueries={[
-                              {
-                                 query: SINGLE_THING_QUERY,
-                                 variables: { id: this.props.thingID }
-                              },
-                              {
-                                 query: CONTEXT_QUERY,
-                                 variables: { id: this.props.thingID }
-                              }
-                           ]}
-                        >
-                           {(
-                              setFeaturedImage,
-                              { loading, error, called, data }
-                           ) => (
-                              <input
-                                 type="checkbox"
-                                 checked={
-                                    currentLink === this.props.featuredImage
-                                 }
-                                 onChange={e => {
-                                    e.preventDefault();
-                                    this.setFeaturedImageHandler(
-                                       e,
-                                       setFeaturedImage
-                                    ).catch(err => {
-                                       alert(err.message);
-                                    });
-                                 }}
-                              />
-                           )}
-                        </Mutation>
-                     )}
-                  <img
-                     src={currentLink}
-                     className="featured"
-                     alt="not featured image for post"
-                  />
-               </div>
-               {headline}
-            </>
-         );
-      } else if (
-         currentLink.includes('youtube.com/watch?v=') ||
-         currentLink.includes('youtu.be/')
-      ) {
-         const videoID = getYoutubeVideoIdFromLink(currentLink);
-         featuredImage = (
-            <div className="videoFeatured">
-               <div className="embed-container">
-                  <iframe
-                     src={`https://www.youtube.com/embed/${videoID}?autoplay=0&loop=1&playlist=${videoID}`}
-                     frameBorder="0"
-                     scrolling="no"
-                     allowFullScreen
-                  />
-               </div>
-               {headline}
-            </div>
-         );
-      } else if (currentLink.includes('gfycat.com/')) {
-         const videoID = getGfycatSlugFromLink(currentLink);
-         featuredImage = (
-            <div className="videoFeatured">
-               <div className="embed-container">
-                  <iframe
-                     src={`https://gfycat.com/ifr/${videoID}`}
-                     frameBorder="0"
-                     scrolling="no"
-                     allowFullScreen
-                  />
-               </div>
-               {headline}
-            </div>
-         );
-      }
-
+   const mediaLinksArray = justTheLinks.filter(link => {
+      const lowerCasedLink = link.toLowerCase();
       return (
-         <FeaturedImageContainer>
-            {leftButton}
-            {featuredImage}
-            {rightButton}
-         </FeaturedImageContainer>
+         link !== props.featuredImage &&
+         (lowerCasedLink.includes('jpg') ||
+            lowerCasedLink.includes('jpeg') ||
+            lowerCasedLink.includes('png') ||
+            lowerCasedLink.includes('gif') ||
+            lowerCasedLink.includes('youtube.com/watch?v=') ||
+            lowerCasedLink.includes('youtu.be/') ||
+            lowerCasedLink.includes('gfycat.com/'))
+      );
+   });
+   const allMedia =
+      props.featuredImage != null &&
+      props.featuredImage !== '/static/defaultPic.jpg'
+         ? featuredImageButItsAnArrayNow.concat(mediaLinksArray)
+         : mediaLinksArray;
+
+   const currentLink = allMedia[currentSliderPosition];
+
+   let leftButton;
+   let rightButton;
+
+   const headline = (
+      <h3 className="headline">
+         {editingTitle ? (
+            <Mutation
+               mutation={CHANGE_TITLE_MUTATION}
+               variables={{
+                  title,
+                  thingID: props.thingID,
+                  isNarrative: props.isNarrative
+               }}
+               refetchQueries={[
+                  {
+                     query: SINGLE_THING_QUERY,
+                     variables: { id: props.thingID }
+                  },
+                  {
+                     query: CONTEXT_QUERY,
+                     variables: { id: props.thingID }
+                  }
+               ]}
+            >
+               {(changeThingTitle, { loading, error, called, data }) => (
+                  <input
+                     type="text"
+                     className="title"
+                     value={title}
+                     onChange={handleTitleChange}
+                     onKeyDown={e => {
+                        e.persist();
+                        watchForEnter(e, changeThingTitle);
+                     }}
+                  />
+               )}
+            </Mutation>
+         ) : (
+            <a
+               href={props.originalSource ? props.originalSource : null}
+               target="_blank"
+               className="headlineLink title"
+            >
+               {props.headline}
+            </a>
+         )}
+         <img
+            src="/static/edit-this.png"
+            alt="edit headline button"
+            className="editThis"
+            onClick={makeTitleEditable}
+         />
+      </h3>
+   );
+
+   if (
+      mediaLinksArray.length > 1 ||
+      (mediaLinksArray.length > 0 &&
+         props.featuredImage != null &&
+         props.featuredImage !== '/static/defaultPic.jpg')
+   ) {
+      leftButton = (
+         <button
+            className="prev"
+            onClick={e => {
+               sliderPositionDown(mediaLinksArray);
+            }}
+         >
+            <img src="/static/grey-up-arrow.png" alt="previous image button" />
+         </button>
+      );
+      rightButton = (
+         <button
+            className="next"
+            onClick={e => {
+               sliderPositionUp(mediaLinksArray);
+            }}
+         >
+            <img src="/static/grey-up-arrow.png" alt="next image button" />
+         </button>
       );
    }
-}
+
+   let featuredImage;
+
+   const lowerCasedCurrentLink =
+      currentLink != null ? currentLink.toLowerCase() : null;
+
+   if (currentLink == null) {
+      featuredImage = (
+         <>
+            <div className="featuredImageWrapper">
+               <img
+                  src="/static/defaultPic.jpg"
+                  className="featured"
+                  alt="empty featured image"
+               />
+            </div>
+            {headline}
+         </>
+      );
+   } else if (
+      lowerCasedCurrentLink.includes('jpg') ||
+      lowerCasedCurrentLink.includes('jpeg') ||
+      lowerCasedCurrentLink.includes('png') ||
+      lowerCasedCurrentLink.includes('gif')
+   ) {
+      featuredImage = (
+         <>
+            <div className="featuredImageWrapper">
+               {props.member != null &&
+                  props.member.roles.some(role =>
+                     ['Admin', 'Editor', 'Moderator'].includes(role)
+                  ) && (
+                     <Mutation
+                        mutation={SET_FEATURED_IMAGE_MUTATION}
+                        variables={{
+                           imageUrl: currentLink,
+                           thingID: props.thingID,
+                           isNarrative: props.isNarrative
+                        }}
+                        refetchQueries={[
+                           {
+                              query: SINGLE_THING_QUERY,
+                              variables: { id: props.thingID }
+                           },
+                           {
+                              query: CONTEXT_QUERY,
+                              variables: { id: props.thingID }
+                           }
+                        ]}
+                     >
+                        {(
+                           setFeaturedImage,
+                           { loading, error, called, data }
+                        ) => (
+                           <input
+                              type="checkbox"
+                              checked={currentLink === props.featuredImage}
+                              onChange={e => {
+                                 e.preventDefault();
+                                 setFeaturedImageHandler(
+                                    e,
+                                    setFeaturedImage
+                                 ).catch(err => {
+                                    alert(err.message);
+                                 });
+                              }}
+                           />
+                        )}
+                     </Mutation>
+                  )}
+               <img
+                  src={currentLink}
+                  className="featured"
+                  alt="not featured image for post"
+               />
+            </div>
+            {headline}
+         </>
+      );
+   } else if (
+      currentLink.includes('youtube.com/watch?v=') ||
+      currentLink.includes('youtu.be/')
+   ) {
+      const videoID = getYoutubeVideoIdFromLink(currentLink);
+      featuredImage = (
+         <div className="videoFeatured">
+            <div className="embed-container">
+               <iframe
+                  src={`https://www.youtube.com/embed/${videoID}?autoplay=0&loop=1&playlist=${videoID}`}
+                  frameBorder="0"
+                  scrolling="no"
+                  allowFullScreen
+               />
+            </div>
+            {headline}
+         </div>
+      );
+   } else if (currentLink.includes('gfycat.com/')) {
+      const videoID = getGfycatSlugFromLink(currentLink);
+      featuredImage = (
+         <div className="videoFeatured">
+            <div className="embed-container">
+               <iframe
+                  src={`https://gfycat.com/ifr/${videoID}`}
+                  frameBorder="0"
+                  scrolling="no"
+                  allowFullScreen
+               />
+            </div>
+            {headline}
+         </div>
+      );
+   }
+
+   return (
+      <FeaturedImageContainer>
+         {leftButton}
+         {featuredImage}
+         {rightButton}
+      </FeaturedImageContainer>
+   );
+};
 
 export default FeaturedImageCarousel;
