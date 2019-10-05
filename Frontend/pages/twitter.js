@@ -21,7 +21,6 @@ const FINISH_TWITTER_LOGIN = gql`
 `;
 
 const startLogin = async initiateTwitterLogin => {
-   console.log('hiya!');
    const { data } = await initiateTwitterLogin();
    window.location.replace(data.initiateTwitterLogin.message);
 };

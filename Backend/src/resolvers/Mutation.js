@@ -918,6 +918,7 @@ const Mutations = {
       tw.login(async (err, tokenSecret, url) => {
          if (err) {
             console.log('failure!');
+            console.log(err);
          }
          await ctx.db.mutation.updateMember({
             where: { id: ctx.request.memberId },
