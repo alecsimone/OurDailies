@@ -106,7 +106,8 @@ const StyledTwitterReader = styled.div`
                a.retweetLink {
                   color: ${props => props.theme.majorColor};
                }
-               img.embeddedPhoto {
+               img.embeddedPhoto,
+               .embeddedVideo video {
                   max-width: 500px;
                   height: auto;
                   margin: 1rem 0;
@@ -303,48 +304,78 @@ const TwitterReader = props => {
                         const thisTweetersTweets = tweetersArray[i].tweets.map(
                            tweet => {
                               const entities = [];
-                              if (tweet.entities.urls) {
-                                 tweet.entities.urls.forEach(entity => {
-                                    entities.push(
-                                       <div
-                                          className="embeddedLink"
-                                          key={entity.display_url}
-                                       >
-                                          <a
-                                             href={entity.expanded_url}
-                                             target="_blank"
-                                          >
-                                             {entity.display_url}
-                                          </a>
-                                       </div>
-                                    );
-                                 });
-                              }
-                              if (tweet.entities.media) {
-                                 tweet.entities.media.forEach(entity => {
-                                    if (entity.type === 'photo') {
+                              if (
+                                 tweet.extended_entities &&
+                                 tweet.extended_entities.urls
+                              ) {
+                                 tweet.extended_entities.urls.forEach(
+                                    entity => {
                                        entities.push(
-                                          <a
-                                             href={entity.media_url_https}
-                                             target="_blank"
-                                             key={entity.id_str}
+                                          <div
+                                             className="embeddedLink"
+                                             key={entity.display_url}
                                           >
-                                             <img
-                                                src={entity.media_url_https}
-                                                className="embeddedPhoto"
-                                                key={entity.id_str}
-                                             />
-                                          </a>
-                                       );
-                                    } else {
-                                       entities.push(
-                                          <div>
-                                             There's media that's not a photo
-                                             here
+                                             <a
+                                                href={entity.expanded_url}
+                                                target="_blank"
+                                             >
+                                                {entity.display_url}
+                                             </a>
                                           </div>
                                        );
                                     }
-                                 });
+                                 );
+                              }
+                              if (
+                                 tweet.extended_entities &&
+                                 tweet.extended_entities.media
+                              ) {
+                                 tweet.extended_entities.media.forEach(
+                                    entity => {
+                                       if (entity.type === 'photo') {
+                                          entities.push(
+                                             <a
+                                                href={entity.media_url_https}
+                                                target="_blank"
+                                                key={entity.id_str}
+                                             >
+                                                <img
+                                                   src={entity.media_url_https}
+                                                   className="embeddedPhoto"
+                                                   key={entity.id_str}
+                                                />
+                                             </a>
+                                          );
+                                       } else if (entity.type === 'video') {
+                                          const mp4s = entity.video_info.variants.filter(
+                                             variantObject =>
+                                                variantObject.content_type ===
+                                                'video/mp4'
+                                          );
+                                          mp4s.sort(
+                                             (a, b) => b.bitrate - a.bitrate
+                                          );
+                                          entities.push(
+                                             <div
+                                                className="embeddedVideo"
+                                                key={entity.id_str}
+                                             >
+                                                <video
+                                                   src={mp4s[0].url}
+                                                   controls
+                                                />
+                                             </div>
+                                          );
+                                       } else {
+                                          entities.push(
+                                             <div key={entity.id_str}>
+                                                There's media that's not a photo
+                                                here
+                                             </div>
+                                          );
+                                       }
+                                    }
+                                 );
                               }
                               if (tweet.retweeted_status != null) {
                                  const rt = tweet.retweeted_status;
