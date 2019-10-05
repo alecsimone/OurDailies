@@ -87,6 +87,14 @@ type Member {
   roles: [Role!] @scalarList(strategy: RELATION)
   resetToken: String
   resetTokenExpiry: Float
+  twitterTokenSecret: String
+  twitterUserName: String
+  twitterUserID: String
+  twitterUserToken: String
+  twitterUserTokenSecret: String
+  twitterSinceIDsObject: String
+  twitterSeenIDsObject: String
+  someRandomJsonField: Json
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
 }

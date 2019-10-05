@@ -17,6 +17,7 @@ const theme = {
    mainText: 'hsla(33, 17%, 88%, .9)',
 
    majorColor: 'hsl(210, 100%, 40%)',
+   lightMajorColor: 'hsla(210, 100%, 70%, .9)',
 
    primaryAccent: 'hsl(120, 100%, 25%)',
 

@@ -1,8 +1,12 @@
 const { forwardTo } = require('prisma-binding');
+const LoginWithTwitter = require('login-with-twitter');
 const {
    getWinnersFromDifferentDays,
    getFinalists,
-   fullThingFields
+   fullThingFields,
+   getLists,
+   fetchListTweets,
+   fetchHomeTweets
 } = require('../utils');
 
 const Query = {
@@ -86,6 +90,98 @@ const Query = {
    async thingsForFinalists(parent, args, ctx, info) {
       const finalists = await getFinalists(ctx);
       return finalists;
+   },
+   async finishTwitterLogin(parent, { token, verifier }, ctx, info) {
+      console.log("we're finishing the login");
+
+      const tw = new LoginWithTwitter({
+         consumerKey: process.env.TWITTER_CONSUMER_KEY,
+         consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+         callbackUrl: `${process.env.FRONTEND_URL}/twitter`
+      });
+
+      console.log(ctx.request.member.twitterTokenSecret);
+
+      tw.callback(
+         {
+            oauth_token: token,
+            oauth_verifier: verifier
+         },
+         ctx.request.member.twitterTokenSecret,
+         async (err, user) => {
+            if (err) {
+               console.log('Failure!');
+               console.log(err);
+            }
+
+            await ctx.db.mutation.updateMember({
+               where: { id: ctx.request.memberId },
+               data: {
+                  twitterUserName: user.userName,
+                  twitterUserID: user.userId,
+                  twitterUserToken: user.userToken,
+                  twitterUserTokenSecret: user.userTokenSecret,
+                  twitterTokenSecret: null
+               }
+            });
+         }
+      );
+      return { message: 'Success!' };
+   },
+   async getTwitterLists(parent, args, ctx, info) {
+      console.log('pulling twitter lists!');
+      const {
+         twitterUserID,
+         twitterUserToken,
+         twitterUserTokenSecret
+      } = ctx.request.member;
+      const lists = getLists(
+         twitterUserID,
+         twitterUserToken,
+         twitterUserTokenSecret
+      );
+      return { message: lists };
+   },
+   async getTweetsForList(parent, { listID }, ctx, info) {
+      console.log("Let's get some tweets!");
+      if (ctx.request.member == null) {
+         const dataString = JSON.stringify({ we: 'Loading...' });
+         return { dataString };
+      }
+      const {
+         twitterUserID,
+         twitterUserToken,
+         twitterUserTokenSecret
+      } = ctx.request.member;
+
+      const rawSinceIDsObject = ctx.request.member.twitterSinceIDsObject;
+      sinceIDsObject = JSON.parse(rawSinceIDsObject);
+      if (listID === 'home') {
+         sinceID = sinceIDsObject.home;
+
+         const listTweets = await fetchHomeTweets(
+            twitterUserID,
+            twitterUserToken,
+            twitterUserTokenSecret,
+            sinceID
+         );
+
+         const dataString = JSON.stringify({ listTweets });
+         return { dataString };
+      }
+
+      sinceID = sinceIDsObject[listID];
+
+      const listTweets = await fetchListTweets(
+         listID,
+         twitterUserID,
+         twitterUserToken,
+         twitterUserTokenSecret,
+         sinceID
+      );
+
+      const dataString = JSON.stringify({ listTweets });
+      return { dataString };
    }
 };
 

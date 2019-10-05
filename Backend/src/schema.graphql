@@ -4,6 +4,10 @@ type SuccessMessage {
   message: String
 }
 
+type JsonObject {
+   dataString: Json
+}
+
 type Mutation {
   createThing(
     title: String!
@@ -44,6 +48,8 @@ type Mutation {
   eliminateThing(thingID: ID!): Thing
   promoteThing(thingID: ID!): Thing
   makeThingWinner(thingID: ID!): Thing
+  initiateTwitterLogin: SuccessMessage
+  markTweetsSeen(listID: String!, tweetIDs: [String]!): Member
 }
 
 type Query {
@@ -60,6 +66,9 @@ type Query {
   thingsForGivenDay(day: String, winnerOffset: Int): [Thing]!
   thingsForNew: [Thing]!
   thingsForFinalists: [Thing]!
+  finishTwitterLogin(token: String!, verifier: String!): SuccessMessage
+  getTwitterLists: SuccessMessage
+  getTweetsForList(listID: String!): JsonObject
 }
 
 type Subscription {
@@ -85,4 +94,11 @@ type Member {
   email: String!
   roles: [Role!]
   createdAt: DateTime!
+  twitterTokenSecret: String
+  twitterUserName: String
+  twitterUserID: String
+  twitterUserToken: String
+  twitterUserTokenSecret: String
+  twitterSinceIDsObject: String
+  twitterSeenIDsObject: String
 }

@@ -3,6 +3,7 @@ const { randomBytes } = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const { transport, basicEmailTemplate } = require('../mail');
+const LoginWithTwitter = require('login-with-twitter');
 const {
    loggedInGate,
    modGate,
@@ -906,6 +907,75 @@ const Mutations = {
       publishThingUpdate(updatedThing, ctx);
 
       return updatedThing;
+   },
+   async initiateTwitterLogin(parent, args, ctx, info) {
+      let message = false;
+      const tw = new LoginWithTwitter({
+         consumerKey: process.env.TWITTER_CONSUMER_KEY,
+         consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+         callbackUrl: `${process.env.FRONTEND_URL}/twitter`
+      });
+      tw.login(async (err, tokenSecret, url) => {
+         if (err) {
+            console.log('failure!');
+         }
+         await ctx.db.mutation.updateMember({
+            where: { id: ctx.request.memberId },
+            data: { twitterTokenSecret: tokenSecret }
+         });
+         message = url;
+         console.log(message);
+      });
+      const wait = ms => new Promise((r, j) => setTimeout(r, ms));
+      let i = 0;
+      while (!message && i < 60) {
+         await wait(500);
+         i++;
+      }
+      return { message };
+   },
+   async markTweetsSeen(parent, { listID, tweetIDs }, ctx, info) {
+      const {
+         twitterSinceIDsObject,
+         twitterSeenIDsObject
+      } = await ctx.db.query.member(
+         {
+            where: { id: ctx.request.memberId }
+         },
+         `{twitterSinceIDsObject, twitterSeenIDsObject}`
+      );
+      let sinceIDsObject;
+      if (twitterSinceIDsObject == null) {
+         sinceIDsObject = {};
+      } else {
+         sinceIDsObject = JSON.parse(twitterSinceIDsObject);
+      }
+      let seenIDsObject;
+      if (twitterSeenIDsObject == null) {
+         seenIDsObject = {};
+      } else {
+         seenIDsObject = JSON.parse(twitterSeenIDsObject);
+      }
+
+      sinceIDsObject[listID] = tweetIDs[0];
+
+      if (seenIDsObject[listID] == null) seenIDsObject[listID] = [];
+      tweetIDs.forEach(tweetID => seenIDsObject[listID].push(tweetID));
+
+      const updatedMember = await ctx.db.mutation.updateMember(
+         {
+            where: { id: ctx.request.memberId },
+            data: {
+               twitterSinceIDsObject: JSON.stringify(sinceIDsObject),
+               twitterSeenIDsObject: JSON.stringify(seenIDsObject)
+            }
+         },
+         `{id
+         twitterSinceIDsObject
+         twitterSeenIDsObject}`
+      );
+
+      return updatedMember;
    }
 };
 

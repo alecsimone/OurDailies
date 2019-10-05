@@ -22,7 +22,7 @@ server.express.use(async (req, res, next) => {
    if (!req.memberId) return next();
    const member = await db.query.member(
       { where: { id: req.memberId } },
-      '{id, displayName, avatar, rep, points, giveableRep, email, roles}'
+      '{id, displayName, avatar, rep, points, giveableRep, email, roles, twitterTokenSecret, twitterUserName, twitterUserID, twitterUserToken, twitterUserTokenSecret, twitterSinceIDsObject}'
    );
    req.member = member;
    next();

@@ -14,6 +14,12 @@ const CURRENT_MEMBER_QUERY = gql`
          rep
          points
          giveableRep
+         twitterUserName
+         twitterUserID
+         twitterUserToken
+         twitterUserTokenSecret
+         twitterSinceIDsObject
+         twitterSeenIDsObject
       }
    }
 `;
