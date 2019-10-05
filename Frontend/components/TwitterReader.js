@@ -254,6 +254,7 @@ const TwitterReader = props => {
 
                   const seenIDs = JSON.parse(props.userSeenIDsObject);
                   const filteredTweets = tweetsArray.filter(tweet => {
+                     if (seenIDs == null) return true;
                      if (seenIDs[activeList] == null) return true;
                      return !seenIDs[activeList].includes(tweet.id_str);
                   });

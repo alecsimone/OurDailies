@@ -170,7 +170,11 @@ const Query = {
          return { dataString };
       }
 
-      sinceID = sinceIDsObject[listID];
+      if (sinceIDsObject != null) {
+         sinceID = sinceIDsObject[listID];
+      } else {
+         sinceID = null;
+      }
 
       const listTweets = await fetchListTweets(
          listID,
