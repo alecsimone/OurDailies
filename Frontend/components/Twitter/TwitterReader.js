@@ -53,6 +53,7 @@ const StyledTwitterReader = styled.div`
       width: 90%;
       margin: auto;
       @media screen and (min-width: 800px) {
+         margin: 2rem auto;
          width: 20%;
          max-width: 300px;
       }
@@ -89,18 +90,23 @@ const StyledTwitterReader = styled.div`
          padding: 0;
          margin: 1rem 0 2rem;
          &.collapsed {
-            height: 0;
-            overflow: hidden;
+            @media screen and (max-width: 800px) {
+               height: 0;
+               overflow: hidden;
+            }
          }
          li {
             cursor: pointer;
-            padding: 0.5rem;
             margin: 0;
             font-weight: 700;
+            padding: 1rem;
             border-radius: 3px;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+            @media screen and (min-width: 800px) {
+               padding: 0.5rem;
+            }
             &.activeList {
                background: ${props => props.theme.veryLowContrastGrey};
             }
