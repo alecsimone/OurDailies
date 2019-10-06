@@ -204,8 +204,8 @@ const TwitterReader = props => {
    };
 
    const pickList = async (listID, client) => {
-      setActiveList(listID);
       const tweetsData = await getTweetsForListHandler(listID, client);
+      setActiveList(listID);
    };
 
    const notifyOfSeenTweets = async (tweets, client) => {
