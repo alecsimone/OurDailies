@@ -28,14 +28,14 @@ const Tweet = props => {
                   />
                </a>
             );
-         } else if (entity.type === 'video') {
+         } else if (entity.type === 'video' || entity.type === 'animated_gif') {
             const mp4s = entity.video_info.variants.filter(
                variantObject => variantObject.content_type === 'video/mp4'
             );
             mp4s.sort((a, b) => b.bitrate - a.bitrate);
             entities.push(
                <div className="embeddedVideo" key={entity.id_str}>
-                  <video src={mp4s[0].url} controls />
+                  <video src={mp4s[0].url} controls loop />
                </div>
             );
          } else {

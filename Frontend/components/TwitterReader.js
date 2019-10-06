@@ -191,7 +191,7 @@ const TwitterReader = props => {
       const tweetsData = JSON.parse(tweetsDataObject.listTweets).reverse();
 
       const thatTweet = tweetsData.filter(
-         tweet => tweet.id_str === '1180425746587832320'
+         tweet => tweet.id_str === '1177064748090658817'
       );
       console.log(thatTweet);
 
