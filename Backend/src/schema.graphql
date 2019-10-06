@@ -49,7 +49,7 @@ type Mutation {
   promoteThing(thingID: ID!): Thing
   makeThingWinner(thingID: ID!): Thing
   initiateTwitterLogin: SuccessMessage
-  markTweetsSeen(listID: String!, tweetIDs: [String]!): Member
+  markTweetsSeen(listID: String!, tweeterID: String!, tweetIDs: [String]!): Member
 }
 
 type Query {

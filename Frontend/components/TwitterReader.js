@@ -23,8 +23,16 @@ const GET_TWEETS_FOR_LIST = gql`
 `;
 
 const MARK_TWEETS_SEEN = gql`
-   mutation MARK_TWEETS_SEEN($listID: String!, $tweetIDs: [String]!) {
-      markTweetsSeen(listID: $listID, tweetIDs: $tweetIDs) {
+   mutation MARK_TWEETS_SEEN(
+      $listID: String!
+      $tweeterID: String!
+      $tweetIDs: [String]!
+   ) {
+      markTweetsSeen(
+         listID: $listID
+         tweeterID: $tweeterID
+         tweetIDs: $tweetIDs
+      ) {
          __typename
          id
          twitterSinceIDsObject
@@ -58,6 +66,7 @@ const StyledTwitterReader = styled.div`
    }
    .tweetsArea {
       width: 80%;
+      flex-grow: 1;
       .tweeters {
          display: flex;
          .tweeterColumn {
@@ -66,6 +75,8 @@ const StyledTwitterReader = styled.div`
             border-radius: 3px;
             position: relative;
             width: 600px;
+            flex-grow: 1;
+            min-width: 40rem;
             height: 80vh;
             h3.tweeterHeader {
                position: absolute;
@@ -77,9 +88,12 @@ const StyledTwitterReader = styled.div`
                justify-content: space-around;
                margin: 0;
                padding: 2rem 0;
-               background: ${props => props.theme.lowContrastCoolGrey};
+               background: ${props => props.theme.majorColorGlass};
                text-align: center;
                border-radius: 3px 3px 0 0;
+               a.tweeterNameLink {
+                  margin-right: 1rem;
+               }
                img {
                   border-radius: 50%;
                   width: ${props => props.theme.smallHead};
@@ -98,50 +112,17 @@ const StyledTwitterReader = styled.div`
                overflow-y: scroll;
                height: calc(100% - 8rem);
             }
-            article.tweet {
-               margin: 2rem 1rem;
-               padding: 2rem 1rem;
-               border: 1px solid ${props => props.theme.veryLowContrastGrey};
-               border-radius: 3px;
-               background: ${props => props.theme.background};
-               a.retweetLink {
-                  color: ${props => props.theme.majorColor};
-               }
-               img.embeddedPhoto,
-               .embeddedVideo video {
-                  max-width: 500px;
+            .scrollToBottomContainer {
+               text-align: center;
+               padding-top: 2rem;
+               img.scrollToBottom {
+                  width: ${props => props.theme.bigText};
                   height: auto;
-                  margin: 1rem 0;
-               }
-               .embeddedLink {
-                  margin: 1rem 0;
-                  a {
-                     color: ${props => props.theme.lightMajorColor};
-                     &:hover {
-                        color: ${props => props.theme.majorColor};
-                     }
-                  }
-               }
-               .quoteTweetContainer {
-                  h5 {
-                     display: flex;
-                     align-items: center;
-                  }
-                  img.quotedTweeterAvatar {
-                     border-radius: 50%;
-                     max-width: ${props => props.theme.smallHead};
-                     height: auto;
-                     margin: 0 1rem;
-                  }
-               }
-               .tweetMeta {
-                  margin-top: 1rem;
-                  a.linkToOriginalTweet {
-                     color: ${props => props.theme.lightMajorColor};
-                     font-size: ${props => props.theme.tinyText};
-                     &:hover {
-                        color: ${props => props.theme.majorColor};
-                     }
+                  transform: rotateX(180deg);
+                  cursor: pointer;
+                  opacity: 0.4;
+                  &:hover {
+                     opacity: 1;
                   }
                }
             }
@@ -168,9 +149,67 @@ const StyledTwitterReader = styled.div`
    }
 `;
 
+const scrollTo = (element, to, duration) => {
+   const start = element.scrollTop;
+   const change = to - start;
+   let currentTime = 0;
+   const increment = 20;
+
+   const animateScroll = function() {
+      currentTime += increment;
+      const val = Math.easeInOutQuad(currentTime, start, change, duration);
+      element.scrollTop = val;
+      if (currentTime < duration) {
+         setTimeout(animateScroll, increment);
+      }
+   };
+   animateScroll();
+};
+
+// t = current time
+// b = start value
+// c = change in value
+// d = duration
+Math.easeInOutQuad = function(t, b, c, d) {
+   t /= d / 2;
+   if (t < 1) return (c / 2) * t * t + b;
+   t--;
+   return (-c / 2) * (t * (t - 2) - 1) + b;
+};
+
+const scrollColumnToTop = e => {
+   if (!e.target.classList.contains('tweeterHeader')) return;
+   const column = e.target.parentNode;
+   const tweetsContainer = column.querySelector('.tweetsContainer');
+   scrollTo(tweetsContainer, 0, 250);
+};
+
+const scrollColumnToBottom = e => {
+   const column = e.target.parentNode.parentNode;
+   const tweetsContainer = column.querySelector('.tweetsContainer');
+   const bottom = tweetsContainer.scrollHeight;
+   scrollTo(tweetsContainer, bottom, 250);
+};
+
 const TwitterReader = props => {
    const [activeList, setActiveList] = useState(false);
    const [tweetsArray, setTweetsArray] = useState(['Loading tweets...']);
+
+   useEffect(() => {
+      const headers = document.getElementsByClassName('tweeterHeader');
+      if (headers.length > 0) {
+         for (const header of headers) {
+            header.addEventListener('click', scrollColumnToTop);
+         }
+      }
+
+      const toBottomButtons = document.getElementsByClassName('scrollToBottom');
+      if (toBottomButtons.length > 0) {
+         for (const button of toBottomButtons) {
+            button.addEventListener('click', scrollColumnToBottom);
+         }
+      }
+   });
 
    const getTweetsForListHandler = async (listID, client) => {
       const refreshButton = document.getElementById('refreshButton');
@@ -190,10 +229,10 @@ const TwitterReader = props => {
       const tweetsDataObject = JSON.parse(data.getTweetsForList.dataString);
       const tweetsData = JSON.parse(tweetsDataObject.listTweets).reverse();
 
-      const thatTweet = tweetsData.filter(
-         tweet => tweet.id_str === '1177064748090658817'
-      );
-      console.log(thatTweet);
+      // const thatTweet = tweetsData.filter(
+      //    tweet => tweet.id_str === '1177064748090658817'
+      // );
+      // console.log(thatTweet);
 
       setActiveList(listID);
       setTweetsArray(tweetsData);
@@ -208,7 +247,7 @@ const TwitterReader = props => {
       setActiveList(listID);
    };
 
-   const notifyOfSeenTweets = async (tweets, client) => {
+   const notifyOfSeenTweets = async (tweeterID, tweets, client) => {
       const tweetIDs = [];
       tweets.forEach(tweet => tweetIDs.push(tweet.id_str));
 
@@ -217,6 +256,7 @@ const TwitterReader = props => {
             mutation: MARK_TWEETS_SEEN,
             variables: {
                listID: activeList,
+               tweeterID,
                tweetIDs
             },
             refetchQueries: [
@@ -241,6 +281,9 @@ const TwitterReader = props => {
                   key={listData.id_str}
                   onClick={() => pickList(listData.id_str, client)}
                >
+                  {listData.user.screen_name == props.userName
+                     ? ''
+                     : `@${listData.user.screen_name}/`}
                   {listData.name}
                </li>
             ));
@@ -274,8 +317,13 @@ const TwitterReader = props => {
                   const seenIDs = JSON.parse(props.userSeenIDsObject);
                   const filteredTweets = tweetsArray.filter(tweet => {
                      if (seenIDs == null) return true;
-                     if (seenIDs[activeList] == null) return true;
-                     return !seenIDs[activeList].includes(tweet.id_str);
+                     const seenTweeters = Object.keys(seenIDs);
+                     let isSeen = false;
+                     seenTweeters.forEach(tweeterID => {
+                        if (seenIDs[tweeterID].includes(tweet.id_str))
+                           isSeen = true;
+                     });
+                     return !isSeen;
                   });
 
                   if (filteredTweets.length === 0) {
@@ -298,6 +346,7 @@ const TwitterReader = props => {
                         if (!seenTweeters.includes(tweeter.screen_name)) {
                            const tweeterObject = {
                               tweeter: {
+                                 id: tweeter.id_str,
                                  name: tweeter.screen_name,
                                  pic: tweeter.profile_image_url_https
                               },
@@ -333,19 +382,24 @@ const TwitterReader = props => {
                                     src={tweetersArray[i].tweeter.pic}
                                     className="tweeterAvatar"
                                  />
-                                 <a
-                                    href={`https://twitter.com/${
-                                       tweetersArray[i].tweeter.name
-                                    }`}
-                                    target="_blank"
-                                 >
-                                    @{tweetersArray[i].tweeter.name}
-                                 </a>
+                                 <div>
+                                    <a
+                                       href={`https://twitter.com/${
+                                          tweetersArray[i].tweeter.name
+                                       }`}
+                                       target="_blank"
+                                       className="tweeterNameLink"
+                                    >
+                                       @{tweetersArray[i].tweeter.name}
+                                    </a>
+                                    ({thisTweetersTweets.length})
+                                 </div>
                                  <img
                                     src="/static/red-x.png"
                                     className="markSeen"
                                     onClick={() =>
                                        notifyOfSeenTweets(
+                                          tweetersArray[i].tweeter.id,
                                           tweetersArray[i].tweets,
                                           client
                                        )
@@ -354,6 +408,13 @@ const TwitterReader = props => {
                               </h3>
                               <div className="tweetsContainer">
                                  {thisTweetersTweets}
+                              </div>
+                              <div className="scrollToBottomContainer">
+                                 <img
+                                    src="/static/grey-up-arrow.png"
+                                    className="scrollToBottom"
+                                    alt="Scroll to bottom"
+                                 />
                               </div>
                            </div>
                         );

@@ -935,7 +935,7 @@ const Mutations = {
       }
       return { message };
    },
-   async markTweetsSeen(parent, { listID, tweetIDs }, ctx, info) {
+   async markTweetsSeen(parent, { tweeterID, listID, tweetIDs }, ctx, info) {
       const {
          twitterSinceIDsObject,
          twitterSeenIDsObject
@@ -959,9 +959,17 @@ const Mutations = {
       }
 
       sinceIDsObject[listID] = tweetIDs[0];
+      const sincedLists = Object.keys(sinceIDsObject);
+      sincedLists.sort(
+         (a, b) => parseInt(sinceIDsObject[a]) - parseInt(sinceIDsObject[b])
+      );
+      const oldestSinceID = sinceIDsObject[sincedLists[0]];
 
-      if (seenIDsObject[listID] == null) seenIDsObject[listID] = [];
-      tweetIDs.forEach(tweetID => seenIDsObject[listID].push(tweetID));
+      if (seenIDsObject[tweeterID] == null) seenIDsObject[tweeterID] = [];
+      tweetIDs.forEach(tweetID => seenIDsObject[tweeterID].push(tweetID));
+      // const freshSeenIDsObject = seenIDsObject[tweeterID].filter(
+      //    tweetID => tweetID > oldestSinceID
+      // );
 
       const updatedMember = await ctx.db.mutation.updateMember(
          {
