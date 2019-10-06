@@ -77,6 +77,7 @@ const StyledTwitterReader = styled.div`
             width: 600px;
             flex-grow: 1;
             min-width: 40rem;
+            max-width: 80rem;
             height: 80vh;
             h3.tweeterHeader {
                position: absolute;
