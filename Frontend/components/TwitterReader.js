@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
+import Router from 'next/router';
 import Error from './ErrorMessage';
 import Tweet from './Twitter/Tweet';
 import { CURRENT_MEMBER_QUERY } from './Member';
@@ -54,10 +55,19 @@ const StyledTwitterReader = styled.div`
       }
       ul {
          list-style-type: '';
+         padding: 0;
          li {
             cursor: pointer;
-            margin: 1rem 0;
+            padding: 0.5rem;
+            margin: 0;
             font-weight: 700;
+            border-radius: 3px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            &.activeList {
+               background: ${props => props.theme.veryLowContrastGrey};
+            }
             &:hover {
                text-decoration: underline;
             }
@@ -68,7 +78,14 @@ const StyledTwitterReader = styled.div`
       width: 80%;
       flex-grow: 1;
       .tweeters {
-         display: flex;
+         .remainingCounters {
+            width: 100%;
+            margin: 0 0 1rem 2rem;
+            opacity: .5;
+         }
+         .tweeterColumnsContainer {
+            display: flex;
+         }
          .tweeterColumn {
             margin: 0 2rem;
             background: ${props => props.theme.veryLowContrastCoolGrey};
@@ -92,6 +109,11 @@ const StyledTwitterReader = styled.div`
                background: ${props => props.theme.majorColorGlass};
                text-align: center;
                border-radius: 3px 3px 0 0;
+               .bottom {
+                  font-size: ${props => props.theme.tinyText};
+                  /* color: ${props => props.theme.highContrastGrey}; */
+                  opacity: 0.4;
+               }
                a.tweeterNameLink {
                   margin-right: 1rem;
                }
@@ -105,6 +127,20 @@ const StyledTwitterReader = styled.div`
                   opacity: 0.4;
                   &:hover {
                      opacity: 1;
+                  }
+                  &.loading {
+                     animation-name: spin;
+                     animation-duration: 750ms;
+                     animation-iteration-count: infinite;
+                     animation-timing-function: linear;
+                  }
+               }
+               @keyframes spin {
+                  from {
+                     transform: rotate(0deg);
+                  }
+                  to {
+                     transform: rotate(360deg);
                   }
                }
             }
@@ -243,12 +279,17 @@ const TwitterReader = props => {
       return tweetsData;
    };
 
-   const pickList = async (listID, client) => {
+   const pickList = async (listID, listName, client) => {
       const tweetsData = await getTweetsForListHandler(listID, client);
       setActiveList(listID);
+      const encodedName = encodeURIComponent(listName);
+      const href = `/twitter?listname=${encodedName}`;
+      const as = href;
+      Router.replace(href, as, { shallow: true });
    };
 
-   const notifyOfSeenTweets = async (tweeterID, tweets, client) => {
+   const notifyOfSeenTweets = async (tweeterID, tweets, client, button) => {
+      button.classList.add('loading');
       const tweetIDs = [];
       tweets.forEach(tweet => tweetIDs.push(tweet.id_str));
 
@@ -269,6 +310,7 @@ const TwitterReader = props => {
          .catch(err => {
             alert(err.message);
          });
+      button.classList.remove('loading');
    };
 
    return (
@@ -280,27 +322,44 @@ const TwitterReader = props => {
             const listElements = lists.map(listData => (
                <li
                   key={listData.id_str}
-                  onClick={() => pickList(listData.id_str, client)}
+                  onClick={() =>
+                     pickList(listData.id_str, listData.name, client)
+                  }
+                  className={
+                     listData.id_str === activeList
+                        ? 'activeList'
+                        : 'inactiveList'
+                  }
                >
+                  {listData.name}
                   {listData.user.screen_name == props.userName
                      ? ''
-                     : `@${listData.user.screen_name}/`}
-                  {listData.name}
+                     : ` (@${listData.user.screen_name})`}
                </li>
             ));
             listElements.unshift(
-               <li key="home" onClick={() => pickList('home', client)}>
+               <li key="home" onClick={() => pickList('home', 'home', client)}>
                   Home
                </li>
             );
 
             let tweetsDisplay;
             if (activeList === false) {
+               let defaultList;
+               if (props.startingList != null) {
+                  [defaultList] = lists.filter(
+                     list =>
+                        list.name.toLowerCase() ===
+                        props.startingList.toLowerCase()
+                  );
+               }
                const [seeAllList] = lists.filter(
                   list => list.name.toLowerCase() === 'see all'
                );
 
-               if (seeAllList) {
+               if (defaultList) {
+                  getTweetsForListHandler(defaultList.id_str, client);
+               } else if (seeAllList) {
                   getTweetsForListHandler(seeAllList.id_str, client);
                } else {
                   getTweetsForListHandler('home', client);
@@ -309,6 +368,8 @@ const TwitterReader = props => {
             }
 
             if (activeList !== false) {
+               let tweetersRemaining;
+               let tweetsRemaining;
                if (tweetsArray[0] === 'Loading tweets...') {
                   tweetsDisplay = <div>Loading tweets...</div>;
                } else {
@@ -326,6 +387,7 @@ const TwitterReader = props => {
                      });
                      return !isSeen;
                   });
+                  tweetsRemaining = filteredTweets.length;
 
                   if (filteredTweets.length === 0) {
                      tweetsDisplay = (
@@ -349,6 +411,7 @@ const TwitterReader = props => {
                               tweeter: {
                                  id: tweeter.id_str,
                                  name: tweeter.screen_name,
+                                 displayName: tweeter.name,
                                  pic: tweeter.profile_image_url_https
                               },
                               tweets: [tweet]
@@ -366,6 +429,7 @@ const TwitterReader = props => {
                            );
                         }
                      });
+                     tweetersRemaining = tweetersArray.length;
 
                      const tweetElements = [];
                      for (let i = 0; i < 3 && i < seenTweeters.length; i++) {
@@ -384,25 +448,31 @@ const TwitterReader = props => {
                                     className="tweeterAvatar"
                                  />
                                  <div>
-                                    <a
-                                       href={`https://twitter.com/${
-                                          tweetersArray[i].tweeter.name
-                                       }`}
-                                       target="_blank"
-                                       className="tweeterNameLink"
-                                    >
-                                       @{tweetersArray[i].tweeter.name}
-                                    </a>
-                                    ({thisTweetersTweets.length})
+                                    <div className="top">
+                                       <a
+                                          href={`https://twitter.com/${
+                                             tweetersArray[i].tweeter.name
+                                          }`}
+                                          target="_blank"
+                                          className="tweeterNameLink"
+                                       >
+                                          @{tweetersArray[i].tweeter.name}
+                                       </a>
+                                       ({thisTweetersTweets.length})
+                                    </div>
+                                    <div className="bottom">
+                                       {tweetersArray[i].tweeter.displayName}
+                                    </div>
                                  </div>
                                  <img
                                     src="/static/red-x.png"
                                     className="markSeen"
-                                    onClick={() =>
+                                    onClick={e =>
                                        notifyOfSeenTweets(
                                           tweetersArray[i].tweeter.id,
                                           tweetersArray[i].tweets,
-                                          client
+                                          client,
+                                          e.target
                                        )
                                     }
                                  />
@@ -424,7 +494,14 @@ const TwitterReader = props => {
                      }
 
                      tweetsDisplay = (
-                        <div className="tweeters">{tweetElements}</div>
+                        <div className="tweeters">
+                           <div className="remainingCounters">
+                              {tweetsRemaining} / {tweetersRemaining}
+                           </div>
+                           <div className="tweeterColumnsContainer">
+                              {tweetElements}
+                           </div>
+                        </div>
                      );
                   }
                }

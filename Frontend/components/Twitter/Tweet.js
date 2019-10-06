@@ -63,6 +63,13 @@ const StyledTweet = styled.article`
          margin: 0 1rem;
       }
    }
+   .entities {
+      display: block;
+      width: 100%;
+      &.empty {
+         display: none;
+      }
+   }
    .tweetMeta {
       margin-top: 1rem;
       color: ${props => props.theme.lightMajorColor};
@@ -104,9 +111,12 @@ const Tweet = props => {
    const { tweet } = props;
    const entities = [];
    if (tweet.entities && tweet.entities.urls) {
-      tweet.entities.urls.forEach(entity => {
+      tweet.entities.urls.forEach((entity, index) => {
          entities.push(
-            <div className="embeddedLink" key={entity.display_url}>
+            <div
+               className="embeddedLink"
+               key={`${entity.display_url}-link-${index}`}
+            >
                <a href={entity.expanded_url} target="_blank">
                   {entity.display_url}
                </a>
@@ -115,19 +125,15 @@ const Tweet = props => {
       });
    }
    if (tweet.extended_entities && tweet.extended_entities.media) {
-      tweet.extended_entities.media.forEach(entity => {
+      tweet.extended_entities.media.forEach((entity, index) => {
          if (entity.type === 'photo') {
             entities.push(
                <a
                   href={entity.media_url_https}
                   target="_blank"
-                  key={entity.id_str}
+                  key={`${entity.id_str}-photo-${index}`}
                >
-                  <img
-                     src={entity.media_url_https}
-                     className="embeddedPhoto"
-                     key={entity.id_str}
-                  />
+                  <img src={entity.media_url_https} className="embeddedPhoto" />
                </a>
             );
          } else if (entity.type === 'video' || entity.type === 'animated_gif') {
@@ -136,18 +142,21 @@ const Tweet = props => {
             );
             mp4s.sort((a, b) => b.bitrate - a.bitrate);
             entities.push(
-               <div className="embeddedVideo" key={entity.id_str}>
+               <div
+                  className="embeddedVideo"
+                  key={`${entity.id_str}-video-${index}`}
+               >
                   <video
                      src={mp4s[0].url}
                      controls
-                     loop={entity.type === 'animated_gif' ? 'true' : false}
-                     autoPlay={entity.type === 'animated_gif' ? 'true' : false}
+                     loop={entity.type === 'animated_gif'}
+                     autoPlay={entity.type === 'animated_gif'}
                   />
                </div>
             );
          } else {
             entities.push(
-               <div key={entity.id_str}>
+               <div key={`${entity.id_str}-unknownmedia-${index}`}>
                   There's media that's not a photo here
                </div>
             );
@@ -178,10 +187,13 @@ const Tweet = props => {
    }
    if (tweet.retweeted_status != null) {
       const rt = tweet.retweeted_status;
-      if (entities.length === 0 && rt.entities.urls) {
-         rt.entities.urls.forEach(entity => {
+      if (entities.length === 0 && rt.entities && rt.entities.urls) {
+         rt.entities.urls.forEach((entity, index) => {
             entities.push(
-               <div className="embeddedLink" key={entity.display_url}>
+               <div
+                  className="embeddedLink"
+                  key={`${entity.display_url}-link-${index}`}
+               >
                   <a href={entity.expanded_url} target="_blank">
                      {entity.display_url}
                   </a>
@@ -189,14 +201,18 @@ const Tweet = props => {
             );
          });
       }
-      if (entities.length === 0 && rt.entities.media) {
-         rt.entities.media.forEach(entity => {
+      if (
+         entities.length === 0 &&
+         rt.extended_entities &&
+         rt.extended_entities.media
+      ) {
+         rt.extended_entities.media.forEach((entity, index) => {
             if (entity.type === 'photo') {
                entities.push(
                   <a
                      href={entity.media_url_https}
                      target="_blank"
-                     key={entity.id_str}
+                     key={`${entity.id_str}-photo-${index}`}
                   >
                      <img
                         src={entity.media_url_https}
@@ -204,8 +220,33 @@ const Tweet = props => {
                      />
                   </a>
                );
+            } else if (
+               entity.type === 'video' ||
+               entity.type === 'animated_gif'
+            ) {
+               const mp4s = entity.video_info.variants.filter(
+                  variantObject => variantObject.content_type === 'video/mp4'
+               );
+               mp4s.sort((a, b) => b.bitrate - a.bitrate);
+               entities.push(
+                  <div
+                     className="embeddedVideo"
+                     key={`${entity.id_str}-video-${index}`}
+                  >
+                     <video
+                        src={mp4s[0].url}
+                        controls
+                        loop={entity.type === 'animated_gif'}
+                        autoPlay={entity.type === 'animated_gif'}
+                     />
+                  </div>
+               );
             } else {
-               entities.push(<div>There's media that's not a photo here</div>);
+               entities.push(
+                  <div key={`${entity.id_str}-unknownmedia-${index}`}>
+                     There's media that's not a photo here
+                  </div>
+               );
             }
          });
       }
@@ -240,7 +281,11 @@ const Tweet = props => {
                ''
             )}
             {decodeHTML(stripTcos(rt.full_text))}
-            {entities}
+            <div
+               className={entities.length > 0 ? 'entities' : 'entities empty'}
+            >
+               {entities}
+            </div>
             <div className="tweetMeta">
                <a
                   href={`https://twitter.com/blank/status/${rt.id_str}`}
@@ -276,7 +321,9 @@ const Tweet = props => {
             ''
          )}
          {decodeHTML(stripTcos(tweet.full_text))}
-         {entities}
+         <div className={entities.length > 0 ? 'entities' : 'entities empty'}>
+            {entities}
+         </div>
          <div className="tweetMeta">
             <a
                href={`https://twitter.com/blank/status/${tweet.id_str}`}

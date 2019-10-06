@@ -81,6 +81,7 @@ const TwitterPage = props => (
                         userTokenSecret={memberData.me.twitterUserTokenSecret}
                         userSinceIDsObject={memberData.me.twitterSinceIDsObject}
                         userSeenIDsObject={memberData.me.twitterSeenIDsObject}
+                        startingList={props.query.listname}
                      />
                   )}
             </div>
