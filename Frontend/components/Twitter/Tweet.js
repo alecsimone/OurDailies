@@ -38,7 +38,7 @@ const Tweet = props => {
                   <video
                      src={mp4s[0].url}
                      controls
-                     loop
+                     loop={entity.type === 'animated_gif' ? 'true' : false}
                      autoPlay={entity.type === 'animated_gif' ? 'true' : false}
                   />
                </div>
