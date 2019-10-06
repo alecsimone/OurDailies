@@ -44,18 +44,54 @@ const MARK_TWEETS_SEEN = gql`
 
 const StyledTwitterReader = styled.div`
    display: flex;
+   flex-wrap: wrap;
+   @media screen and (min-width: 800px) {
+      flex-wrap: nowrap;
+   }
    .picker {
-      width: 20%;
-      max-width: 300px;
+      min-width: 200px;
+      width: 90%;
+      margin: auto;
+      @media screen and (min-width: 800px) {
+         width: 20%;
+         max-width: 300px;
+      }
       h5 {
          font-size: ${props => props.theme.bigText};
+         position: relative;
+         margin: 1rem 0;
          span.twitterName {
             color: ${props => props.theme.secondaryAccent};
+         }
+         button.showLists {
+            border: none;
+            width: ${props => props.theme.bigText};
+            height: ${props => props.theme.bigText};
+            padding: 0;
+            position: absolute;
+            right: 0;
+            img {
+               transform: rotateZ(0deg);
+               width: 100%;
+               height: auto;
+               transition: transform 0.25s;
+               &.collapsed {
+                  transform: rotateZ(-180deg);
+               }
+            }
+            @media screen and (min-width: 800px) {
+               display: none;
+            }
          }
       }
       ul {
          list-style-type: '';
          padding: 0;
+         margin: 1rem 0 2rem;
+         &.collapsed {
+            height: 0;
+            overflow: hidden;
+         }
          li {
             cursor: pointer;
             padding: 0.5rem;
@@ -96,6 +132,12 @@ const StyledTwitterReader = styled.div`
             min-width: 40rem;
             max-width: 80rem;
             height: 80vh;
+            &.column1,
+            &.column2 {
+               @media screen and (max-width: 800px) {
+                  display: none;
+               }
+            }
             h3.tweeterHeader {
                position: absolute;
                top: 0;
@@ -230,6 +272,7 @@ const scrollColumnToBottom = e => {
 const TwitterReader = props => {
    const [activeList, setActiveList] = useState(false);
    const [tweetsArray, setTweetsArray] = useState(['Loading tweets...']);
+   const [pickerCollapsed, setPickerCollapsed] = useState(true);
 
    useEffect(() => {
       const headers = document.getElementsByClassName('tweeterHeader');
@@ -438,7 +481,7 @@ const TwitterReader = props => {
 
                         const thisTweeter = (
                            <div
-                              className="tweeterColumn"
+                              className={`tweeterColumn column${i}`}
                               key={tweetersArray[i].tweeter.name}
                            >
                               <h3 className="tweeterHeader">
@@ -513,8 +556,20 @@ const TwitterReader = props => {
                      <h5>
                         Welcome,{' '}
                         <span className="twitterName">{props.userName}</span>
+                        <button
+                           className="showLists"
+                           onClick={() => setPickerCollapsed(!pickerCollapsed)}
+                        >
+                           <img
+                              src="/static/grey-up-arrow.png"
+                              alt="Show lists"
+                              className={pickerCollapsed ? 'collapsed' : 'full'}
+                           />
+                        </button>
                      </h5>
-                     <ul>{listElements}</ul>
+                     <ul className={pickerCollapsed ? 'collapsed' : 'full'}>
+                        {listElements}
+                     </ul>
                   </div>
                   <div className="tweetsArea">{tweetsDisplay}</div>
                </StyledTwitterReader>
