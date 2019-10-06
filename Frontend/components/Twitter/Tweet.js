@@ -35,7 +35,12 @@ const Tweet = props => {
             mp4s.sort((a, b) => b.bitrate - a.bitrate);
             entities.push(
                <div className="embeddedVideo" key={entity.id_str}>
-                  <video src={mp4s[0].url} controls loop />
+                  <video
+                     src={mp4s[0].url}
+                     controls
+                     loop
+                     autoPlay={entity.type === 'animated_gif' ? 'true' : false}
+                  />
                </div>
             );
          } else {
