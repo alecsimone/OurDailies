@@ -166,8 +166,7 @@ const StyledTwitterReader = styled.div`
          }
          &.empty {
             margin-top: 4rem;
-            justify-content: center;
-            flex-wrap: wrap;
+            text-align: center;
             h3 {
                font-size: ${props => props.theme.bigHead};
                font-weight: 700;
