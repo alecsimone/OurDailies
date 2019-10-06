@@ -3,9 +3,9 @@ import { Query } from 'react-apollo';
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import Router from 'next/router';
-import Error from './ErrorMessage';
-import Tweet from './Twitter/Tweet';
-import { CURRENT_MEMBER_QUERY } from './Member';
+import Error from '../ErrorMessage';
+import Tweet from './Tweet';
+import { CURRENT_MEMBER_QUERY } from '../Member';
 
 const GET_TWITTER_LISTS = gql`
    query GET_TWITTER_LISTS {
@@ -81,7 +81,7 @@ const StyledTwitterReader = styled.div`
          .remainingCounters {
             width: 100%;
             margin: 0 0 1rem 2rem;
-            opacity: .5;
+            opacity: 0.5;
          }
          .tweeterColumnsContainer {
             display: flex;
@@ -111,7 +111,7 @@ const StyledTwitterReader = styled.div`
                border-radius: 3px 3px 0 0;
                .bottom {
                   font-size: ${props => props.theme.tinyText};
-                  /* color: ${props => props.theme.highContrastGrey}; */
+                  font-weight: 400;
                   opacity: 0.4;
                }
                a.tweeterNameLink {
@@ -496,7 +496,8 @@ const TwitterReader = props => {
                      tweetsDisplay = (
                         <div className="tweeters">
                            <div className="remainingCounters">
-                              {tweetsRemaining} / {tweetersRemaining}
+                              {tweetsRemaining} tweets / {tweetersRemaining}{' '}
+                              tweeters
                            </div>
                            <div className="tweeterColumnsContainer">
                               {tweetElements}

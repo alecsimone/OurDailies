@@ -3,10 +3,12 @@ import { convertISOtoAgo, urlFinder } from '../../lib/utils';
 
 const StyledTweet = styled.article`
    margin: 2rem 1rem;
-   padding: 2rem 1rem;
+   padding: 0 1rem 2rem 1rem;
    border: 1px solid ${props => props.theme.veryLowContrastGrey};
    border-radius: 3px;
    background: ${props => props.theme.background};
+   p.tweetLine {
+   }
    .replyInfo {
       a {
          color: ${props => props.theme.lightMajorColor};
@@ -14,12 +16,12 @@ const StyledTweet = styled.article`
             color: ${props => props.theme.majorColor};
          }
       }
-      margin-bottom: 1rem;
+      margin-top: 2rem;
    }
    .retweeter {
       display: flex;
       align-items: center;
-      margin: -2rem -1rem 1rem -1rem;
+      margin: 0 -1rem 1rem -1rem;
       padding: 2rem 1rem;
       background: ${props => props.theme.veryLowContrastCoolGrey};
       a.retweetLink {
@@ -105,6 +107,19 @@ const decodeHTML = text => {
    const txt = document.createElement('textarea');
    txt.innerHTML = text;
    return txt.value;
+};
+
+const makeParagraphElements = text => {
+   const paragraphsAndEmptyStrings = text.split('\n');
+   const paragraphs = paragraphsAndEmptyStrings.filter(string => string != '');
+
+   const paragraphElements = paragraphs.map((tweetLineString, index) => (
+      <p className="tweetLine" key={index}>
+         {tweetLineString}
+      </p>
+   ));
+
+   return paragraphElements;
 };
 
 const Tweet = props => {
@@ -280,7 +295,7 @@ const Tweet = props => {
             ) : (
                ''
             )}
-            {decodeHTML(stripTcos(rt.full_text))}
+            {makeParagraphElements(decodeHTML(stripTcos(rt.full_text)))}
             <div
                className={entities.length > 0 ? 'entities' : 'entities empty'}
             >
@@ -320,7 +335,7 @@ const Tweet = props => {
          ) : (
             ''
          )}
-         {decodeHTML(stripTcos(tweet.full_text))}
+         {makeParagraphElements(decodeHTML(stripTcos(tweet.full_text)))}
          <div className={entities.length > 0 ? 'entities' : 'entities empty'}>
             {entities}
          </div>

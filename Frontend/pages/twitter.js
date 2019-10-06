@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import Member from '../components/Member';
-import TwitterReader from '../components/TwitterReader';
+import TwitterReader from '../components/Twitter/TwitterReader';
 import MustSignIn from '../components/MustSignIn';
 
 const START_TWITTER_LOGIN = gql`
