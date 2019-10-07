@@ -648,12 +648,51 @@ const getLists = async (userID, token, tokenSecret) => {
          Authorization: headerString
       }
    });
+
    const listsJson = await lists.json();
-   return JSON.stringify(listsJson);
+   if (listsJson.errors && listsJson.errors[0].code == 88) {
+      throw new Error("You've exceeded the twitter rate limit for lists");
+   }
+   return listsJson;
 };
 exports.getLists = getLists;
 
-const fetchListTweets = async (listID, userID, token, tokenSecret, sinceID) => {
+const fetchListTweets = async (listID, ctx) => {
+   const {
+      twitterSinceIDsObject: rawSinceIDsObject,
+      twitterUserID,
+      twitterUserToken,
+      twitterUserTokenSecret
+   } = await ctx.db.query.member(
+      {
+         where: { id: ctx.request.memberId }
+      },
+      `{twitterUserID, twitterSinceIDsObject, twitterUserToken, twitterUserTokenSecret}`
+   );
+
+   sinceIDsObject = JSON.parse(rawSinceIDsObject);
+   if (listID === 'home') {
+      sinceID = sinceIDsObject.home;
+
+      const listTweets = await fetchHomeTweets(
+         twitterUserID,
+         twitterUserToken,
+         twitterUserTokenSecret,
+         sinceID
+      );
+
+      return listTweets;
+
+      const dataString = JSON.stringify({ listTweets });
+      return { dataString };
+   }
+
+   if (sinceIDsObject != null) {
+      sinceID = sinceIDsObject[listID];
+   } else {
+      sinceID = null;
+   }
+
    const baseURL = 'https://api.twitter.com/1.1/lists/statuses.json';
    const parameters = {
       list_id: listID,
@@ -666,8 +705,8 @@ const fetchListTweets = async (listID, userID, token, tokenSecret, sinceID) => {
    const headerString = buildHeaderString(
       process.env.TWITTER_CONSUMER_KEY,
       process.env.TWITTER_CONSUMER_SECRET,
-      token,
-      tokenSecret,
+      twitterUserToken,
+      twitterUserTokenSecret,
       baseURL,
       parameters
    );

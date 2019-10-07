@@ -938,12 +938,12 @@ const Mutations = {
    async markTweetsSeen(parent, { tweeterID, listID, tweetIDs }, ctx, info) {
       const {
          twitterSinceIDsObject,
-         twitterSeenIDsObject
+         twitterSeenIDs
       } = await ctx.db.query.member(
          {
             where: { id: ctx.request.memberId }
          },
-         `{twitterSinceIDsObject, twitterSeenIDsObject}`
+         `{twitterSinceIDsObject, twitterSeenIDs}`
       );
       let sinceIDsObject;
       if (twitterSinceIDsObject == null) {
@@ -951,13 +951,12 @@ const Mutations = {
       } else {
          sinceIDsObject = JSON.parse(twitterSinceIDsObject);
       }
-      let seenIDsObject;
-      if (twitterSeenIDsObject == null) {
-         seenIDsObject = {};
-      } else {
-         seenIDsObject = JSON.parse(twitterSeenIDsObject);
+
+      if (twitterSeenIDs == null) {
+         twitterSeenIDs = [];
       }
 
+      tweetIDs.sort();
       sinceIDsObject[listID] = tweetIDs[0];
       const sincedLists = Object.keys(sinceIDsObject);
       sincedLists.sort(
@@ -965,25 +964,22 @@ const Mutations = {
       );
       const oldestSinceID = sinceIDsObject[sincedLists[0]];
 
-      if (seenIDsObject[tweeterID] == null) seenIDsObject[tweeterID] = [];
-      tweetIDs.forEach(tweetID => seenIDsObject[tweeterID].push(tweetID));
-      // const freshSeenIDsObject = seenIDsObject[tweeterID].filter(
-      //    tweetID => tweetID > oldestSinceID
-      // );
-
+      tweetIDs.forEach(tweetID => twitterSeenIDs.push(tweetID));
+      const freshSeenIDs = twitterSeenIDs.filter(
+         tweetID => tweetID >= oldestSinceID
+      );
       const updatedMember = await ctx.db.mutation.updateMember(
          {
             where: { id: ctx.request.memberId },
             data: {
                twitterSinceIDsObject: JSON.stringify(sinceIDsObject),
-               twitterSeenIDsObject: JSON.stringify(seenIDsObject)
+               twitterSeenIDs: { set: freshSeenIDs }
             }
          },
          `{id
          twitterSinceIDsObject
-         twitterSeenIDsObject}`
+         twitterSeenIDs}`
       );
-
       return updatedMember;
    }
 };

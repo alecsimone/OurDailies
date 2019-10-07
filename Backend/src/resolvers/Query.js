@@ -132,15 +132,54 @@ const Query = {
       console.log('pulling twitter lists!');
       const {
          twitterUserID,
+         twitterUserName,
          twitterUserToken,
          twitterUserTokenSecret
-      } = ctx.request.member;
-      const lists = getLists(
+      } = await ctx.db.query.member(
+         {
+            where: { id: ctx.request.memberId }
+         },
+         `{twitterUserID,
+         twitterUserName,
+         twitterUserToken,
+         twitterUserTokenSecret}`
+      );
+      const listData = {
+         home: {
+            id: 'home',
+            name: 'Home',
+            user: {
+               screen_name: twitterUserName
+            },
+            tweets: []
+         }
+      };
+      const lists = await getLists(
          twitterUserID,
          twitterUserToken,
          twitterUserTokenSecret
       );
-      return { message: lists };
+      lists.forEach(listObject => {
+         listData[listObject.id_str] = {
+            id: listObject.id_str,
+            name: listObject.name,
+            user: listObject.user,
+            tweets: []
+         };
+      });
+      const listIDs = Object.keys(listData);
+      await Promise.all(
+         listIDs.map(async id => {
+            const tweets = await fetchListTweets(id, ctx);
+            listData[id].tweets = tweets;
+         })
+      );
+      // listIDs.forEach(id => {
+      //    const tweets = fetchListTweets(id, ctx);
+      //    listData[id].tweets = JSON.parse(tweets);
+      // });
+      const listDataString = JSON.stringify(listData);
+      return { message: listDataString };
    },
    async getTweetsForList(parent, { listID }, ctx, info) {
       console.log("Let's get some tweets!");
@@ -148,41 +187,8 @@ const Query = {
          const dataString = JSON.stringify({ we: 'Loading...' });
          return { dataString };
       }
-      const {
-         twitterUserID,
-         twitterUserToken,
-         twitterUserTokenSecret
-      } = ctx.request.member;
 
-      const rawSinceIDsObject = ctx.request.member.twitterSinceIDsObject;
-      sinceIDsObject = JSON.parse(rawSinceIDsObject);
-      if (listID === 'home') {
-         sinceID = sinceIDsObject.home;
-
-         const listTweets = await fetchHomeTweets(
-            twitterUserID,
-            twitterUserToken,
-            twitterUserTokenSecret,
-            sinceID
-         );
-
-         const dataString = JSON.stringify({ listTweets });
-         return { dataString };
-      }
-
-      if (sinceIDsObject != null) {
-         sinceID = sinceIDsObject[listID];
-      } else {
-         sinceID = null;
-      }
-
-      const listTweets = await fetchListTweets(
-         listID,
-         twitterUserID,
-         twitterUserToken,
-         twitterUserTokenSecret,
-         sinceID
-      );
+      const listTweets = await fetchListTweets(listID, ctx);
 
       const dataString = JSON.stringify({ listTweets });
       return { dataString };

@@ -123,6 +123,7 @@ const makeParagraphElements = text => {
 };
 
 const Tweet = props => {
+   // return <div>Tweet!</div>;
    const { tweet } = props;
    const entities = [];
    if (tweet.entities && tweet.entities.urls) {
@@ -265,6 +266,7 @@ const Tweet = props => {
             }
          });
       }
+
       return (
          <StyledTweet key={rt.id_str} className="tweet">
             <div className="retweeter">

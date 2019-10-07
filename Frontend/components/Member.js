@@ -19,7 +19,7 @@ const CURRENT_MEMBER_QUERY = gql`
          twitterUserToken
          twitterUserTokenSecret
          twitterSinceIDsObject
-         twitterSeenIDsObject
+         twitterSeenIDs
       }
    }
 `;

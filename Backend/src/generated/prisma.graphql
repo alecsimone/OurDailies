@@ -735,7 +735,7 @@ type Member {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: [String!]!
   someRandomJsonField: Json
   createdAt: DateTime!
   updatedAt: DateTime
@@ -771,7 +771,7 @@ input MemberCreateInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberCreatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -799,6 +799,10 @@ input MemberCreaterolesInput {
   set: [Role!]
 }
 
+input MemberCreatetwitterSeenIDsInput {
+  set: [String!]
+}
+
 input MemberCreateWithoutCommentsInput {
   id: ID
   displayName: String!
@@ -822,7 +826,7 @@ input MemberCreateWithoutCommentsInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberCreatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -849,7 +853,7 @@ input MemberCreateWithoutPassesInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberCreatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -876,7 +880,7 @@ input MemberCreateWithoutSubmissionsInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberCreatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -903,7 +907,7 @@ input MemberCreateWithoutVotesInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberCreatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -949,8 +953,6 @@ enum MemberOrderByInput {
   twitterUserTokenSecret_DESC
   twitterSinceIDsObject_ASC
   twitterSinceIDsObject_DESC
-  twitterSeenIDsObject_ASC
-  twitterSeenIDsObject_DESC
   someRandomJsonField_ASC
   someRandomJsonField_DESC
   createdAt_ASC
@@ -979,7 +981,7 @@ type MemberPreviousValues {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: [String!]!
   someRandomJsonField: Json
   createdAt: DateTime!
   updatedAt: DateTime
@@ -1026,7 +1028,7 @@ input MemberUpdateInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberUpdatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -1049,7 +1051,7 @@ input MemberUpdateManyMutationInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberUpdatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -1085,6 +1087,10 @@ input MemberUpdaterolesInput {
   set: [Role!]
 }
 
+input MemberUpdatetwitterSeenIDsInput {
+  set: [String!]
+}
+
 input MemberUpdateWithoutCommentsDataInput {
   displayName: String
   name: String
@@ -1107,7 +1113,7 @@ input MemberUpdateWithoutCommentsDataInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberUpdatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -1133,7 +1139,7 @@ input MemberUpdateWithoutPassesDataInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberUpdatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -1159,7 +1165,7 @@ input MemberUpdateWithoutSubmissionsDataInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberUpdatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -1185,7 +1191,7 @@ input MemberUpdateWithoutVotesDataInput {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: MemberUpdatetwitterSeenIDsInput
   someRandomJsonField: Json
 }
 
@@ -1450,20 +1456,6 @@ input MemberWhereInput {
   twitterSinceIDsObject_not_starts_with: String
   twitterSinceIDsObject_ends_with: String
   twitterSinceIDsObject_not_ends_with: String
-  twitterSeenIDsObject: String
-  twitterSeenIDsObject_not: String
-  twitterSeenIDsObject_in: [String!]
-  twitterSeenIDsObject_not_in: [String!]
-  twitterSeenIDsObject_lt: String
-  twitterSeenIDsObject_lte: String
-  twitterSeenIDsObject_gt: String
-  twitterSeenIDsObject_gte: String
-  twitterSeenIDsObject_contains: String
-  twitterSeenIDsObject_not_contains: String
-  twitterSeenIDsObject_starts_with: String
-  twitterSeenIDsObject_not_starts_with: String
-  twitterSeenIDsObject_ends_with: String
-  twitterSeenIDsObject_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

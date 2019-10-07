@@ -27,7 +27,7 @@ const startLogin = async initiateTwitterLogin => {
 
 const TwitterPage = props => (
    <MustSignIn>
-      <Member queryString="twitterUserName, twitterUserID, twitterUserToken, twitterUserTokenSecret twitterSinceIDsObject twitterSeenIDsObject">
+      <Member queryString="twitterUserName, twitterUserID, twitterUserToken, twitterUserTokenSecret twitterSinceIDsObject twitterSeenIDs">
          {({ data: memberData }) => (
             <div>
                {/* If we don't have twitter connected for this member */}
@@ -80,7 +80,7 @@ const TwitterPage = props => (
                         userToken={memberData.me.twitterUserToken}
                         userTokenSecret={memberData.me.twitterUserTokenSecret}
                         userSinceIDsObject={memberData.me.twitterSinceIDsObject}
-                        userSeenIDsObject={memberData.me.twitterSeenIDsObject}
+                        userSeenIDs={memberData.me.twitterSeenIDs}
                         startingList={props.query.listname}
                      />
                   )}

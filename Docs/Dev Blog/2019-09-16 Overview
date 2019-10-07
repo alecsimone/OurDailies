@@ -6,7 +6,7 @@ The public must become members in order to use the database, but once they do th
 -The OurDailies.org app
 -The Twitch chat extension
 
-Both of these tools interface with the database through a graphql-yoga server, also running on heroku. Although it can be found at playground.ourdailies.org, it's important to note that it is an entirely separate app, only sharing a domain.
+Both of these tools interface with the database through a graphql-yoga server, also running on Heroku. Although it can be found at playground.ourdailies.org, it's important to note that it is an entirely separate app, only sharing a domain.
 
 So the full stack is
 -A MYSQL database

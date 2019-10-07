@@ -37,7 +37,7 @@ const MARK_TWEETS_SEEN = gql`
          __typename
          id
          twitterSinceIDsObject
-         twitterSeenIDsObject
+         twitterSeenIDs
       }
    }
 `;
@@ -104,6 +104,11 @@ const StyledTwitterReader = styled.div`
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+            span.remainingCounters,
+            span.listOwner {
+               opacity: 0.5;
+               font-weight: 300;
+            }
             @media screen and (min-width: 800px) {
                padding: 0.5rem;
             }
@@ -275,6 +280,14 @@ const scrollColumnToBottom = e => {
    scrollTo(tweetsContainer, bottom, 250);
 };
 
+const filterTweets = (tweets, seenIDs, finder) => {
+   const filteredTweets = tweets.filter(tweet => {
+      if (seenIDs == null) return true;
+      return !seenIDs.includes(tweet.id_str);
+   });
+   return filteredTweets;
+};
+
 const TwitterReader = props => {
    const [activeList, setActiveList] = useState(false);
    const [tweetsArray, setTweetsArray] = useState(['Loading tweets...']);
@@ -301,6 +314,7 @@ const TwitterReader = props => {
       if (refreshButton != null) {
          refreshButton.classList.add('loading');
       }
+      console.log('Getting some tweets');
       const { data, loading } = await client
          .query({
             query: GET_TWEETS_FOR_LIST,
@@ -328,6 +342,7 @@ const TwitterReader = props => {
    };
 
    const pickList = async (listID, listName, client) => {
+      setTweetsArray(['Loading tweets...']);
       const tweetsData = await getTweetsForListHandler(listID, client);
       setActiveList(listID);
       const encodedName = encodeURIComponent(listName);
@@ -340,6 +355,7 @@ const TwitterReader = props => {
       button.classList.add('loading');
       const tweetIDs = [];
       tweets.forEach(tweet => tweetIDs.push(tweet.id_str));
+      console.log(tweetIDs);
 
       const { data, loading } = await client
          .mutate({
@@ -366,51 +382,68 @@ const TwitterReader = props => {
          {({ error, loading, data, client }) => {
             if (error) return <Error error={error} />;
             if (loading) return <p>Loading...</p>;
-            const lists = JSON.parse(data.getTwitterLists.message);
-            const listElements = lists.map(listData => (
-               <li
-                  key={listData.id_str}
-                  onClick={() =>
-                     pickList(listData.id_str, listData.name, client)
-                  }
-                  className={
-                     listData.id_str === activeList
-                        ? 'activeList'
-                        : 'inactiveList'
-                  }
-               >
-                  {listData.name}
-                  {listData.user.screen_name == props.userName
-                     ? ''
-                     : ` (@${listData.user.screen_name})`}
-               </li>
-            ));
-            listElements.unshift(
-               <li key="home" onClick={() => pickList('home', 'home', client)}>
-                  Home
-               </li>
-            );
+            const listData = JSON.parse(data.getTwitterLists.message);
+            const listIDs = Object.keys(listData);
+            const listElements = listIDs.map(listID => {
+               const thisListsTweets = JSON.parse(listData[listID].tweets);
+               const filteredTweets = filterTweets(
+                  thisListsTweets,
+                  props.userSeenIDs,
+                  '391'
+               );
+               return (
+                  <li
+                     key={listID}
+                     onClick={() =>
+                        pickList(listID, listData[listID].name, client)
+                     }
+                     className={
+                        listID === activeList ? 'activeList' : 'inactiveList'
+                     }
+                  >
+                     {listData[listID].name}{' '}
+                     {listData[listID].user.screen_name == props.userName ? (
+                        ''
+                     ) : (
+                        <span className="listOwner">
+                           (@{listData[listID].user.screen_name})
+                        </span>
+                     )}{' '}
+                     <span className="remainingCounters">
+                        ({filteredTweets.length})
+                     </span>
+                  </li>
+               );
+            });
+            // listElements.unshift(
+            //    <li key="home" onClick={() => pickList('home', 'home', client)}>
+            //       Home
+            //    </li>
+            // );
 
             let tweetsDisplay;
             if (activeList === false) {
                let defaultList;
                if (props.startingList != null) {
-                  [defaultList] = lists.filter(
-                     list =>
-                        list.name.toLowerCase() ===
+                  [defaultList] = listIDs.filter(
+                     listID =>
+                        listData[listID].name.toLowerCase() ===
                         props.startingList.toLowerCase()
                   );
                }
-               const [seeAllList] = lists.filter(
-                  list => list.name.toLowerCase() === 'see all'
+               const [seeAllList] = listIDs.filter(
+                  listID => listData[listID].name.toLowerCase() === 'see all'
                );
 
                if (defaultList) {
-                  getTweetsForListHandler(defaultList.id_str, client);
+                  setTweetsArray(JSON.parse(listData[defaultList].tweets));
+                  setActiveList(defaultList);
                } else if (seeAllList) {
-                  getTweetsForListHandler(seeAllList.id_str, client);
+                  setTweetsArray(JSON.parse(listData[seeAllList].tweets));
+                  setActiveList(seeAllList);
                } else {
-                  getTweetsForListHandler('home', client);
+                  setTweetsArray(JSON.parse(listData.home.tweets));
+                  setActiveList('home');
                }
                tweetsDisplay = <div>Loading tweets...</div>;
             }
@@ -424,17 +457,10 @@ const TwitterReader = props => {
                   const tweetersArray = [];
                   const seenTweeters = [];
 
-                  const seenIDs = JSON.parse(props.userSeenIDsObject);
-                  const filteredTweets = tweetsArray.filter(tweet => {
-                     if (seenIDs == null) return true;
-                     const seenTweeters = Object.keys(seenIDs);
-                     let isSeen = false;
-                     seenTweeters.forEach(tweeterID => {
-                        if (seenIDs[tweeterID].includes(tweet.id_str))
-                           isSeen = true;
-                     });
-                     return !isSeen;
-                  });
+                  const filteredTweets = filterTweets(
+                     tweetsArray,
+                     props.userSeenIDs
+                  );
                   tweetsRemaining = filteredTweets.length;
 
                   if (filteredTweets.length === 0) {

@@ -93,7 +93,7 @@ type Member {
   twitterUserToken: String
   twitterUserTokenSecret: String
   twitterSinceIDsObject: String
-  twitterSeenIDsObject: String
+  twitterSeenIDs: [String] @scalarList(strategy: RELATION)
   someRandomJsonField: Json
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
